@@ -18,10 +18,10 @@ module.exports = {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            role: {
-                type: Sequelize.ENUM("buyer", "seller"),
-                allowNull: false,
-            },
+            // role: {
+            //     type: Sequelize.ENUM("buyer", "seller"),
+            //     allowNull: false,
+            // },
             isVerified: {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false,

@@ -31,7 +31,10 @@ async function sendVerificationEmail(userEmail, token) {
 
 // Controller Methods
 exports.register = async (req, res) => {
-    const { email, password, role } = req.body;
+    const { email, password
+        // , role 
+        
+    } = req.body;
     if (!email.endsWith(`@${COLLEGE_DOMAIN}`)) {
         return res
             .status(400)
@@ -48,7 +51,7 @@ exports.register = async (req, res) => {
         const newUser = await User.create({
             email,
             passwordHash,
-            role,
+            // role,
             verificationToken,
         });
         await sendVerificationEmail(email, verificationToken);
@@ -99,7 +102,9 @@ exports.login = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.passwordHash);
         if (!isMatch)
             return res.status(401).json({ message: "Invalid credentials." });
-        const payload = { userId: user.id, email: user.email, role: user.role };
+        const payload = { userId: user.id, email: user.email, 
+            // role: user.role 
+            };
         const token = jwt.sign(payload, process.env.JWT_SECRET, {
             expiresIn: "1d",
         });
