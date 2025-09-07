@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+    ingress-nginx:
+        image: nginx:1.25
+        ports:
+            - "80:80"
+        volumes:
+            - ./infra/nginx/default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - auth-service
+
+    auth-service:
+        build: ./services/auth-service
+        env_file: ./services/auth-service/.env
+        volumes:
+            - ./services/auth-service:/usr/src/app
+            - /usr/src/app/node_modules
+        command: >
+            sh -c "npx sequelize-cli db:migrate && npm start"
+        depends_on:
+            postgres-auth-db:
+                condition: service_healthy
+
+    postgres-auth-db:
+        image: postgres:15
+        environment:
+            - POSTGRES_USER=admin
+            - POSTGRES_PASSWORD=secret_password
+            - POSTGRES_DB=auth_db
+        ports:
+            - "5432:5432"
+        volumes:
+            - auth_db_data:/var/lib/postgresql/data # This line makes data persistent
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U admin -d auth_db"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+# Top-level key to define the named volume
+volumes:
+    auth_db_data:
