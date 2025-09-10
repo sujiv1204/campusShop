@@ -16,7 +16,7 @@ async function sendVerificationEmail(userEmail, token) {
         secure: false,
         auth: { user: testAccount.user, pass: testAccount.pass },
     });
-    const verificationLink = `http://localhost/api/auth/verify-email?token=${token}`;
+    const verificationLink = `${process.env.CLIENT_URL}/api/auth/verify-email?token=${token}`;
     const info = await transporter.sendMail({
         from: '"Campus Marketplace" <noreply@campus-marketplace.com>',
         to: userEmail,
