@@ -2,6 +2,7 @@ const db = require("../models");
 const Item = db.Item;
 const minioClient = require("../config/minioClient");
 const crypto = require("crypto");
+const { validate: isUuid } = require("uuid");
 // Controller method for creating a new item
 exports.createItem = async (req, res) => {
     // For now, we'll get sellerId from the request body.
@@ -47,6 +48,9 @@ exports.getAllItems = async (req, res) => {
 exports.getItemById = async (req, res) => {
     try {
         const { id } = req.params; // Get the ID from the URL parameters
+        if (!isUuid(id)) {
+            return res.status(400).json({ message: "Invalid item ID format." });
+        }
         const item = await Item.findByPk(id);
 
         // If no item is found with that ID, return a 404 error
@@ -79,12 +83,10 @@ exports.uploadImage = async (req, res) => {
         // --- START: Authorization Check ---
         // Verify that the logged-in user is the seller of the item.
         if (item.sellerId !== req.user.userId) {
-            return res
-                .status(403)
-                .json({
-                    message:
-                        "Forbidden: You can only upload images for your own items.",
-                });
+            return res.status(403).json({
+                message:
+                    "Forbidden: You can only upload images for your own items.",
+            });
         }
 
         const bucketName = process.env.MINIO_BUCKET;
