@@ -23,24 +23,41 @@ services:
         depends_on:
             postgres-auth-db:
                 condition: service_healthy
-    
+
     items-service:
         build: ./services/items-service
         env_file: ./services/items-service/.env
         volumes:
-        - ./services/items-service:/usr/src/app
-        - /usr/src/app/node_modules
+            - ./services/items-service:/usr/src/app
+            - /usr/src/app/node_modules
         command: >
             sh -c "npx sequelize-cli db:migrate && npm start"
         depends_on:
             postgres-items-db:
                 condition: service_healthy
-    bidding-service: 
+    zookeeper:
+        image: confluentinc/cp-zookeeper:7.3.2
+        environment:
+            ZOOKEEPER_CLIENT_PORT: 2181
+
+    kafka:
+        image: confluentinc/cp-kafka:7.3.2
+        depends_on: [zookeeper]
+        ports: ["9092:9092"]
+        environment:
+            KAFKA_BROKER_ID: 1
+            KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+            KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+            KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+            KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+            KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    bidding-service:
         build: ./services/bidding-service
         env_file: ./services/bidding-service/.env
         volumes:
-        - ./services/bidding-service:/usr/src/app
-        - /usr/src/app/node_modules
+            - ./services/bidding-service:/usr/src/app
+            - /usr/src/app/node_modules
         command: >
             sh -c "npx sequelize-cli db:migrate && npm start"
         depends_on:
@@ -55,19 +72,19 @@ services:
         ports:
             - "5432:5432"
         volumes:
-            - auth_db_data:/var/lib/postgresql/data # This line makes data persistent
+            - auth_db_data:/var/lib/postgresql/data
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -U admin -d auth_db"]
             interval: 10s
             timeout: 5s
             retries: 5
 
-    postgres-items-db:  
+    postgres-items-db:
         image: postgres:15
         environment:
-        - POSTGRES_USER=admin
-        - POSTGRES_PASSWORD=secret_password
-        - POSTGRES_DB=items_db
+            - POSTGRES_USER=admin
+            - POSTGRES_PASSWORD=secret_password
+            - POSTGRES_DB=items_db
         ports:
             - "5433:5432" # Use a different host port (5433)
         volumes:
@@ -78,28 +95,28 @@ services:
             timeout: 5s
             retries: 5
 
-    minio: 
+    minio:
         image: minio/minio:latest
         ports:
-        - "9000:9000" # API Port
-        - "9001:9001" # Console UI Port
+            - "9000:9000" # API Port
+            - "9001:9001" # Console UI Port
         volumes:
-        - minio_data:/data
+            - minio_data:/data
         environment:
-        - MINIO_ROOT_USER=minioadmin
-        - MINIO_ROOT_PASSWORD=minioadmin
+            - MINIO_ROOT_USER=minioadmin
+            - MINIO_ROOT_PASSWORD=minioadmin
         command: server /data --console-address ":9001"
 
-    postgres-bids-db: 
+    postgres-bids-db:
         image: postgres:15
         environment:
-        - POSTGRES_USER=admin
-        - POSTGRES_PASSWORD=secret_password
-        - POSTGRES_DB=bids_db
+            - POSTGRES_USER=admin
+            - POSTGRES_PASSWORD=secret_password
+            - POSTGRES_DB=bids_db
         ports:
-        - "5434:5432" 
+            - "5434:5432"
         volumes:
-        - bids_db_data:/var/lib/postgresql/data
+            - bids_db_data:/var/lib/postgresql/data
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -U admin -d bids_db"]
             interval: 10s
