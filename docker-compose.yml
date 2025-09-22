@@ -10,6 +10,7 @@ services:
         depends_on:
             - auth-service
             - items-service
+            - bidding-service
 
     auth-service:
         build: ./services/auth-service
@@ -34,7 +35,17 @@ services:
         depends_on:
             postgres-items-db:
                 condition: service_healthy
-
+    bidding-service: 
+        build: ./services/bidding-service
+        env_file: ./services/bidding-service/.env
+        volumes:
+        - ./services/bidding-service:/usr/src/app
+        - /usr/src/app/node_modules
+        command: >
+            sh -c "npx sequelize-cli db:migrate && npm start"
+        depends_on:
+            postgres-bids-db:
+                condition: service_healthy
     postgres-auth-db:
         image: postgres:15
         environment:
@@ -79,9 +90,24 @@ services:
         - MINIO_ROOT_PASSWORD=minioadmin
         command: server /data --console-address ":9001"
 
-
+    postgres-bids-db: 
+        image: postgres:15
+        environment:
+        - POSTGRES_USER=admin
+        - POSTGRES_PASSWORD=secret_password
+        - POSTGRES_DB=bids_db
+        ports:
+        - "5434:5432" 
+        volumes:
+        - bids_db_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U admin -d bids_db"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 # Top-level key to define the named volume
 volumes:
     auth_db_data:
     items_db_data:
     minio_data:
+    bids_db_data:
