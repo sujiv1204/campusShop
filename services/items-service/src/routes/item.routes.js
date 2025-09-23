@@ -24,5 +24,6 @@ router.post(
     upload.single("itemImage"),
     itemController.uploadImage
 );
+router.post("/:id/sell", verifyToken, itemController.markAsSold);
 
 module.exports = router;
