@@ -1,0 +1,22 @@
+# Git and Docker files
+# These are not needed inside the running container.
+.git
+.gitignore
+.dockerignore
+Dockerfile
+
+# Dependencies
+# We run 'npm install' inside the Dockerfile to get the correct
+# platform-specific versions of packages. Copying your local
+# node_modules can cause issues.
+node_modules
+
+# Environment Variables
+# Secrets should be injected at runtime, not built into the image.
+.env
+
+# Logs and debug files
+npm-debug.log*
+
+# Documentation
+README.md
