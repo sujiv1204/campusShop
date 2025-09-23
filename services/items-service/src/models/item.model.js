@@ -25,6 +25,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.UUID,
                 allowNull: false,
             },
+            status: {
+                type: DataTypes.ENUM("available", "sold"),
+                allowNull: false,
+                defaultValue: "available",
+            },
         },
         {
             sequelize,
