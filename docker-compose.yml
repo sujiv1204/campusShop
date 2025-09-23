@@ -63,6 +63,19 @@ services:
         depends_on:
             postgres-bids-db:
                 condition: service_healthy
+
+    notifications-service: 
+        build: ./services/notifications-service
+        env_file: ./services/notifications-service/.env
+        volumes:
+        - ./services/notifications-service:/usr/src/app
+        - /usr/src/app/node_modules
+        command: npm start
+        depends_on:
+        - kafka
+        - auth-service
+        - items-service
+
     postgres-auth-db:
         image: postgres:15
         environment:
