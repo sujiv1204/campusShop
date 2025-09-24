@@ -25,5 +25,5 @@ router.post(
     itemController.uploadImage
 );
 router.post("/:id/sell", verifyToken, itemController.markAsSold);
-
+router.get("/me/bids", verifyToken, itemController.getBidsForSellerItems);
 module.exports = router;
