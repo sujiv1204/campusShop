@@ -3,6 +3,7 @@ const Item = db.Item;
 const minioClient = require("../config/minioClient");
 const crypto = require("crypto");
 const { validate: isUuid } = require("uuid");
+const { publishItemSoldEvent } = require("../lib/kafka");
 // Controller method for creating a new item
 exports.createItem = async (req, res) => {
     // For now, we'll get sellerId from the request body.
@@ -36,7 +37,18 @@ exports.createItem = async (req, res) => {
 // Controller method for getting all items
 exports.getAllItems = async (req, res) => {
     try {
-        const items = await Item.findAll({ where: { status: "available" } });
+        const { sellerId, status } = req.query;
+        let queryOptions = {};
+
+        // Start with a base filter for 'available' unless another status is specified
+        queryOptions.where = { status: status || "available" };
+
+        // If a sellerId is provided, add it to the filter
+        if (sellerId) {
+            queryOptions.where.sellerId = sellerId;
+        }
+
+        const items = await Item.findAll(queryOptions);
         res.status(200).json(items);
     } catch (error) {
         console.error("Error fetching items:", error);
@@ -199,6 +211,7 @@ exports.markAsSold = async (req, res) => {
 
         item.status = "sold";
         await item.save();
+        await publishItemSoldEvent(item.toJSON());
         res.status(200).json(item);
     } catch (error) {
         console.error("Error marking item as sold:", error);
