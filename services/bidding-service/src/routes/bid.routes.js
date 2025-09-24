@@ -6,4 +6,6 @@ const verifyToken = require("../middleware/auth.middleware");
 router.post("/", verifyToken, bidController.placeBid);
 // GET /api/bids - Get all bids for the authenticated user
 router.get('/', verifyToken, bidController.getBidsForUser);
+// GET /api/bids/item/:itemId - Get all bids for a specific item
+router.get('/item/:itemId', bidController.getBidsForItem);
 module.exports = router;

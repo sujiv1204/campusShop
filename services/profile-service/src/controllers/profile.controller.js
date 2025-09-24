@@ -89,3 +89,42 @@ exports.getUserBids = async (req, res) => {
         res.status(500).json({ message: "Could not fetch user bids." });
     }
 };
+
+exports.getActiveBids = async (req, res) => {
+    try {
+        const bidderId = req.user.userId;
+        const bidsResponse = await axios.get(
+            `http://bidding-service:5003/api/bids?bidderId=${bidderId}`,
+            {
+                headers: { Authorization: req.headers["authorization"] },
+            }
+        );
+        const allBids = bidsResponse.data;
+        if (allBids.length === 0) return res.json([]);
+
+        const activeBids = [];
+        for (const bid of allBids) {
+            try {
+                const itemResponse = await axios.get(
+                    `http://items-service:5002/api/items/${bid.itemId}`
+                );
+                if (
+                    itemResponse.data &&
+                    itemResponse.data.status === "available"
+                ) {
+                    activeBids.push({ ...bid, item: itemResponse.data });
+                }
+            } catch (itemError) {
+                // Item might be deleted, so we just skip it
+                console.log(
+                    `Skipping bid on item ${bid.itemId} as it could not be found.`
+                );
+            }
+        }
+
+        res.json(activeBids);
+    } catch (error) {
+        console.error("Error fetching active bids:", error.message);
+        res.status(500).json({ message: "Could not fetch active bids." });
+    }
+};
