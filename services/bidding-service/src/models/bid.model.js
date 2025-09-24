@@ -2,8 +2,8 @@
 const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-    class Item extends Model {}
-    Item.init(
+    class Bid extends Model {}
+    Bid.init(
         {
             id: {
                 type: DataTypes.UUID,
@@ -11,30 +11,23 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 allowNull: false,
             },
-            title: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            description: DataTypes.TEXT,
-            price: {
-                type: DataTypes.DECIMAL(10, 2),
-                allowNull: false,
-            },
-            imageUrl: DataTypes.STRING,
-            sellerId: {
+            itemId: {
                 type: DataTypes.UUID,
                 allowNull: false,
             },
-            status: {
-                type: DataTypes.ENUM("available", "sold"),
+            bidderId: {
+                type: DataTypes.UUID,
                 allowNull: false,
-                defaultValue: "available",
+            },
+            amount: {
+                type: DataTypes.DECIMAL(10, 2),
+                allowNull: false,
             },
         },
         {
             sequelize,
-            modelName: "Item",
+            modelName: "Bid",
         }
     );
-    return Item;
+    return Bid;
 };
