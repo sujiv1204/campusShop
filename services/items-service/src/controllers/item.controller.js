@@ -3,6 +3,7 @@ const Item = db.Item;
 const minioClient = require("../config/minioClient");
 const crypto = require("crypto");
 const { validate: isUuid } = require("uuid");
+const { publishItemSoldEvent } = require("../lib/kafka");
 // Controller method for creating a new item
 exports.createItem = async (req, res) => {
     // For now, we'll get sellerId from the request body.
@@ -210,6 +211,7 @@ exports.markAsSold = async (req, res) => {
 
         item.status = "sold";
         await item.save();
+        await publishItemSoldEvent(item.toJSON());
         res.status(200).json(item);
     } catch (error) {
         console.error("Error marking item as sold:", error);
