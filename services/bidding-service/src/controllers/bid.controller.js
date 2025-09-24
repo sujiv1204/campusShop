@@ -48,3 +48,16 @@ exports.placeBid = async (req, res) => {
         res.status(500).json({ message: "Server error while placing bid." });
     }
 };
+// Add this new controller function
+exports.getBidsForUser = async (req, res) => {
+    try {
+        // This allows fetching bids for the logged-in user OR another user if an admin feature is added later
+        const bidderId = req.query.bidderId || req.user.userId;
+
+        const bids = await Bid.findAll({ where: { bidderId: bidderId } });
+        res.status(200).json(bids);
+    } catch (error) {
+        console.error("Error fetching bids:", error);
+        res.status(500).json({ message: "Server error while fetching bids." });
+    }
+};
