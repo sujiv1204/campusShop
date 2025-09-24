@@ -31,16 +31,15 @@ async function sendVerificationEmail(userEmail, token) {
 
 // Controller Methods
 exports.register = async (req, res) => {
-    const { email, password
-        // , role 
-        
+    const {
+        email,
+        password,
+        // , role
     } = req.body;
     if (!email.endsWith(`@${COLLEGE_DOMAIN}`)) {
-        return res
-            .status(400)
-            .json({
-                message: `Registration is for @${COLLEGE_DOMAIN} emails only.`,
-            });
+        return res.status(400).json({
+            message: `Registration is for @${COLLEGE_DOMAIN} emails only.`,
+        });
     }
     try {
         const existingUser = await User.findOne({ where: { email } });
@@ -94,17 +93,17 @@ exports.login = async (req, res) => {
         if (!user)
             return res.status(401).json({ message: "Invalid credentials." });
         if (!user.isVerified)
-            return res
-                .status(403)
-                .json({
-                    message: "Please verify your email before logging in.",
-                });
+            return res.status(403).json({
+                message: "Please verify your email before logging in.",
+            });
         const isMatch = await bcrypt.compare(password, user.passwordHash);
         if (!isMatch)
             return res.status(401).json({ message: "Invalid credentials." });
-        const payload = { userId: user.id, email: user.email, 
-            // role: user.role 
-            };
+        const payload = {
+            userId: user.id,
+            email: user.email,
+            // role: user.role
+        };
         const token = jwt.sign(payload, process.env.JWT_SECRET, {
             expiresIn: "1d",
         });
@@ -119,4 +118,21 @@ exports.logout = (req, res) => {
     res.status(200).json({
         message: "Logout successful. Please delete your token.",
     });
+};
+
+exports.getUserById = async (req, res) => {
+    try {
+        // This endpoint is for internal service-to-service communication,
+        // so we don't need heavy validation.
+        const user = await User.findByPk(req.params.id, {
+            attributes: ["id", "email"], // Only return non-sensitive info
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
 };

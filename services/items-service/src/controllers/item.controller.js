@@ -3,6 +3,7 @@ const Item = db.Item;
 const minioClient = require("../config/minioClient");
 const crypto = require("crypto");
 const { validate: isUuid } = require("uuid");
+const { publishItemSoldEvent } = require("../lib/kafka");
 // Controller method for creating a new item
 exports.createItem = async (req, res) => {
     // For now, we'll get sellerId from the request body.
@@ -36,7 +37,18 @@ exports.createItem = async (req, res) => {
 // Controller method for getting all items
 exports.getAllItems = async (req, res) => {
     try {
-        const items = await Item.findAll();
+        const { sellerId, status } = req.query;
+        let queryOptions = {};
+
+        // Start with a base filter for 'available' unless another status is specified
+        queryOptions.where = { status: status || "available" };
+
+        // If a sellerId is provided, add it to the filter
+        if (sellerId) {
+            queryOptions.where.sellerId = sellerId;
+        }
+
+        const items = await Item.findAll(queryOptions);
         res.status(200).json(items);
     } catch (error) {
         console.error("Error fetching items:", error);
@@ -179,5 +191,30 @@ exports.deleteItem = async (req, res) => {
     } catch (error) {
         console.error("Error deleting item:", error);
         res.status(500).json({ message: "Server error while deleting item." });
+    }
+};
+
+exports.markAsSold = async (req, res) => {
+    try {
+        const item = await Item.findByPk(req.params.id);
+        if (!item) return res.status(404).json({ message: "Item not found." });
+
+        // Authorization check
+        if (item.sellerId !== req.user.userId) {
+            return res
+                .status(403)
+                .json({ message: "You can only update your own items." });
+        }
+        if (item.status === "sold") {
+            return res.status(400).json({ message: "Item is already sold." });
+        }
+
+        item.status = "sold";
+        await item.save();
+        await publishItemSoldEvent(item.toJSON());
+        res.status(200).json(item);
+    } catch (error) {
+        console.error("Error marking item as sold:", error);
+        res.status(500).json({ message: "Server error." });
     }
 };
