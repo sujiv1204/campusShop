@@ -76,6 +76,18 @@ services:
         - auth-service
         - items-service
 
+    profile-service:
+        build: ./services/profile-service
+        env_file: ./services/profile-service/.env
+        volumes:
+        - ./services/profile-service:/usr/src/app
+        - /usr/src/app/node_modules
+        command: >
+            sh -c "npx sequelize-cli db:migrate && npm start"
+        depends_on:
+            postgres-profiles-db:
+                condition: service_healthy
+
     postgres-auth-db:
         image: postgres:15
         environment:
@@ -135,9 +147,26 @@ services:
             interval: 10s
             timeout: 5s
             retries: 5
+
+    postgres-profiles-db:
+        image: postgres:15
+        environment:
+            - POSTGRES_USER=admin
+            - POSTGRES_PASSWORD=secret_password
+            - POSTGRES_DB=profiles_db
+        ports:
+            - "5435:5432"
+        volumes:
+            - profiles_db_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U admin -d profiles_db"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 # Top-level key to define the named volume
 volumes:
     auth_db_data:
     items_db_data:
     minio_data:
     bids_db_data:
+    profiles_db_data:
