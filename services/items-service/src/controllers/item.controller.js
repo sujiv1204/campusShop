@@ -4,6 +4,7 @@ const minioClient = require("../config/minioClient");
 const crypto = require("crypto");
 const { validate: isUuid } = require("uuid");
 const { publishItemSoldEvent } = require("../lib/kafka");
+const axios = require("axios");
 // Controller method for creating a new item
 exports.createItem = async (req, res) => {
     // For now, we'll get sellerId from the request body.
@@ -215,6 +216,45 @@ exports.markAsSold = async (req, res) => {
         res.status(200).json(item);
     } catch (error) {
         console.error("Error marking item as sold:", error);
+        res.status(500).json({ message: "Server error." });
+    }
+};
+exports.getBidsForSellerItems = async (req, res) => {
+    try {
+        const sellerId = req.user.userId;
+
+        // 1. Find all items posted by the seller
+        const items = await Item.findAll({ where: { sellerId } });
+        if (items.length === 0) {
+            return res.status(200).json([]);
+        }
+
+        // 2. For each item, fetch its bids from the bidding-service
+        const itemsWithBids = [];
+        for (const item of items) {
+            try {
+                const bidsResponse = await axios.get(
+                    `http://bidding-service:5003/api/bids/item/${item.id}`,
+                    {
+                        headers: {
+                            Authorization: req.headers["authorization"],
+                        },
+                    }
+                );
+                // Attach the bids to the item object
+                itemsWithBids.push({
+                    ...item.toJSON(),
+                    bids: bidsResponse.data,
+                });
+            } catch (bidError) {
+                // If fetching bids fails for one item, just add it without bids
+                itemsWithBids.push({ ...item.toJSON(), bids: [] });
+            }
+        }
+
+        res.status(200).json(itemsWithBids);
+    } catch (error) {
+        console.error("Error fetching bids for seller's items:", error);
         res.status(500).json({ message: "Server error." });
     }
 };
