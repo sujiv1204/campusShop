@@ -144,6 +144,15 @@ const Header = ({ isAuthenticated, onLogout }) => {
                   <Link to="/create-item" className="nav-button">
                     Sell Item
                   </Link>
+                
+                  <Link to="/buy-items" className="nav-button">
+                    🛍️ Buy Items
+                  </Link>
+
+                  <Link to="/user-profile" className="nav-button">
+                    Profile
+                  </Link>
+                
                 </li>
                 <li>
                   <button onClick={handleLogout} className="nav-button logout-button">
