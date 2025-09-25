@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard/dashboard';
 import BuyItems from './pages/BuyItems/buyItems';
 import PlaceBid from './pages/PlaceBid/placeBid';
 import UserProfile from './pages/UserProfile/userProfile';
+import EditItem from './pages/EditItem/editItem';
 import './App.css';
 
 function App() {
@@ -72,6 +73,10 @@ function App() {
             <Route 
               path="/user-profile" 
               element={isAuthenticated ? <UserProfile /> : <Navigate to="/user-profile" />} 
+            />
+            <Route 
+              path="/edit-item/:id" 
+              element={isAuthenticated ? <EditItem /> : <Navigate to="/login" />} 
             />
             
             {/* Add a catch-all route for undefined paths */}
