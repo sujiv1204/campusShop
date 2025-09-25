@@ -182,7 +182,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './Login.css';
+import './login.css';
 
 const Login = ({ setIsAuthenticated }) => {
   const [email, setEmail] = useState('');

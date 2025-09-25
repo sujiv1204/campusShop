@@ -233,6 +233,14 @@ api.interceptors.request.use((config) => {
 });
 
 // Items API
+export const profileAPI = {
+  getProfile: () => api.get('/profiles/me'),
+  updateProfile: (profileData) => api.put('/profiles/me', profileData),
+  getMyBids: () => api.get('/profiles/me/bids'), 
+  getMyPosted:()=>api.get('/profiles/me/items/posted'), // New endpoint to get items posted by the user
+  getBidderProfile:(id)=>api.get(`auth/user/${id}`), 
+  getMySoldItems:()=>api.get('/profiles/me/items/sold') // New endpoint to get sold items by the user
+};
 export const itemsAPI = {
   getAll: () => api.get('/items/'),
   getById: (id) => api.get(`/items/${id}`),
@@ -241,8 +249,8 @@ export const itemsAPI = {
   delete: (id) => api.delete(`/items/${id}`),
   uploadImage: (id, imageFile) => {
     const formData = new FormData();
-    formData.append('image', imageFile);
-    return api.post(`/items/${id}/upload-image`, formData, {
+    formData.append('itemImage', imageFile);
+    return api.post(`/items/${id}/image`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
@@ -257,6 +265,7 @@ export const itemsAPI = {
   
   // NEW: Get bids for items I've made (as a seller)
   getMyItemBids: () => api.get('/items/me/bids'),
+
 };
 
 // Bids API

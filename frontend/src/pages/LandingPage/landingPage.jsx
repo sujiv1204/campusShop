@@ -284,7 +284,7 @@ const LandingPage = ({ isAuthenticated }) => {
                         e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjBGMEYwIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPk5vIEltYWdlPC90ZXh0Pgo8L3N2Zz4=';
                       }}
                     />
-                    <div className="item-badge">${parseFloat(item.price).toFixed(2)}</div>
+                    <div className="item-badge">₹{parseFloat(item.price).toFixed(2)}</div>
                   </div>
                   
                   <div className="item-content">
@@ -300,12 +300,7 @@ const LandingPage = ({ isAuthenticated }) => {
                     <div className="item-actions">
                       {isAuthenticated ? (
                         <>
-                          <button 
-                            onClick={() => handleBuyItem(item.id, item.title)}
-                            className="action-btn buy-btn"
-                          >
-                            🛒 Buy Now
-                          </button>
+                          
                           <button 
                             onClick={() => handlePlaceBid(item)}
                             className="action-btn bid-btn"

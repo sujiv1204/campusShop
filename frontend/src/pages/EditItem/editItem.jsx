@@ -562,7 +562,7 @@ const EditItem = () => {
                   </div>
                 )}
               </div>
-              <small>Leave empty to keep current image. Supported formats: JPG, PNG, GIF</small>
+              <small>Leave empty to keep current image. Supported formats: JPG, PNG</small>
             </div>
           </div>
 
@@ -592,15 +592,6 @@ const EditItem = () => {
           </div>
         </form>
 
-        <div className="edit-item-info">
-          <h4>💡 Tips for Better Listings</h4>
-          <ul>
-            <li>Use clear, descriptive titles</li>
-            <li>Include detailed descriptions with condition information</li>
-            <li>Set fair market prices</li>
-            <li>Use high-quality, well-lit photos</li>
-          </ul>
-        </div>
       </div>
     </div>
   );

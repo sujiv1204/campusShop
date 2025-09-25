@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { bidsAPI, itemsAPI } from '../../services/api';
-import './PlaceBid.css';
+import './placeBid.css';
 
 const PlaceBid = () => {
   const { itemId } = useParams();
@@ -46,7 +46,7 @@ const PlaceBid = () => {
     }
 
     if (parseFloat(bidAmount) < parseFloat(item.price)) {
-      setError(`Bid must be at least the starting price of $${item.price}`);
+      setError(`Bid must be at least the starting price of ₹ ${item.price}`);
       return;
     }
 
@@ -119,13 +119,13 @@ const PlaceBid = () => {
           <div className="item-info">
             <h3>{item.title}</h3>
             <p className="description">{item.description}</p>
-            <p className="starting-price">Starting Price: <strong>${parseFloat(item.price).toFixed(2)}</strong></p>
+            <p className="starting-price">Starting Price: <strong>₹{parseFloat(item.price).toFixed(2)}</strong></p>
           </div>
         </div>
 
         <form onSubmit={handlePlaceBid} className="bid-form">
           <div className="form-group">
-            <label htmlFor="bidAmount">Your Bid Amount ($)</label>
+            <label htmlFor="bidAmount">Your Bid Amount (₹)</label>
             <input
               type="number"
               id="bidAmount"
@@ -136,14 +136,14 @@ const PlaceBid = () => {
               required
               disabled={submitting}
             />
-            <small>Minimum bid: ${(parseFloat(item.price) + 0.01).toFixed(2)}</small>
+            <small>Minimum bid: ₹{(parseFloat(item.price) + 0.01).toFixed(2)}</small>
           </div>
 
           <div className="bid-summary">
             <h4>Bid Summary</h4>
             <p>Item: {item.title}</p>
-            <p>Your Bid: <strong>${parseFloat(bidAmount || 0).toFixed(2)}</strong></p>
-            <p>Starting Price: ${parseFloat(item.price).toFixed(2)}</p>
+            <p>Your Bid: <strong>₹{parseFloat(bidAmount || 0).toFixed(2)}</strong></p>
+            <p>Starting Price: ₹{parseFloat(item.price).toFixed(2)}</p>
           </div>
 
           <div className="form-actions">

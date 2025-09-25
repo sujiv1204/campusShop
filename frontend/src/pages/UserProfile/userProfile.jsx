@@ -994,9 +994,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { itemsAPI, bidsAPI } from '../../services/api';
+import { itemsAPI, bidsAPI, profileAPI } from '../../services/api';
 import BidsManager from '../../components/BidsManager/bidsManager';
-import './UserProfile.css';
+import './userProfile.css';
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -1006,6 +1006,7 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true);
   const [bidsLoading, setBidsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [soldItems,setSoldItems]=useState([])
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -1015,6 +1016,9 @@ const UserProfile = () => {
   useEffect(() => {
     if (activeTab === 'my-bids') {
       fetchUserBids();
+    }
+    else if(activeTab==='sold-item'){
+      fetchUserSoldItems()
     }
   }, [activeTab]);
 
@@ -1042,6 +1046,7 @@ const UserProfile = () => {
     return userInfo;
   };
 
+  
   const fetchUserData = async () => {
     try {
       setLoading(true);
@@ -1050,7 +1055,8 @@ const UserProfile = () => {
       const userInfo = getUserInfo();
       setUser(userInfo);
 
-      const itemsResponse = await itemsAPI.getAll();
+      const itemsResponse = await profileAPI.getMyPosted();
+      
       setMyItems(itemsResponse.data);
       console.log(itemsResponse.data);
 
@@ -1061,6 +1067,23 @@ const UserProfile = () => {
       setLoading(false);
     }
   };
+const fetchUserSoldItems=async()=>{
+  try {
+    const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found. Please login again.');
+      }
+
+      const response = await profileAPI.getMySoldItems();
+      console.log("sold items",response.data);
+      setSoldItems(response.data);
+      // console.log(response.data);
+  }
+  catch(err){
+    console.error(err);
+    setError('Failed to load sold items. Please try again.');
+  }
+}
 
   const fetchUserBids = async () => {
     try {
@@ -1076,7 +1099,17 @@ const UserProfile = () => {
 
       // Use the updated bidsAPI with the new endpoint
       const response = await bidsAPI.getMyBids();
-      
+      console.log("jai",response.data);
+      // const itemDetails=await itemsAPI.getById(itemsResponse.data.id);
+      // console.log(itemDetails);
+      for(let a=0;a<response.data.length;a++){
+        const itemDetails=await itemsAPI.getById(response.data[a].itemId);
+        // console.log("itemDetails",itemDetails);
+        response.data[a].title=itemDetails.data.title;
+        response.data[a].description=itemDetails.data.description;
+      }
+      // const itemDetails=await itemsAPI.getById(response.data[0].itemId);
+      // console.log("asdfasd",itemDetails)
       console.log('Bids API response:', response);
       console.log('Bids data received:', response.data);
       
@@ -1293,21 +1326,16 @@ const UserProfile = () => {
 
                 {/* Bid Actions */}
                 <div className="bid-actions">
-                  <button 
-                    onClick={() => navigate(`/item/${bid.itemId}`)}
-                    className="action-btn view-item-btn"
-                  >
-                    👁️ View Item
-                  </button>
                   
-                  {(bid.status === 'active' || !bid.status) && (
+                  
+                  {/* {(bid.status === 'active' || !bid.status) && (
                     <button 
                       onClick={() => handlePlaceNewBid(bid.itemId)}
                       className="action-btn bid-again-btn"
                     >
                       💰 Bid Again
                     </button>
-                  )}
+                  )} */}
 
                   {bid.status === 'won' && (
                     <button 
@@ -1325,7 +1353,146 @@ const UserProfile = () => {
       </div>
     );
   };
+const renderSoldItems=()=>{
+    // if (bidsLoading) {
+    //   return (
+    //     <div className="bids-loading">
+    //       <div className="loading-spinner"></div>
+    //       <p>Loading your bids...</p>
+    //     </div>
+    //   );
+    // }
 
+    // if (error && activeTab === 'sold-item') {
+    //   return (
+    //     <div className="bids-error">
+    //       <div className="error-icon">⚠️</div>
+    //       <h3>Error Loading Bids</h3>
+    //       <p>{error}</p>
+    //       <button onClick={fetchUserBids} className="retry-btn">Try Again</button>
+    //     </div>
+    //   );
+    // }
+
+    if (soldItems.length === 0) {
+      return (
+        <div className="empty-state">
+          <div className="empty-icon">🏷️</div>
+          <h3>No sold Items Yet</h3>
+          <p>You haven't placed any bids yet. Start bidding on items to see them here!</p>
+          <button 
+            onClick={() => navigate('/items')}
+            className="cta-button"
+          >
+            Browse Items
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="my-bids-tab">
+        <div className="bids-header">
+          <h2>Sold Items ({soldItems.length})</h2>
+          <button onClick={fetchUserBids} className="refresh-btn">
+            🔄 Refresh
+          </button>
+        </div>
+
+        <div className="bids-grid">
+          {soldItems.map(bid => (
+            <div key={bid.id || bid._id} className="bid-card">
+              {/* Item Image */}
+              {bid.itemImage || bid.imageUrl ? (
+                <div className="bid-item-image">
+                  <img src={bid.itemImage || bid.imageUrl} alt={bid.itemName || bid.itemTitle} />
+                </div>
+              ) : (
+                <div className="bid-item-image placeholder">
+                  <span>📦</span>
+                </div>
+              )}
+              
+              <div className="bid-content">
+                {/* Item Info */}
+                <div className="bid-item-info">
+                  <h4 className="bid-item-title">{bid.itemName || bid.title || 'Unnamed Item'}</h4>
+                  <p className="bid-item-description">
+                    {bid.itemDescription || bid.description || 'No description available'}
+                  </p>
+                </div>
+
+                {/* Bid Details */}
+                {/* <div className="bid-details"> */}
+                  {/* <div className="bid-amount">
+                    <span className="label">Your Bid:</span>
+                    <span className="value">{formatCurrency(bid.price || bid.amount)}</span>
+                  </div> */}
+                  
+                  {/* <div className="bid-time">
+                    <span className="label">Placed:</span>
+                    <span className="value">{formatDate(bid.bidTime || bid.createdAt || bid.timestamp)}</span>
+                  </div> */}
+                  
+                  {/* <div className={`bid-status ${(bid.status || 'active').toLowerCase()}`}>
+                    <span className="label">Status:</span>
+                    <span className="value">{bid.status || 'Active'}</span>
+                  </div> */}
+
+                  {/* Current highest bid if available */}
+                  {/* {bid.currentHighestBid && (
+                    <div className="current-highest">
+                      <span className="label">Current Highest:</span>
+                      <span className="value">{formatCurrency(bid.currentHighestBid)}</span>
+                    </div>
+                  )} */}
+
+                  {/* Item price if available */}
+                  {/* {bid.itemPrice && (
+                    <div className="item-price">
+                      <span className="label">Item Price:</span>
+                      <span className="value">{formatCurrency(bid.itemPrice)}</span>
+                    </div>
+                  )} */}
+
+                  {/* Time remaining if available */}
+                  {/* {bid.auctionEndTime && (
+                    <div className="time-remaining">
+                      <span className="label">Auction Ends:</span>
+                      <span className="value">{formatDate(bid.auctionEndTime)}</span>
+                    </div>
+                  )} */}
+                {/* </div> */}
+
+                {/* Bid Actions */}
+                <div className="bid-actions">
+                  
+                  
+                  {/* {(bid.status === 'active' || !bid.status) && (
+                    <button 
+                      onClick={() => handlePlaceNewBid(bid.itemId)}
+                      className="action-btn bid-again-btn"
+                    >
+                      💰 Bid Again
+                    </button>
+                  )} */}
+
+                  {bid.status === 'won' && (
+                    <button 
+                      onClick={() => handleContactSeller(bid)}
+                      className="action-btn contact-btn"
+                    >
+                      📞 Contact Seller
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
   const handlePlaceNewBid = (itemId) => {
     navigate(`/item/${itemId}`, { state: { focusBid: true } });
   };
@@ -1382,7 +1549,7 @@ const UserProfile = () => {
             </div>
             <div className="stat">
               <span className="stat-number">
-                {myItems.filter(item => item.status === 'sold').length}
+                {activeTab === 'sold-item' ? soldItems.length:'...'}
               </span>
               <span className="stat-label">Items Sold</span>
             </div>
@@ -1409,6 +1576,12 @@ const UserProfile = () => {
           onClick={() => setActiveTab('my-bids')}
         >
           🏷️ My Bids ({activeTab === 'my-bids' ? myBids.length : '...'})
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'sold-item' ? 'active' : ''}`}
+          onClick={() => setActiveTab('sold-item')}
+        >
+          🏷️ Sold Items ({activeTab === 'sold-item' ? soldItems.length : '...'})
         </button>
       </div>
 
@@ -1441,7 +1614,7 @@ const UserProfile = () => {
                       <h4 className="item-title">{item.title}</h4>
                       <p className="item-description">{item.description}</p>
                       <div className="item-details">
-                        <span className="item-price">${parseFloat(item.price).toFixed(2)}</span>
+                        <span className="item-price">₹{parseFloat(item.price).toFixed(2)}</span>
                         <span className="item-date">
                           Listed: {formatDate(item.createdAt)}
                         </span>
@@ -1477,6 +1650,7 @@ const UserProfile = () => {
         {activeTab === 'bids' && <BidsManager />}
         
         {activeTab === 'my-bids' && renderMyBids()}
+        {activeTab === 'sold-item' && renderSoldItems()}
       </div>
     </div>
   );
