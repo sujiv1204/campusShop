@@ -108,23 +108,49 @@ exports.uploadImage = async (req, res) => {
             .randomBytes(8)
             .toString("hex")}_${req.file.originalname}`;
 
-        // Create the bucket if it doesn't exist
+        // --- START: UPDATED BUCKET CREATION AND POLICY LOGIC ---
+
         const bucketExists = await minioClient.bucketExists(bucketName);
         if (!bucketExists) {
+            // 1. Create the bucket
             await minioClient.makeBucket(bucketName, "us-east-1");
             console.log(`Bucket ${bucketName} created.`);
+
+            // 2. Define the public-read policy
+            const policy = {
+                Version: "2012-10-17",
+                Statement: [
+                    {
+                        Effect: "Allow",
+                        Principal: "*",
+                        Action: "s3:GetObject",
+                        Resource: `arn:aws:s3:::${bucketName}/*`,
+                    },
+                ],
+            };
+
+            // 3. Set the bucket policy
+            await minioClient.setBucketPolicy(
+                bucketName,
+                JSON.stringify(policy)
+            );
+            console.log(`Public read policy set for bucket ${bucketName}.`);
         }
 
+        // --- END: UPDATED LOGIC ---
+        const metadata = {
+            "Content-Type": req.file.mimetype,
+        };
         // Upload the file to MinIO
         await minioClient.putObject(
             bucketName,
             objectName,
             req.file.buffer,
-            req.file.mimetype
+            metadata
         );
 
         // Construct the URL
-        const imageUrl = `http://${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/${bucketName}/${objectName}`;
+        const imageUrl = `${process.env.MINIO_PUBLIC_URL}/${bucketName}/${objectName}`;
 
         // Update the item in the database with the new image URL
         item.imageUrl = imageUrl;
