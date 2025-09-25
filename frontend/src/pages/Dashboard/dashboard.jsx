@@ -125,7 +125,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { itemsAPI } from '../../services/api';
-import './Dashboard.css';
+import './dashboard.css';
 
 const Dashboard = () => {
   const [myItems, setMyItems] = useState([]);
@@ -300,7 +300,7 @@ const Dashboard = () => {
             <div key={item.id} className="item-card">
               {item.imageUrl && (
                 <div className="item-image">
-                  <img src={item.imageUrl} alt={item.title} />
+                  <img src={item.imageUrl} alt={item.title}   />
                 </div>
               )}
               
@@ -309,9 +309,6 @@ const Dashboard = () => {
                 <p className="description">{item.description}</p>
                 <p className="price">${parseFloat(item.price).toFixed(2)}</p>
                 <p className="date">Posted: {new Date(item.createdAt).toLocaleDateString()}</p>
-                <p className="item-id">
-                  <small>ID: {item.id}</small>
-                </p>
                 
                 <div className="item-actions">
                   <button 

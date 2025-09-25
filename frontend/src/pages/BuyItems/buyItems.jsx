@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { itemsAPI } from '../../services/api';
-import './buyItems.css';
+import './buyitems.css';
 
 const BuyItems = ({ isAuthenticated }) => {
   const [items, setItems] = useState([]);
@@ -83,7 +83,7 @@ const BuyItems = ({ isAuthenticated }) => {
             <div key={item.id} className="item-card">
               {item.imageUrl && (
                 <div className="item-image">
-                  {/* <img src={item.imageUrl} alt={item.title} /> */}
+                  <img src={item.imageUrl} alt={item.title} />
                 </div>
               )}
               
@@ -92,7 +92,7 @@ const BuyItems = ({ isAuthenticated }) => {
                 <p className="item-description">{item.description}</p>
                 
                 <div className="item-details">
-                  <div className="item-price">Starting Price: ${parseFloat(item.price).toFixed(2)}</div>
+                  <div className="item-price">Starting Price: ₹{parseFloat(item.price).toFixed(2)}</div>
                   <div className="item-seller">Seller ID: {item.sellerId?.substring(0, 8)}...</div>
                   <div className="item-date">
                     Listed: {new Date(item.createdAt).toLocaleDateString()}
@@ -107,13 +107,13 @@ const BuyItems = ({ isAuthenticated }) => {
                   >
                     💰 Place Bid
                   </button>
-                  <button 
+                  {/* <button 
                     onClick={() => handleBuyNow(item.id, item.title)}
                     className="buy-now-btn"
                     title="Buy immediately at asking price"
                   >
                     🛒 Buy Now
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>

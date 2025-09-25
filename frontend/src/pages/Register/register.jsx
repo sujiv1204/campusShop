@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import '../Login/Login.css'; // Reusing login styles
+import '../Login/login.css'; // Reusing login styles
 
 const Register = () => {
   const [username, setUsername] = useState('');

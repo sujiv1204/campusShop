@@ -643,7 +643,7 @@ const CreateItem = () => {
             // Step 1: Create the item to get its ID
             const response = await itemsAPI.create(formData);
             const newItem = response.data;
-
+            console.log('Item created:', newItem);
             // Step 2: If an image was selected, upload it
             if (image) {
                 await itemsAPI.uploadImage(newItem.id, image);
@@ -692,7 +692,7 @@ const CreateItem = () => {
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="price">Price ($) *</label>
+                        <label htmlFor="price">Price (₹) *</label>
                         <input
                             type="number" id="price" name="price"
                             value={formData.price} onChange={handleChange}

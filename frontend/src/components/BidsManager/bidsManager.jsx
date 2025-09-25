@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { bidsAPI, itemsAPI } from '../../services/api';
+import { bidsAPI, itemsAPI, profileAPI } from '../../services/api';
 import './bidsManager.css';
 
 const BidsManager = () => {
@@ -18,7 +18,7 @@ const BidsManager = () => {
     try {
       setLoading(true);
       setError('');
-      const response = await itemsAPI.getAll();
+      const response = await profileAPI.getMyPosted();
       // In a real app, you'd filter by current user's items
       // For now, we'll show all items since we don't have user-specific filtering
       setMyItems(response.data);
@@ -35,7 +35,14 @@ const BidsManager = () => {
       setBidsLoading(true);
       setError('');
       const response = await bidsAPI.getBidsByItem(itemId);
+      for(let i=0; i<response.data.length; i++) {
+        const bidderInfo = await profileAPI.getBidderProfile(response.data[i].bidderId);
+        console.log(bidderInfo)
+        response.data[i].email = bidderInfo.data.email;
+      }
       setItemBids(response.data);
+      console.log(response.data);
+
       setSelectedItem(myItems.find(item => item.id === itemId));
     } catch (err) {
       console.error('Error fetching bids:', err);
@@ -196,7 +203,7 @@ const BidsManager = () => {
                       
                       <div className="bid-header">
                         <div className="bidder-info">
-                          <strong>Bidder:</strong> {bid.bidderId?.substring(0, 8)}...
+                          <strong>Bidder:</strong> {bid.email }
                         </div>
                         {getBidStatusBadge(bid.status)}
                       </div>
