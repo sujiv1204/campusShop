@@ -21,6 +21,7 @@ const BuyItems = ({ isAuthenticated }) => {
       // Filter out sold items if they have a status field
       const availableItems = response.data.filter(item => item.status !== 'sold');
       setItems(availableItems);
+      console.log(availableItems)
     } catch (err) {
       setError('Failed to load items');
       console.error('Error fetching items:', err);
@@ -82,7 +83,7 @@ const BuyItems = ({ isAuthenticated }) => {
             <div key={item.id} className="item-card">
               {item.imageUrl && (
                 <div className="item-image">
-                  <img src={item.imageUrl} alt={item.title} />
+                  {/* <img src={item.imageUrl} alt={item.title} /> */}
                 </div>
               )}
               

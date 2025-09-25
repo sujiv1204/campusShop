@@ -648,23 +648,375 @@
 
 
 
+// import React, { useState, useEffect } from 'react';
+// import { useNavigate } from 'react-router-dom';
+// import { itemsAPI } from '../../services/api';
+// import BidsManager from '../../components/BidsManager/bidsManager';
+// import './UserProfile.css';
+// // import MyBids from '../components/MyBids';
+
+// const UserProfile = () => {
+//   const [user, setUser] = useState(null);
+//   const [myItems, setMyItems] = useState([]);
+//   const [activeTab, setActiveTab] = useState('items');
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState('');
+//   const navigate = useNavigate();
+
+//   useEffect(() => {
+//     fetchUserData();
+//   }, []);
+
+//   const getUserInfo = () => {
+//     const token = localStorage.getItem('token');
+//     let userInfo = {
+//       id: 'current-user',
+//       name: 'Current User',
+//       email: 'user@campus.edu'
+//     };
+
+//     if (token) {
+//       try {
+//         const payload = JSON.parse(atob(token.split('.')[1]));
+//         userInfo = {
+//           id: payload.userId || userInfo.id,
+//           name: payload.name || userInfo.name,
+//           email: payload.email || userInfo.email
+//         };
+//       } catch (error) {
+//         console.log('Token is not JWT or cannot be decoded', error);
+//       }
+//     }
+
+//     return userInfo;
+//   };
+
+//   const fetchUserData = async () => {
+//     try {
+//       setLoading(true);
+//       setError('');
+
+//       const userInfo = getUserInfo();
+//       setUser(userInfo);
+
+//       const itemsResponse = await itemsAPI.getAll();
+//       setMyItems(itemsResponse.data);
+
+//     } catch (err) {
+//       console.error('Error fetching user data:', err);
+//       setError('Failed to load profile data. Please try again.');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleDeleteItem = async (itemId, itemTitle) => {
+//     if (window.confirm(`Are you sure you want to delete "${itemTitle}"?`)) {
+//       try {
+//         await itemsAPI.delete(itemId);
+//         setMyItems(myItems.filter(item => item.id !== itemId));
+//         alert('Item deleted successfully!');
+//       } catch (err) {
+//         console.error('Error deleting item:', err);
+//         alert('Failed to delete item. Please try again.');
+//       }
+//     }
+//   };
+
+//   const handleEditItem = (item) => {
+//   navigate(`/edit-item/${item.id}`, { 
+//     state: { item }  // Pass the entire item object
+//   });
+// };
+
+//   const handleMarkAsSold = async (itemId, itemTitle) => {
+//     if (window.confirm(`Mark "${itemTitle}" as sold?`)) {
+//       try {
+//         console.log('Attempting to mark item as sold:', itemId);
+        
+//         // Check if token exists
+//         const token = localStorage.getItem('token');
+//         if (!token) {
+//           alert('Please login again. Your session may have expired.');
+//           navigate('/login');
+//           return;
+//         }
+
+//         console.log('Token exists, making API call...');
+        
+//         // Make the API call to mark as sold
+//         const response = await itemsAPI.markAsSold(itemId);
+        
+//         console.log('Mark as sold successful:', response.data);
+        
+//         // Remove the item from the list
+//         setMyItems(myItems.filter(item => item.id !== itemId));
+//         alert('Item marked as sold successfully!');
+        
+//       } catch (err) {
+//         console.error('Error marking item as sold:', err);
+        
+//         // Detailed error information
+//         if (err.response) {
+//           console.error('Response status:', err.response.status);
+//           console.error('Response data:', err.response.data);
+//           console.error('Response headers:', err.response.headers);
+          
+//           if (err.response.status === 401) {
+//             alert('Authentication failed. Please login again.');
+//             localStorage.removeItem('token');
+//             navigate('/login');
+//           } else if (err.response.status === 403) {
+//             alert('You do not have permission to mark this item as sold.');
+//           } else if (err.response.status === 404) {
+//             alert('Item not found. It may have been already deleted.');
+//           } else {
+//             alert(`Failed to mark item as sold: ${err.response.data?.message || 'Please try again.'}`);
+//           }
+//         } else if (err.request) {
+//           alert('Network error: Could not connect to the server. Please check your connection.');
+//         } else {
+//           alert(`Error: ${err.message}`);
+//         }
+//       }
+//     }
+//   };
+
+//   // Alternative method using fetch directly (if the API service isn't working)
+//   // const handleMarkAsSoldDirect = async (itemId, itemTitle) => {
+//   //   if (window.confirm(`Mark "${itemTitle}" as sold?`)) {
+//   //     try {
+//   //       const token = localStorage.getItem('token');
+//   //       if (!token) {
+//   //         alert('Please login again.');
+//   //         navigate('/login');
+//   //         return;
+//   //       }
+
+//   //       console.log('Using direct fetch to mark item as sold...');
+        
+//   //       const response = await fetch(`/api/items/${itemId}/sell`, {
+//   //         method: 'PATCH',
+//   //         headers: {
+//   //           'Authorization': `Bearer ${token}`,
+//   //           'Content-Type': 'application/json'
+//   //         }
+//   //       });
+
+//   //       if (!response.ok) {
+//   //         throw new Error(`HTTP error! status: ${response.status}`);
+//   //       }
+
+//   //       const result = await response.json();
+//   //       console.log('Direct fetch successful:', result);
+        
+//   //       setMyItems(myItems.filter(item => item.id !== itemId));
+//   //       alert('Item marked as sold successfully!');
+        
+//   //     } catch (err) {
+//   //       console.error('Direct fetch error:', err);
+//   //       alert(`Failed to mark item as sold: ${err.message}`);
+//   //     }
+//   //   }
+//   // };
+
+//   const formatDate = (dateString) => {
+//     return new Date(dateString).toLocaleDateString('en-US', {
+//       year: 'numeric',
+//       month: 'short',
+//       day: 'numeric'
+//     });
+//   };
+
+//   if (loading) return (
+//     <div className="profile-loading">
+//       <div className="loading-spinner"></div>
+//       <p>Loading your profile...</p>
+//     </div>
+//   );
+
+//   if (error) return (
+//     <div className="profile-error">
+//       <div className="error-icon">⚠️</div>
+//       <h3>Error Loading Profile</h3>
+//       <p>{error}</p>
+//       <button onClick={fetchUserData} className="retry-btn">Try Again</button>
+//     </div>
+//   );
+
+//   return (
+//     <div className="user-profile">
+//       {/* Profile Header */}
+//       <div className="profile-header">
+//         <div className="profile-avatar">
+//           <div className="avatar-placeholder">
+//             {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+//           </div>
+//         </div>
+//         <div className="profile-info">
+//           <h1 className="profile-name">
+//             {user?.name || 'User Profile'}
+//           </h1>
+//           <p className="profile-email">{user?.email}</p>
+//           <div className="profile-stats">
+//             <div className="stat">
+//               <span className="stat-number">{myItems.length}</span>
+//               <span className="stat-label">Items Posted</span>
+//             </div>
+//             <div className="stat">
+//               <span className="stat-number">0</span>
+//               <span className="stat-label">Active Bids</span>
+//             </div>
+//             <div className="stat">
+//               <span className="stat-number">
+//                 {myItems.filter(item => item.status === 'sold').length}
+//               </span>
+//               <span className="stat-label">Items Sold</span>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Debug Info */}
+//       {/* <div className="debug-info" style={{background: '#f0f8ff', padding: '10px', borderRadius: '5px', marginBottom: '20px', fontSize: '12px'}}>
+//         <strong>Debug Info:</strong> Token: {localStorage.getItem('token') ? 'Exists' : 'Missing'} | 
+//         Items: {myItems.length} | 
+//         API Base: /api/items/ID/sell
+//       </div> */}
+
+//       {/* Tab Navigation */}
+//       <div className="profile-tabs-navigation">
+//         <button
+//           className={`tab-btn ${activeTab === 'items' ? 'active' : ''}`}
+//           onClick={() => setActiveTab('items')}
+//         >
+//           📦 My Items ({myItems.length})
+//         </button>
+//         <button
+//           className={`tab-btn ${activeTab === 'bids' ? 'active' : ''}`}
+//           onClick={() => setActiveTab('bids')}
+//         >
+//           💰 Manage Bids
+//         </button>
+//         <button
+//           className={`tab-btn ${activeTab === 'my-bids' ? 'active' : ''}`}
+//           onClick={() => setActiveTab('my-bids')}
+//         >
+//           🏷️ My Bids
+//         </button>
+//       </div>
+      
+
+//       {/* Tab Content */}
+//       <div className="profile-tab-content">
+//         {activeTab === 'items' ? (
+//           <div className="items-tab">
+//             {myItems.length === 0 ? (
+//               <div className="empty-state">
+//                 <div className="empty-icon">📦</div>
+//                 <h3>No Items Posted Yet</h3>
+//                 <p>Start selling by posting your first item!</p>
+//                 <button 
+//                   onClick={() => navigate('/create-item')}
+//                   className="cta-button"
+//                 >
+//                   Create Your First Item
+//                 </button>
+//               </div>
+//             ) : (
+//               <div className="items-grid">
+//                 {myItems.map(item => (
+//                   <div key={item.id} className="profile-item-card">
+//                     {item.imageUrl && (
+//                       <div className="item-image">
+//                         <img src={item.imageUrl} alt={item.title} />
+//                       </div>
+//                     )}
+//                     <div className="item-content">
+//                       <h4 className="item-title">{item.title}</h4>
+//                       <p className="item-description">{item.description}</p>
+//                       <div className="item-details">
+//                         <span className="item-price">${parseFloat(item.price).toFixed(2)}</span>
+//                         <span className="item-date">
+//                           Listed: {formatDate(item.createdAt)}
+//                         </span>
+//                         <span className="item-id" style={{fontSize: '10px', color: '#999'}}>
+//                           ID: {item.id.substring(0, 8)}...
+//                         </span>
+//                       </div>
+//                       <div className="item-actions">
+//                         <button 
+//                           onClick={() => handleEditItem(item)}
+//                           className="action-btn edit-btn"
+//                         >
+//                           ✏️ Edit
+//                         </button>
+//                         <button 
+//                           onClick={() => handleMarkAsSold(item.id, item.title)}
+//                           className="action-btn sold-btn"
+//                         >
+//                           ✅ Mark Sold
+//                         </button>
+//                         {/* Alternative button for testing */}
+//                         {/* <button 
+//                           onClick={() => handleMarkAsSoldDirect(item.id, item.title)}
+//                           className="action-btn test-btn"
+//                           style={{background: '#6f42c1'}}
+//                           title="Test with direct fetch"
+//                         >
+//                           🔧 Test Sell
+//                         </button> */}
+//                         <button 
+//                           onClick={() => handleDeleteItem(item.id, item.title)}
+//                           className="action-btn delete-btn"
+//                         >
+//                           🗑️ Delete
+//                         </button>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 ))}
+//               </div>
+//             )}
+//           </div>
+//         ) : (
+//           <BidsManager />
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default UserProfile;
+
+
+
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { itemsAPI } from '../../services/api';
+import { itemsAPI, bidsAPI } from '../../services/api';
 import BidsManager from '../../components/BidsManager/bidsManager';
 import './UserProfile.css';
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
   const [myItems, setMyItems] = useState([]);
+  const [myBids, setMyBids] = useState([]);
   const [activeTab, setActiveTab] = useState('items');
   const [loading, setLoading] = useState(true);
+  const [bidsLoading, setBidsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchUserData();
   }, []);
+
+  useEffect(() => {
+    if (activeTab === 'my-bids') {
+      fetchUserBids();
+    }
+  }, [activeTab]);
 
   const getUserInfo = () => {
     const token = localStorage.getItem('token');
@@ -700,6 +1052,7 @@ const UserProfile = () => {
 
       const itemsResponse = await itemsAPI.getAll();
       setMyItems(itemsResponse.data);
+      console.log(itemsResponse.data);
 
     } catch (err) {
       console.error('Error fetching user data:', err);
@@ -708,6 +1061,55 @@ const UserProfile = () => {
       setLoading(false);
     }
   };
+
+  const fetchUserBids = async () => {
+    try {
+      setBidsLoading(true);
+      setError('');
+
+      console.log('Fetching user bids from /api/items/me/bids...');
+      
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found. Please login again.');
+      }
+
+      // Use the updated bidsAPI with the new endpoint
+      const response = await bidsAPI.getMyBids();
+      
+      console.log('Bids API response:', response);
+      console.log('Bids data received:', response.data);
+      
+      setMyBids(response.data);
+      console.log(response.data)
+
+    } catch (err) {
+      console.error('Error fetching user bids:', err);
+      
+      // Detailed error handling
+      if (err.response) {
+        console.error('Response status:', err.response.status);
+        console.error('Response data:', err.response.data);
+        
+        if (err.response.status === 401) {
+          setError('Please login again. Your session may have expired.');
+          localStorage.removeItem('token');
+          navigate('/login');
+        } else if (err.response.status === 404) {
+          setError('Bids endpoint not found. The API may have changed.');
+        } else {
+          setError(err.response.data?.message || `Server error: ${err.response.status}`);
+        }
+      } else if (err.request) {
+        setError('Cannot connect to the server. Please check if the backend is running.');
+      } else {
+        setError(err.message || 'Failed to fetch your bids. Please try again.');
+      }
+    } finally {
+      setBidsLoading(false);
+    }
+  };
+
 
   const handleDeleteItem = async (itemId, itemTitle) => {
     if (window.confirm(`Are you sure you want to delete "${itemTitle}"?`)) {
@@ -723,15 +1125,14 @@ const UserProfile = () => {
   };
 
   const handleEditItem = (item) => {
-    navigate(`/edit-item/${item.id}`);
+    navigate(`/edit-item/${item.id}`, { 
+      state: { item }
+    });
   };
 
   const handleMarkAsSold = async (itemId, itemTitle) => {
     if (window.confirm(`Mark "${itemTitle}" as sold?`)) {
       try {
-        console.log('Attempting to mark item as sold:', itemId);
-        
-        // Check if token exists
         const token = localStorage.getItem('token');
         if (!token) {
           alert('Please login again. Your session may have expired.');
@@ -739,80 +1140,24 @@ const UserProfile = () => {
           return;
         }
 
-        console.log('Token exists, making API call...');
-        
-        // Make the API call to mark as sold
         const response = await itemsAPI.markAsSold(itemId);
-        
-        console.log('Mark as sold successful:', response.data);
-        
-        // Remove the item from the list
+        console.log(response.data);
         setMyItems(myItems.filter(item => item.id !== itemId));
         alert('Item marked as sold successfully!');
         
       } catch (err) {
         console.error('Error marking item as sold:', err);
-        
-        // Detailed error information
         if (err.response) {
-          console.error('Response status:', err.response.status);
-          console.error('Response data:', err.response.data);
-          console.error('Response headers:', err.response.headers);
-          
           if (err.response.status === 401) {
             alert('Authentication failed. Please login again.');
             localStorage.removeItem('token');
             navigate('/login');
-          } else if (err.response.status === 403) {
-            alert('You do not have permission to mark this item as sold.');
-          } else if (err.response.status === 404) {
-            alert('Item not found. It may have been already deleted.');
           } else {
             alert(`Failed to mark item as sold: ${err.response.data?.message || 'Please try again.'}`);
           }
-        } else if (err.request) {
-          alert('Network error: Could not connect to the server. Please check your connection.');
         } else {
           alert(`Error: ${err.message}`);
         }
-      }
-    }
-  };
-
-  // Alternative method using fetch directly (if the API service isn't working)
-  const handleMarkAsSoldDirect = async (itemId, itemTitle) => {
-    if (window.confirm(`Mark "${itemTitle}" as sold?`)) {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          alert('Please login again.');
-          navigate('/login');
-          return;
-        }
-
-        console.log('Using direct fetch to mark item as sold...');
-        
-        const response = await fetch(`/api/items/${itemId}/sell`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        console.log('Direct fetch successful:', result);
-        
-        setMyItems(myItems.filter(item => item.id !== itemId));
-        alert('Item marked as sold successfully!');
-        
-      } catch (err) {
-        console.error('Direct fetch error:', err);
-        alert(`Failed to mark item as sold: ${err.message}`);
       }
     }
   };
@@ -821,25 +1166,194 @@ const UserProfile = () => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
-  if (loading) return (
-    <div className="profile-loading">
-      <div className="loading-spinner"></div>
-      <p>Loading your profile...</p>
-    </div>
-  );
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
+  };
 
-  if (error) return (
-    <div className="profile-error">
-      <div className="error-icon">⚠️</div>
-      <h3>Error Loading Profile</h3>
-      <p>{error}</p>
-      <button onClick={fetchUserData} className="retry-btn">Try Again</button>
-    </div>
-  );
+  // Render My Bids tab content
+  const renderMyBids = () => {
+    if (bidsLoading) {
+      return (
+        <div className="bids-loading">
+          <div className="loading-spinner"></div>
+          <p>Loading your bids...</p>
+        </div>
+      );
+    }
+
+    if (error && activeTab === 'my-bids') {
+      return (
+        <div className="bids-error">
+          <div className="error-icon">⚠️</div>
+          <h3>Error Loading Bids</h3>
+          <p>{error}</p>
+          <button onClick={fetchUserBids} className="retry-btn">Try Again</button>
+        </div>
+      );
+    }
+
+    if (myBids.length === 0) {
+      return (
+        <div className="empty-state">
+          <div className="empty-icon">🏷️</div>
+          <h3>No Bids Yet</h3>
+          <p>You haven't placed any bids yet. Start bidding on items to see them here!</p>
+          <button 
+            onClick={() => navigate('/items')}
+            className="cta-button"
+          >
+            Browse Items
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="my-bids-tab">
+        <div className="bids-header">
+          <h2>My Bids ({myBids.length})</h2>
+          <button onClick={fetchUserBids} className="refresh-btn">
+            🔄 Refresh
+          </button>
+        </div>
+
+        <div className="bids-grid">
+          {myBids.map(bid => (
+            <div key={bid.id || bid._id} className="bid-card">
+              {/* Item Image */}
+              {bid.itemImage || bid.imageUrl ? (
+                <div className="bid-item-image">
+                  <img src={bid.itemImage || bid.imageUrl} alt={bid.itemName || bid.itemTitle} />
+                </div>
+              ) : (
+                <div className="bid-item-image placeholder">
+                  <span>📦</span>
+                </div>
+              )}
+              
+              <div className="bid-content">
+                {/* Item Info */}
+                <div className="bid-item-info">
+                  <h4 className="bid-item-title">{bid.itemName || bid.title || 'Unnamed Item'}</h4>
+                  <p className="bid-item-description">
+                    {bid.itemDescription || bid.description || 'No description available'}
+                  </p>
+                </div>
+
+                {/* Bid Details */}
+                <div className="bid-details">
+                  <div className="bid-amount">
+                    <span className="label">Your Bid:</span>
+                    <span className="value">{formatCurrency(bid.price || bid.amount)}</span>
+                  </div>
+                  
+                  <div className="bid-time">
+                    <span className="label">Placed:</span>
+                    <span className="value">{formatDate(bid.bidTime || bid.createdAt || bid.timestamp)}</span>
+                  </div>
+                  
+                  <div className={`bid-status ${(bid.status || 'active').toLowerCase()}`}>
+                    <span className="label">Status:</span>
+                    <span className="value">{bid.status || 'Active'}</span>
+                  </div>
+
+                  {/* Current highest bid if available */}
+                  {bid.currentHighestBid && (
+                    <div className="current-highest">
+                      <span className="label">Current Highest:</span>
+                      <span className="value">{formatCurrency(bid.currentHighestBid)}</span>
+                    </div>
+                  )}
+
+                  {/* Item price if available */}
+                  {bid.itemPrice && (
+                    <div className="item-price">
+                      <span className="label">Item Price:</span>
+                      <span className="value">{formatCurrency(bid.itemPrice)}</span>
+                    </div>
+                  )}
+
+                  {/* Time remaining if available */}
+                  {bid.auctionEndTime && (
+                    <div className="time-remaining">
+                      <span className="label">Auction Ends:</span>
+                      <span className="value">{formatDate(bid.auctionEndTime)}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Bid Actions */}
+                <div className="bid-actions">
+                  <button 
+                    onClick={() => navigate(`/item/${bid.itemId}`)}
+                    className="action-btn view-item-btn"
+                  >
+                    👁️ View Item
+                  </button>
+                  
+                  {(bid.status === 'active' || !bid.status) && (
+                    <button 
+                      onClick={() => handlePlaceNewBid(bid.itemId)}
+                      className="action-btn bid-again-btn"
+                    >
+                      💰 Bid Again
+                    </button>
+                  )}
+
+                  {bid.status === 'won' && (
+                    <button 
+                      onClick={() => handleContactSeller(bid)}
+                      className="action-btn contact-btn"
+                    >
+                      📞 Contact Seller
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const handlePlaceNewBid = (itemId) => {
+    navigate(`/item/${itemId}`, { state: { focusBid: true } });
+  };
+
+  const handleContactSeller = (bid) => {
+    // Implement contact seller functionality
+    alert(`Contact seller for ${bid.itemName || 'this item'} to complete the purchase.`);
+  };
+
+  if (loading && activeTab === 'items') {
+    return (
+      <div className="profile-loading">
+        <div className="loading-spinner"></div>
+        <p>Loading your profile...</p>
+      </div>
+    );
+  }
+
+  if (error && activeTab === 'items') {
+    return (
+      <div className="profile-error">
+        <div className="error-icon">⚠️</div>
+        <h3>Error Loading Profile</h3>
+        <p>{error}</p>
+        <button onClick={fetchUserData} className="retry-btn">Try Again</button>
+      </div>
+    );
+  }
 
   return (
     <div className="user-profile">
@@ -861,8 +1375,10 @@ const UserProfile = () => {
               <span className="stat-label">Items Posted</span>
             </div>
             <div className="stat">
-              <span className="stat-number">0</span>
-              <span className="stat-label">Active Bids</span>
+              <span className="stat-number">
+                {activeTab === 'my-bids' ? myBids.length : '...'}
+              </span>
+              <span className="stat-label">My Bids</span>
             </div>
             <div className="stat">
               <span className="stat-number">
@@ -872,13 +1388,6 @@ const UserProfile = () => {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Debug Info */}
-      <div className="debug-info" style={{background: '#f0f8ff', padding: '10px', borderRadius: '5px', marginBottom: '20px', fontSize: '12px'}}>
-        <strong>Debug Info:</strong> Token: {localStorage.getItem('token') ? 'Exists' : 'Missing'} | 
-        Items: {myItems.length} | 
-        API Base: /api/items/ID/sell
       </div>
 
       {/* Tab Navigation */}
@@ -895,11 +1404,17 @@ const UserProfile = () => {
         >
           💰 Manage Bids
         </button>
+        <button
+          className={`tab-btn ${activeTab === 'my-bids' ? 'active' : ''}`}
+          onClick={() => setActiveTab('my-bids')}
+        >
+          🏷️ My Bids ({activeTab === 'my-bids' ? myBids.length : '...'})
+        </button>
       </div>
 
       {/* Tab Content */}
       <div className="profile-tab-content">
-        {activeTab === 'items' ? (
+        {activeTab === 'items' && (
           <div className="items-tab">
             {myItems.length === 0 ? (
               <div className="empty-state">
@@ -930,9 +1445,6 @@ const UserProfile = () => {
                         <span className="item-date">
                           Listed: {formatDate(item.createdAt)}
                         </span>
-                        <span className="item-id" style={{fontSize: '10px', color: '#999'}}>
-                          ID: {item.id.substring(0, 8)}...
-                        </span>
                       </div>
                       <div className="item-actions">
                         <button 
@@ -947,15 +1459,6 @@ const UserProfile = () => {
                         >
                           ✅ Mark Sold
                         </button>
-                        {/* Alternative button for testing */}
-                        <button 
-                          onClick={() => handleMarkAsSoldDirect(item.id, item.title)}
-                          className="action-btn test-btn"
-                          style={{background: '#6f42c1'}}
-                          title="Test with direct fetch"
-                        >
-                          🔧 Test Sell
-                        </button>
                         <button 
                           onClick={() => handleDeleteItem(item.id, item.title)}
                           className="action-btn delete-btn"
@@ -969,9 +1472,11 @@ const UserProfile = () => {
               </div>
             )}
           </div>
-        ) : (
-          <BidsManager />
         )}
+
+        {activeTab === 'bids' && <BidsManager />}
+        
+        {activeTab === 'my-bids' && renderMyBids()}
       </div>
     </div>
   );
