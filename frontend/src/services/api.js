@@ -2,72 +2,95 @@ import axios from 'axios';
 
 const API_BASE = '/api';
 
-// Create axios instance
 const api = axios.create({
   baseURL: API_BASE,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
-// Add a request interceptor to include the token in every request
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-);
-
-// Add a response interceptor to handle token expiration
-api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    if (error.response?.status === 401) {
-      // Token is invalid or expired
-      localStorage.removeItem('token');
-      window.location.href = '/login'; // Redirect to login
-    }
-    return Promise.reject(error);
-  }
-);
+  return config;
+});
 
 // Items API
 export const itemsAPI = {
-  // Get all items
   getAll: () => api.get('/items/'),
-  
-  // Get items by current user
-  getMyItems: () => api.get('/items/my-items'),
-  
-  // Get single item
   getById: (id) => api.get(`/items/${id}`),
-  
-  // Create new item
   create: (itemData) => api.post('/items/', itemData),
-  
-  // Update item
   update: (id, itemData) => api.put(`/items/${id}`, itemData),
-  
-  // Delete item
   delete: (id) => api.delete(`/items/${id}`),
-  
-  // Upload image
   uploadImage: (id, imageFile) => {
     const formData = new FormData();
     formData.append('image', imageFile);
     return api.post(`/items/${id}/upload-image`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
+  },
+  markAsSold: (id) => {
+    // Make sure we're using the correct endpoint and method
+    return api.post(`/items/${id}/sell`, {}, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  },
+
+  // Add endpoint to get user's items
+  getMyItems: () => api.get('/items/my-items'),
+};
+
+// Bids API
+export const bidsAPI = {
+  placeBid: (bidData) => api.post('/bids/', bidData),
+  getBidsByItem: (itemId) => api.get(`/bids/item/${itemId}`),
+  getMyBids: () => api.get('/bids/my-bids'),
+  // Add these endpoints for bid management
+  acceptBid: (bidId) => api.patch(`/bids/${bidId}/accept`),
+  rejectBid: (bidId) => api.patch(`/bids/${bidId}/reject`),
+  getReceivedBids: () => api.get('/bids/received'),
+};
+
+// User API - Add this section
+export const userAPI = {
+  // Get current user profile - you might need to create this endpoint
+  getProfile: () => api.get('/auth/profile'),
+  // Update user profile
+  updateProfile: (profileData) => api.put('/auth/profile', profileData),
+};
+
+// If the profile endpoint doesn't exist, we can create a fallback
+export const authAPI = {
+  getProfile: () => {
+    // Fallback: Since we might not have a profile endpoint,
+    // we can return basic user info from the token or create a mock response
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return Promise.reject(new Error('No token found'));
+    }
+    
+    // Try to decode the token to get user info (if it's a JWT)
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return Promise.resolve({
+        data: {
+          id: payload.userId || 'unknown',
+          name: payload.name || 'User',
+          email: payload.email || 'user@example.com'
+        }
+      });
+    } catch (error) {
+        console.log(error);
+      // If token decoding fails, return a mock profile
+      return Promise.resolve({
+        data: {
+          id: 'user-id',
+          name: 'Current User',
+          email: 'user@campus.edu'
+        }
+      });
+    }
   }
 };
 

@@ -253,7 +253,7 @@ const Dashboard = () => {
         <h1>My Dashboard</h1>
         <div className="header-actions">
           <button onClick={testDeleteAPI} className="test-btn" title="Test API connection">
-            🧪 Test API
+            {/* 🧪 Test API */}
           </button>
           <button onClick={handleCreateItem} className="create-item-btn">
             + Create New Item
@@ -262,13 +262,13 @@ const Dashboard = () => {
       </div>
 
       {/* Debug Information */}
-      <div className="debug-info">
+      {/* <div className="debug-info">
         <h3>Debug Information</h3>
         <p><strong>Authentication:</strong> {localStorage.getItem('token') ? '✅ Logged In' : '❌ Not Logged In'}</p>
         <p><strong>Token Present:</strong> {localStorage.getItem('token') ? 'Yes' : 'No'}</p>
         <p><strong>Items Loaded:</strong> {myItems.length}</p>
         <p><strong>First Item ID (if any):</strong> {myItems[0]?.id || 'None'}</p>
-      </div>
+      </div> */}
 
       {/* Messages */}
       {success && (

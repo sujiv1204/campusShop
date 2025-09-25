@@ -6,6 +6,9 @@ import Login from './pages/Login/login';
 import Register from './pages/Register/register';
 import CreateItem from './pages/CreateItem/createItem'; 
 import Dashboard from './pages/Dashboard/dashboard'; 
+import BuyItems from './pages/BuyItems/buyItems';
+import PlaceBid from './pages/PlaceBid/placeBid';
+import UserProfile from './pages/UserProfile/userProfile';
 import './App.css';
 
 function App() {
@@ -43,6 +46,14 @@ function App() {
               element={!isAuthenticated ? <Login setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/" />} 
             />
             <Route 
+              path="/buy-items" 
+              element={<BuyItems isAuthenticated={isAuthenticated} />} 
+            />
+            <Route 
+              path="/place-bid/:itemId" 
+              element={isAuthenticated ? <PlaceBid /> : <Navigate to="/login" />} 
+            />
+            <Route 
               path="/register" 
               element={!isAuthenticated ? <Register /> : <Navigate to="/" />} 
             />
@@ -57,6 +68,10 @@ function App() {
             <Route 
               path="/dashboard" 
               element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/user-profile" 
+              element={isAuthenticated ? <UserProfile /> : <Navigate to="/user-profile" />} 
             />
             
             {/* Add a catch-all route for undefined paths */}
