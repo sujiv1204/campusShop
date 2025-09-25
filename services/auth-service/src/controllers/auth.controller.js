@@ -11,21 +11,24 @@ const COLLEGE_DOMAIN = "iitj.ac.in";
 async function sendVerificationEmail(userEmail, token) {
     const testAccount = await nodemailer.createTestAccount();
     const transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        secure: false,
-        auth: { user: testAccount.user, pass: testAccount.pass },
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+        },
     });
     const verificationLink = `${process.env.CLIENT_URL}/api/auth/verify-email?token=${token}`;
     const info = await transporter.sendMail({
-        from: '"Campus Marketplace" <noreply@campus-marketplace.com>',
+        from: process.env.EMAIL_FROM,
         to: userEmail,
         subject: "Verify Your Email Address",
         html: `<b>Please click the link to verify:</b><br/><a href="${verificationLink}">${verificationLink}</a>`,
     });
     console.log(
-        "Verification email sent. Preview URL: %s",
-        nodemailer.getTestMessageUrl(info)
+        "Verification email sent successfully. Message ID: %s",
+        info.messageId
     );
 }
 
