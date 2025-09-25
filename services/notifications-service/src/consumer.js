@@ -12,14 +12,13 @@ const consumer = kafka.consumer({ groupId: "notifications-group" });
 // --- Nodemailer Setup (using Ethereal for testing) ---
 let transporter;
 async function setupMailer() {
-    let testAccount = await nodemailer.createTestAccount();
     transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
         secure: false,
         auth: {
-            user: testAccount.user,
-            pass: testAccount.pass,
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
         },
     });
 }
@@ -73,15 +72,15 @@ async function handleBidPlaced(event) {
 
         // 3. Construct and send the email to the seller
         const mailInfo = await transporter.sendMail({
-            from: '"Campus Marketplace" <noreply@campus-marketplace.com>',
+            from: process.env.EMAIL_FROM,
             to: sellerEmail,
             subject: `New Bid on Your Item: "${item.title}"`,
             html: `<b>Hello!</b><br/>A new bid of <b>₹${event.amount}</b> was placed on your item "${item.title}".<br/><br/>You can contact the bidder at: ${bidderEmail}`,
         });
 
         console.log(
-            `Bid notification email sent to ${sellerEmail}. Preview URL: %s`,
-            nodemailer.getTestMessageUrl(mailInfo)
+            `Bid notification email sent to ${sellerEmail}. Message ID: %s`,
+            mailInfo.messageId
         );
     } catch (error) {
         console.error(
@@ -120,7 +119,7 @@ async function handleItemSold(item) {
 
         // 3. Email the seller
         const sellerMailInfo = await transporter.sendMail({
-            from: '"Campus Marketplace" <noreply@campus-marketplace.com>',
+            from: process.env.EMAIL_FROM,
             to: sellerEmail,
             subject: `Congratulations! Your item "${item.title}" has been sold.`,
             html: `
@@ -130,13 +129,13 @@ async function handleItemSold(item) {
             `,
         });
         console.log(
-            `ItemSold notification sent to seller. Preview URL: %s`,
-            nodemailer.getTestMessageUrl(sellerMailInfo)
+            `ItemSold notification sent to seller. Message ID: %s`,
+            sellerMailInfo.messageId
         );
 
         // 4. Email the winning bidder
         const winnerMailInfo = await transporter.sendMail({
-            from: '"Campus Marketplace" <noreply@campus-marketplace.com>',
+            from: process.env.EMAIL_FROM,
             to: winnerEmail,
             subject: `Congratulations! You won the bid for "${item.title}".`,
             html: `
@@ -146,8 +145,8 @@ async function handleItemSold(item) {
             `,
         });
         console.log(
-            `ItemSold notification sent to winner. Preview URL: %s`,
-            nodemailer.getTestMessageUrl(winnerMailInfo)
+            `ItemSold notification sent to winner. Message ID: %s`,
+            winnerMailInfo.messageId
         );
 
         // --- END: Nodemailer Logic ---
