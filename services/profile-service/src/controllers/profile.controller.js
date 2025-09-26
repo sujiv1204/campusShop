@@ -74,7 +74,7 @@ exports.getSoldItems = async (req, res) => {
                     { headers: { Authorization: req.headers["authorization"] } }
                 );
                 const winningBid = bidsResponse.data[0];
-                console.log(bidsResponse.data)
+                // console.log(bidsResponse.data)
 
                 if (winningBid) {
                     enrichedItem.finalPrice = winningBid.amount;

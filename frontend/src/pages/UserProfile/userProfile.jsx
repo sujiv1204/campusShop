@@ -1208,7 +1208,7 @@ const fetchUserSoldItems=async()=>{
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'INR'
     }).format(amount);
   };
 
@@ -1296,7 +1296,7 @@ const fetchUserSoldItems=async()=>{
                   
                   <div className={`bid-status ${(bid.status || 'active').toLowerCase()}`}>
                     <span className="label">Status:</span>
-                    <span className="value">{bid.status || 'Active'}</span>
+                    <span className="value">{bid.itemStatus || 'Active'}</span>
                   </div>
 
                   {/* Current highest bid if available */}
@@ -1417,9 +1417,14 @@ const renderSoldItems=()=>{
                 {/* Item Info */}
                 <div className="bid-item-info">
                   <h4 className="bid-item-title">{bid.itemName || bid.title || 'Unnamed Item'}</h4>
-                  <p className="bid-item-description">
-                    {bid.itemDescription || bid.description || 'No description available'}
-                  </p>
+                  {/* <p className="bid-item-description"> */}
+                    {/* {bid.itemDescription || bid.description || 'No description available'} */}
+                    <p>sold for: </p>{bid.finalPrice}
+                    <p>Original price: </p>{bid.price}
+                    {/* ################################################################################ */}
+                    <p>Sold to: </p>{bid?.soldTo?.email}
+                    {/* ####################################################################################### */}
+                  {/* </p> */}
                 </div>
 
                 {/* Bid Details */}
@@ -1493,9 +1498,9 @@ const renderSoldItems=()=>{
       </div>
     );
   };
-  const handlePlaceNewBid = (itemId) => {
-    navigate(`/item/${itemId}`, { state: { focusBid: true } });
-  };
+  // const handlePlaceNewBid = (itemId) => {
+  //   navigate(`/item/${itemId}`, { state: { focusBid: true } });
+  // };
 
   const handleContactSeller = (bid) => {
     // Implement contact seller functionality
@@ -1581,7 +1586,9 @@ const renderSoldItems=()=>{
           className={`tab-btn ${activeTab === 'sold-item' ? 'active' : ''}`}
           onClick={() => setActiveTab('sold-item')}
         >
+        {/* ############################################### ############################################*/}
           🏷️ Sold Items ({activeTab === 'sold-item' ? soldItems.length : '...'})
+          {/* ######################################################################################### */}
         </button>
       </div>
 
