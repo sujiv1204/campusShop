@@ -272,62 +272,79 @@ const LandingPage = ({ isAuthenticated }) => {
         ) : (
           <>
             <h2 className="section-title">Featured Items</h2>
-            <div className="items-grid">
-              {filteredItems.map(item => (
-                <div key={item.id} className="item-card">
-                  <div className="item-image-container">
-                    <img 
-                      src={item.imageUrl || '/api/placeholder/300/200'} 
-                      alt={item.title}
-                      className="item-image"
-                      onError={(e) => {
-                        e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjBGMEYwIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPk5vIEltYWdlPC90ZXh0Pgo8L3N2Zz4=';
-                      }}
-                    />
-                    <div className="item-badge">₹{parseFloat(item.price).toFixed(2)}</div>
-                  </div>
-                  
-                  <div className="item-content">
-                    <h3 className="item-title">{item.title}</h3>
-                    <p className="item-description">{item.description}</p>
-                    
-                    <div className="item-meta">
-                      <span className="item-date">
-                        📅 {new Date(item.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4 bg-gray-100">
+  {filteredItems.map(item => (
+    <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col transition-transform hover:scale-105">
+      
+      {/* Image and Price Badge */}
+      <div className="relative">
+        <img 
+          src={item.imageUrl || '/api/placeholder/300/200'} 
+          alt={item.title}
+          className="w-full h-48 object-cover"
+          // This onError handler is preserved from your original code
+          onError={(e) => {
+            e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjBGMEYwIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPk5vIEltYWdlPC90ZXh0Pgo8L3N2Zz4=';
+          }}
+        />
+        <div className="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-sm font-semibold px-2.5 py-1 rounded-full">
+          ₹{parseFloat(item.price).toFixed(2)}
+        </div>
+      </div>
+      
+      {/* Card Content */}
+      <div className="p-4 flex flex-col flex-grow">
+        <h3 className="text-lg font-bold text-gray-800 mb-1 line-clamp-2">
+          {item.title}
+        </h3>
+        <p className="text-sm text-gray-600 mb-4 flex-grow line-clamp-3">
+          {item.description}
+        </p>
+        
+        {/* Date */}
+        <div className="flex items-center text-xs text-gray-500">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span>{new Date(item.createdAt).toLocaleDateString()}</span>
+        </div>
 
-                    <div className="item-actions">
-                      {isAuthenticated ? (
-                        <>
-                          
-                          <button 
-                            onClick={() => handlePlaceBid(item)}
-                            className="action-btn bid-btn"
-                          >
-                            💰 Bid
-                          </button>
-                        </>
-                      ) : (
-                        <button 
-                          onClick={() => navigate('/login')}
-                          className="action-btn login-btn"
-                        >
-                          🔐 Login to Buy
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* Action Buttons */}
+        <div className="mt-4">
+          {isAuthenticated ? (
+            <button 
+              onClick={() => handlePlaceBid(item)}
+              className="w-full inline-flex items-center justify-center text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10 3.5a1.5 1.5 0 013 0V4a1 1 0 001 1h3a1 1 0 011 1v2a1 1 0 01-1 1h-3a1 1 0 00-1-1V3.5z" />
+                <path d="M15.5 10a1.5 1.5 0 00-3 0V11a1 1 0 01-1 1H5a1 1 0 00-1 1v2a1 1 0 001 1h6a1 1 0 011-1v-1.5a1.5 1.5 0 00-3 0V15a1 1 0 001 1h3a1 1 0 001-1v-2a1 1 0 00-1-1h-3a1 1 0 01-1-1v-1.5z" />
+              </svg>
+              Place Bid
+            </button>
+          ) : (
+            <button 
+              onClick={() => navigate('/login')}
+              className="w-full inline-flex items-center justify-center text-gray-900 bg-gray-200 hover:bg-gray-300 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+              </svg>
+              Login to Buy
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
           </>
         )}
       </section>
 
       {/* Footer Section */}
       <footer className="landing-footer">
-        <p>© 2024 Campus Marketplace. Connecting students through commerce.</p>
+        <p>© 2025 Campus shop. Connecting IITJ students through E-commerce.</p>
       </footer>
     </div>
   );

@@ -997,6 +997,7 @@ import { useNavigate } from 'react-router-dom';
 import { itemsAPI, bidsAPI, profileAPI } from '../../services/api';
 import BidsManager from '../../components/BidsManager/bidsManager';
 import './userProfile.css';
+import { Button } from "flowbite-react";
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -1269,7 +1270,7 @@ const fetchUserSoldItems=async()=>{
                 </div>
               ) : (
                 <div className="bid-item-image placeholder">
-                  <span>📦</span>
+                  <span></span>
                 </div>
               )}
               
@@ -1379,13 +1380,13 @@ const renderSoldItems=()=>{
         <div className="empty-state">
           <div className="empty-icon">🏷️</div>
           <h3>No sold Items Yet</h3>
-          <p>You haven't placed any bids yet. Start bidding on items to see them here!</p>
-          <button 
+          {/* <p>You haven't placed any bids yet. Start bidding on items to see them here!</p> */}
+          {/* <button 
             onClick={() => navigate('/items')}
             className="cta-button"
           >
             Browse Items
-          </button>
+          </button> */}
         </div>
       );
     }
@@ -1409,7 +1410,7 @@ const renderSoldItems=()=>{
                 </div>
               ) : (
                 <div className="bid-item-image placeholder">
-                  <span>📦</span>
+                  <span></span>
                 </div>
               )}
               
@@ -1538,7 +1539,7 @@ const renderSoldItems=()=>{
         </div>
         <div className="profile-info">
           <h1 className="profile-name">
-            {user?.name || 'User Profile'}
+            {/* {user?.name || 'User Profile'} */}<p>Hi</p>
           </h1>
           <p className="profile-email">{user?.email}</p>
           <div className="profile-stats">
@@ -1565,100 +1566,168 @@ const renderSoldItems=()=>{
       {/* Tab Navigation */}
       <div className="profile-tabs-navigation">
         <button
-          className={`tab-btn ${activeTab === 'items' ? 'active' : ''}`}
+          className={`
+          m-2
+    px-4 py-2
+    bg-gray-200
+    blue
+    border border-gray-400
+    rounded-lg
+    font-semibold
+    transition-colors duration-200 ease-in-out
+    hover:bg-gray-300 hover:border-gray-500
+    focus:outline-none focus:ring-2 focus:ring-gray-400
+    ${activeTab === 'items' ? 'bg-gray-800 text-white border-gray-900' : ''}
+  `}
           onClick={() => setActiveTab('items')}
         >
-          📦 My Items ({myItems.length})
+          My Items ({myItems.length})
         </button>
         <button
-          className={`tab-btn ${activeTab === 'bids' ? 'active' : ''}`}
+          className={`
+          m-2
+    px-4 py-2
+    bg-gray-200
+    blue
+    border border-gray-400
+    rounded-lg
+    font-semibold
+    transition-colors duration-200 ease-in-out
+    hover:bg-gray-300 hover:border-gray-500
+    focus:outline-none focus:ring-2 focus:ring-gray-400
+    ${activeTab === 'bids' ? 'bg-gray-800 text-white border-gray-900' : ''}
+  `}
           onClick={() => setActiveTab('bids')}
         >
-          💰 Manage Bids
+           Manage Bids
         </button>
         <button
-          className={`tab-btn ${activeTab === 'my-bids' ? 'active' : ''}`}
+          className={`
+          m-2
+    px-4 py-2
+    bg-gray-200
+    blue
+    border border-gray-400
+    rounded-lg
+    font-semibold
+    transition-colors duration-200 ease-in-out
+    hover:bg-gray-300 hover:border-gray-500
+    focus:outline-none focus:ring-2 focus:ring-gray-400
+    ${activeTab === 'my-bids' ? 'bg-gray-800 text-white border-gray-900' : ''}
+  `}
           onClick={() => setActiveTab('my-bids')}
         >
-          🏷️ My Bids ({activeTab === 'my-bids' ? myBids.length : '...'})
+           My Bids ({activeTab === 'my-bids' ? myBids.length : '...'})
         </button>
-        <button
-          className={`tab-btn ${activeTab === 'sold-item' ? 'active' : ''}`}
+        {/* <button 
+          className={`tab-nav ${activeTab === 'sold-item' ? 'active' : ''}`}
           onClick={() => setActiveTab('sold-item')}
         >
-        {/* ############################################### ############################################*/}
           🏷️ Sold Items ({activeTab === 'sold-item' ? soldItems.length : '...'})
-          {/* ######################################################################################### */}
-        </button>
-      </div>
+        </button> */}
+
+        <button
+  className={`
+  m-2
+    px-4 py-2
+    bg-gray-200
+    blue
+    border border-gray-400
+    rounded-lg
+    font-semibold
+    transition-colors duration-200 ease-in-out
+    hover:bg-gray-300 hover:border-gray-500
+    focus:outline-none focus:ring-2 focus:ring-gray-400
+    ${activeTab === 'sold-item' ? 'bg-gray-800 text-white border-gray-900' : ''}
+  `}
+  onClick={() => setActiveTab('sold-item')}
+>
+   Sold Items ({activeTab === 'sold-item' ? soldItems.length : '...'})
+</button>
+     </div>
 
       {/* Tab Content */}
-      <div className="profile-tab-content">
-        {activeTab === 'items' && (
-          <div className="items-tab">
-            {myItems.length === 0 ? (
-              <div className="empty-state">
-                <div className="empty-icon">📦</div>
-                <h3>No Items Posted Yet</h3>
-                <p>Start selling by posting your first item!</p>
-                <button 
-                  onClick={() => navigate('/create-item')}
-                  className="cta-button"
-                >
-                  Create Your First Item
-                </button>
-              </div>
-            ) : (
-              <div className="items-grid">
-                {myItems.map(item => (
-                  <div key={item.id} className="profile-item-card">
-                    {item.imageUrl && (
-                      <div className="item-image">
-                        <img src={item.imageUrl} alt={item.title} />
-                      </div>
-                    )}
-                    <div className="item-content">
-                      <h4 className="item-title">{item.title}</h4>
-                      <p className="item-description">{item.description}</p>
-                      <div className="item-details">
-                        <span className="item-price">₹{parseFloat(item.price).toFixed(2)}</span>
-                        <span className="item-date">
-                          Listed: {formatDate(item.createdAt)}
-                        </span>
-                      </div>
-                      <div className="item-actions">
-                        <button 
-                          onClick={() => handleEditItem(item)}
-                          className="action-btn edit-btn"
-                        >
-                          ✏️ Edit
-                        </button>
-                        <button 
-                          onClick={() => handleMarkAsSold(item.id, item.title)}
-                          className="action-btn sold-btn"
-                        >
-                          ✅ Mark Sold
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteItem(item.id, item.title)}
-                          className="action-btn delete-btn"
-                        >
-                          🗑️ Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+      <div className="profile-tab-content p-4 bg-gray-100 rounded-lg">
+  {activeTab === 'items' && (
+    <div className="items-tab">
+      {myItems.length === 0 ? (
+        // Professional Empty State (Light Grey Theme)
+        <div className="text-center py-16 px-6 bg-white rounded-lg shadow-sm">
+          <div className="mx-auto w-16 h-16 text-gray-400">
+            {/* SVG Icon for "Package" */}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-16 h-16">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+            </svg>
           </div>
-        )}
+          <h3 className="mt-4 text-xl font-semibold text-gray-900">No Items Posted Yet</h3>
+          <p className="mt-2 text-gray-600">Start selling by posting your first item!</p>
+          <button 
+            onClick={() => navigate('/create-item')}
+            className="mt-6 inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
+          >
+            Create Your First Item
+          </button>
+        </div>
+      ) : (
+        // Responsive Grid for Item Cards (Light Grey Theme)
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {myItems.map(item => (
+            // Professional Item Card (Light Grey Theme)
+            <div key={item.id} className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col">
+              {item.imageUrl && (
+                <a href="#"> {/* You can link to an item details page here */}
+                  <img className="rounded-t-lg w-full h-48 object-cover" src={item.imageUrl} alt={item.title} />
+                </a>
+              )}
+              <div className="p-5 flex-grow flex flex-col">
+                <div className="flex-grow">
+                    <a href="#">
+                        <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900">{item.title}</h5>
+                    </a>
+                    <p className="mb-3 font-normal text-gray-700 line-clamp-3">
+                        {item.description}
+                    </p>
+                </div>
+                
+                <div className="flex justify-between items-center mt-4">
+                  <span className="text-2xl font-bold text-gray-900">₹{parseFloat(item.price).toFixed(2)}</span>
+                  <span className="text-xs text-gray-500">
+                    Listed: {formatDate(item.createdAt)}
+                  </span>
+                </div>
+                
+                <div className="border-t border-gray-200 mt-4 pt-4 flex justify-end space-x-2">
+                  <button 
+                    onClick={() => handleEditItem(item)}
+                    className="inline-flex items-center px-3 py-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-200"
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    onClick={() => handleDeleteItem(item.id, item.title)}
+                    className="inline-flex items-center px-3 py-2 text-xs font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300"
+                  >
+                    Delete
+                  </button>
+                   <button 
+                    onClick={() => handleMarkAsSold(item.id, item.title)}
+                    className="inline-flex items-center px-3 py-2 text-xs font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300"
+                  >
+                    Mark Sold
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )}
 
-        {activeTab === 'bids' && <BidsManager />}
-        
-        {activeTab === 'my-bids' && renderMyBids()}
-        {activeTab === 'sold-item' && renderSoldItems()}
-      </div>
+  {activeTab === 'bids' && <BidsManager />}
+  {activeTab === 'my-bids' && renderMyBids()}
+  {activeTab === 'sold-item' && renderSoldItems()}
+</div>
     </div>
   );
 };

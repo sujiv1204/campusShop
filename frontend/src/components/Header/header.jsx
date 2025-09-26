@@ -145,8 +145,8 @@ const Header = ({ isAuthenticated, onLogout }) => {
                     Sell Item
                   </Link>
                 
-                  <Link to="/buy-items" className="nav-button">
-                    🛍️ Buy Items
+                  <Link to="/" className="nav-button">
+                    Buy Item
                   </Link>
 
                   <Link to="/user-profile" className="nav-button">
