@@ -50,7 +50,7 @@ const Register = () => {
         <h2 className="form-title">Create Account</h2>
         {error && <p className="error-message">{error}</p>}
         {success && <p className="success-message">{success}</p>}
-        <div className="input-group">
+        {/* <div className="input-group">
           <label htmlFor="username">Username</label>
           <input
             type="text"
@@ -60,7 +60,7 @@ const Register = () => {
             disabled={isLoading}
             required
           />
-        </div>
+        </div> */}
         <div className="input-group">
           <label htmlFor="email">Email</label>
           <input

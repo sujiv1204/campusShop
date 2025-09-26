@@ -96,7 +96,7 @@ const PlaceBid = () => {
   return (
     <div className="place-bid-page">
       <div className="place-bid-container">
-        <h2>💰 Place a Bid</h2>
+        <h2> Place a Bid</h2>
         
         {error && (
           <div className="error-message">

@@ -137,7 +137,7 @@ const BidsManager = () => {
           <div className="items-list">
             {myItems.length === 0 ? (
               <div className="empty-items">
-                <div className="empty-icon">📦</div>
+                <div className="empty-icon"></div>
                 <p>No items posted yet</p>
                 <p>Post items to receive bids!</p>
               </div>
@@ -155,7 +155,7 @@ const BidsManager = () => {
                   )}
                   <div className="item-info">
                     <h4>{item.title}</h4>
-                    <p className="item-price">${parseFloat(item.price).toFixed(2)}</p>
+                    <p className="item-price">₹{parseFloat(item.price).toFixed(2)}</p>
                     <p className="item-date">Listed: {formatDate(item.createdAt)}</p>
                   </div>
                 </div>
@@ -194,7 +194,7 @@ const BidsManager = () => {
                 <div className="bids-list">
                   <div className="bids-stats">
                     <span>Total Bids: <strong>{itemBids.length}</strong></span>
-                    <span>Highest Bid: <strong>${Math.max(...itemBids.map(bid => parseFloat(bid.amount))).toFixed(2)}</strong></span>
+                    <span>Highest Bid: <strong>₹{Math.max(...itemBids.map(bid => parseFloat(bid.amount))).toFixed(2)}</strong></span>
                   </div>
 
                   {itemBids.map((bid, index) => (
@@ -210,13 +210,13 @@ const BidsManager = () => {
 
                       <div className="bid-details">
                         <div className="bid-amount">
-                          <span className="amount">${parseFloat(bid.amount).toFixed(2)}</span>
-                          <span className="difference">
+                          <span className="amount">₹{parseFloat(bid.amount).toFixed(2)}</span>
+                          {/* <span className="difference">
                             {parseFloat(bid.amount) > parseFloat(selectedItem.price) ? 
                               `+$${(parseFloat(bid.amount) - parseFloat(selectedItem.price)).toFixed(2)}` : 
                               'At asking price'
                             }
-                          </span>
+                          </span> */}
                         </div>
                         
                         <div className="bid-meta">
