@@ -4,7 +4,7 @@ import axios from 'axios';
 import '../Login/login.css'; // Reusing login styles
 
 const Register = () => {
-  const [username, setUsername] = useState('');
+  // const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -17,7 +17,7 @@ const Register = () => {
     setSuccess('');
     setIsLoading(true);
 
-    if (!username || !email || !password) {
+    if (!email || !password) {
       setError('Please fill out all fields.');
       setIsLoading(false);
       return;
@@ -32,7 +32,7 @@ const Register = () => {
 
       setSuccess(response.data.message);
       // Clear form fields on success
-      setUsername('');
+      // setUsername('');
       setEmail('');
       setPassword('');
 
