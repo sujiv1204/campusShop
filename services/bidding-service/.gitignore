@@ -29,3 +29,6 @@ Thumbs.db
 *.njsproj
 *.sln
 *.swp
+
+services_envs/
+services_envs.zip
