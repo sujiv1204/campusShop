@@ -79,12 +79,13 @@ services:
         env_file: ./services/notifications-service/.env
         volumes:
         - ./services/notifications-service:/usr/src/app
-        - /usr/src/app/node_modules
-        command: npm start
+        command: >
+            sh -c "npx sequelize-cli db:migrate && npm start"
         depends_on:
-        - kafka
-        - auth-service
-        - items-service
+            - kafka
+            - auth-service
+            - items-service
+            - postgres-notifications-db # <-- ADD THIS
 
     profile-service:
         build: ./services/profile-service
@@ -177,6 +178,22 @@ services:
             interval: 10s
             timeout: 5s
             retries: 5
+
+    postgres-notifications-db: # <-- ADD THIS ENTIRE SERVICE
+        image: postgres:15
+        environment:
+            - POSTGRES_USER=admin
+            - POSTGRES_PASSWORD=secret_password
+            - POSTGRES_DB=notifications_db
+        ports:
+            - "5436:5432" # Use a new host port
+        volumes:
+            - notifications_db_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U admin -d notifications_db"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 # Top-level key to define the named volume
 volumes:
     auth_db_data:
@@ -187,3 +204,4 @@ volumes:
     zookeeper_data:
     zookeeper_log:
     kafka_data:
+    notifications_db_data:

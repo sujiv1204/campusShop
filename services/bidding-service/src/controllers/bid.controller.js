@@ -72,6 +72,7 @@ exports.placeBid = async (req, res) => {
             {
                 topic: "bids-topic",
                 payload: {
+                    bidId: newBid.id, 
                     bidAmount: newBid.amount,
                     itemTitle: itemTitle,
                     sellerEmail: sellerEmail, // <-- Add data
