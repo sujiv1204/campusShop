@@ -239,6 +239,33 @@ exports.markAsSold = async (req, res) => {
         item.status = "sold";
         await item.save();
         await publishItemSoldEvent(item.toJSON());
+
+        // --- START: New "Fat Event" Logic for ItemSold ---
+        let eventPayload = { item: item.toJSON() }; 
+
+        try {
+            // 1. Find the winning bidder
+            const bidsResponse = await axios.get(`${process.env.BIDDING_SERVICE_URL}/api/bids/item/${item.id}`);
+            const winningBid = bidsResponse.data[0];
+
+            if (winningBid) {
+                // 2. Get contact info for seller and winner
+                const sellerResponse = await axios.get(`${process.env.AUTH_SERVICE_URL}/api/auth/user/${item.sellerId}`);
+                const winnerResponse = await axios.get(`${process.env.AUTH_SERVICE_URL}/api/auth/user/${winningBid.bidderId}`);
+
+                // 3. Add all required data to the payload
+                eventPayload.winningBid = winningBid;
+                eventPayload.sellerEmail = sellerResponse.data.email;
+                eventPayload.winnerEmail = winnerResponse.data.email;
+            }
+        } catch (eventError) {
+            console.error("Failed to gather full event data for ItemSold, sending minimal event.", eventError.message);
+        }
+        
+        // 4. Publish the (now "fat") event
+        await publishItemSoldEvent(eventPayload);
+        // --- END: New "Fat Event" Logic ---
+        
         res.status(200).json(item);
     } catch (error) {
         console.error("Error marking item as sold:", error);

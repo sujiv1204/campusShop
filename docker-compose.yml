@@ -42,6 +42,9 @@ services:
         image: confluentinc/cp-zookeeper:7.3.2
         environment:
             ZOOKEEPER_CLIENT_PORT: 2181
+        volumes:
+            - zookeeper_data:/var/lib/zookeeper/data
+            - zookeeper_log:/var/lib/zookeeper/log
 
     kafka:
         image: confluentinc/cp-kafka:7.3.2
@@ -55,6 +58,8 @@ services:
             KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
             KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
             KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+        volumes:
+            - kafka_data:/var/lib/kafka/data
     bidding-service:
         build: ./services/bidding-service
         env_file: ./services/bidding-service/.env
@@ -179,3 +184,6 @@ volumes:
     minio_data:
     bids_db_data:
     profiles_db_data:
+    zookeeper_data:
+    zookeeper_log:
+    kafka_data:

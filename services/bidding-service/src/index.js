@@ -3,6 +3,7 @@ const express = require("express");
 const db = require("./models");
 const bidRoutes = require("./routes/bid.routes");
 const { connectProducer } = require("./lib/kafka");
+const { startPolling } = require("./poller");
 const app = express();
 app.use(express.json());
 
@@ -26,10 +27,14 @@ const startServer = async () => {
         // 2. Wait for the initial Kafka connection
         await connectProducer();
 
-        // 3. Only now, start the server
+        // 3. Start the server
         app.listen(PORT, () => {
             console.log(`Bidding service running on port ${PORT}`);
         });
+
+        // 4. Start the outbox poller
+        startPolling();
+        console.log("Outbox poller started.");
     } catch (err) {
         console.error("Failed to start server. Retrying in 5 seconds...", err);
         setTimeout(startServer, 5000);

@@ -36,6 +36,21 @@ producer.on(producer.events.DISCONNECT, (err) => {
     connectProducer();
 });
 
+// This function should just send.
+const publishEvent = async (topic, payload) => {
+    try {
+        await producer.send({
+            topic: topic,
+            messages: [{ value: JSON.stringify(payload) }],
+        });
+        console.log(`Event published to ${topic}.`);
+    } catch (err) {
+        console.error(`Failed to publish event to ${topic}`, err);
+        throw err; // Re-throw the error so the poller knows it failed
+    }
+    // NO producer.disconnect() HERE
+};
+
 // 2. The publish function now only sends
 const publishBidPlacedEvent = async (bid) => {
     try {
@@ -63,5 +78,7 @@ const publishBidPlacedEvent = async (bid) => {
 
 module.exports = {
     publishBidPlacedEvent,
+    publishEvent,
+    producer,
     connectProducer, // Export connect function to be called in index.js
 };

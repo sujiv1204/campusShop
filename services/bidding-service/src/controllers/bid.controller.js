@@ -1,7 +1,9 @@
 const axios = require("axios");
 const db = require("../models");
-const { publishBidPlacedEvent } = require("../lib/kafka");
+// const { publishBidPlacedEvent } = require("../lib/kafka");
 const Bid = db.Bid;
+const EventOutbox = db.EventOutbox; // Import the new model
+const sequelize = db.sequelize; // Import the sequelize instance
 
 exports.placeBid = async (req, res) => {
     const { itemId, amount } = req.body;
@@ -13,6 +15,9 @@ exports.placeBid = async (req, res) => {
             .json({ message: "Item ID and amount are required." });
     }
 
+    // Start a database transaction
+    const t = await sequelize.transaction();
+
     try {
         // --- Business Logic Checks ---
         const itemResponse = await axios.get(
@@ -20,23 +25,34 @@ exports.placeBid = async (req, res) => {
         );
         const item = itemResponse.data;
 
-        // 1. Check if the item is already sold
+        // --- START: New "Fat Event" Logic ---
+        // 1. Get all the data for the notification *before* creating the event
+        const sellerResponse = await axios.get(
+            `${process.env.AUTH_SERVICE_URL}/api/auth/user/${item.sellerId}`
+        );
+        const bidderResponse = await axios.get(
+            `${process.env.AUTH_SERVICE_URL}/api/auth/user/${bidderId}`
+        );
+
+        const sellerEmail = sellerResponse.data.email;
+        const bidderEmail = bidderResponse.data.email;
+        const itemTitle = item.title;
+        // --- END: New "Fat Event" Logic ---
+
         if (item.status === "sold") {
+            await t.rollback(); // Rollback the transaction
             return res
                 .status(403)
-                .json({
-                    message:
-                        "This item has already been sold and is no longer available for bidding.",
-                });
+                .json({ message: "This item has already been sold." });
         }
-        // 2. Check if the bidder is the seller
         if (item.sellerId === bidderId) {
+            await t.rollback();
             return res
                 .status(403)
                 .json({ message: "You cannot bid on your own item." });
         }
-        // 3. Check the bid amount
         if (parseFloat(amount) < parseFloat(item.price)) {
+            await t.rollback();
             return res
                 .status(400)
                 .json({
@@ -45,11 +61,35 @@ exports.placeBid = async (req, res) => {
         }
         // --- End Business Logic Checks ---
 
-        const newBid = await Bid.create({ itemId, bidderId, amount });
+        // 1. Create the bid within the transaction
+        const newBid = await Bid.create(
+            { itemId, bidderId, amount },
+            { transaction: t }
+        );
 
-        await publishBidPlacedEvent(newBid);
+        // 2. Create the event in the outbox table within the same transaction
+        await EventOutbox.create(
+            {
+                topic: "bids-topic",
+                payload: {
+                    bidAmount: newBid.amount,
+                    itemTitle: itemTitle,
+                    sellerEmail: sellerEmail, // <-- Add data
+                    bidderEmail: bidderEmail, // <-- Add data
+                },
+                status: "pending",
+            },
+            { transaction: t }
+        );
+
+        // 3. If both are successful, commit the transaction
+        await t.commit();
+
         res.status(201).json(newBid);
     } catch (error) {
+        // If anything fails, roll back all changes
+        await t.rollback();
+
         if (error.response && error.response.status === 404) {
             return res
                 .status(404)
@@ -59,7 +99,6 @@ exports.placeBid = async (req, res) => {
         res.status(500).json({ message: "Server error while placing bid." });
     }
 };
-
 
 exports.getBidsForItem = async (req, res) => {
     try {
