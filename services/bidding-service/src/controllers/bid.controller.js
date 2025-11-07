@@ -21,7 +21,7 @@ exports.placeBid = async (req, res) => {
     try {
         // --- Business Logic Checks ---
         const itemResponse = await axios.get(
-            `http://items-service:5002/api/items/${itemId}`
+            `${process.env.ITEMS_SERVICE_URL}/api/items/${itemId}`
         );
         const item = itemResponse.data;
 

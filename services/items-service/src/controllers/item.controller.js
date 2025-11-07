@@ -281,7 +281,7 @@ exports.getBidsForSellerItems = async (req, res) => {
         for (const item of items) {
             try {
                 const bidsResponse = await axios.get(
-                    `http://bidding-service:5003/api/bids/item/${item.id}`,
+                    `${process.env.BIDDING_SERVICE_URL}/api/bids/item/${item.id}`,
                     {
                         headers: {
                             Authorization: req.headers["authorization"],

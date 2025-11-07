@@ -34,7 +34,7 @@ exports.getPostedItems = async (req, res) => {
     try {
         const sellerId = req.user.userId;
         const response = await axios.get(
-            `http://items-service:5002/api/items?sellerId=${sellerId}&status=available`,
+            `${process.env.ITEMS_SERVICE_URL}/api/items?sellerId=${sellerId}&status=available`,
             {
                 headers: { Authorization: req.headers["authorization"] }, // Forward the auth header
             }
@@ -55,7 +55,7 @@ exports.getSoldItems = async (req, res) => {
         const sellerId = req.user.userId;
         // 1. Get all items the user has marked as 'sold' from the items-service
         const itemsResponse = await axios.get(
-            `http://items-service:5002/api/items?sellerId=${sellerId}&status=sold`,
+            `${process.env.ITEMS_SERVICE_URL}/api/items?sellerId=${sellerId}&status=sold`,
             { headers: { Authorization: req.headers["authorization"] } }
         );
         const soldItems = itemsResponse.data;
@@ -70,7 +70,7 @@ exports.getSoldItems = async (req, res) => {
             try {
                 // Call the bidding-service to get the winning bid
                 const bidsResponse = await axios.get(
-                    `http://bidding-service:5003/api/bids/item/${item.id}`,
+                    `${process.env.BIDDING_SERVICE_URL}/api/bids/item/${item.id}`,
                     { headers: { Authorization: req.headers["authorization"] } }
                 );
                 const winningBid = bidsResponse.data[0];
@@ -78,25 +78,30 @@ exports.getSoldItems = async (req, res) => {
 
                 if (winningBid) {
                     enrichedItem.finalPrice = winningBid.amount;
-                    
+
                     // 3. Call the profile-service to get the winner's display name
                     const profileResponse = await axios.get(
-                        `http://auth-service:5001/api/auth/user/${winningBid.bidderId}`,
+                        `${process.env.AUTH_SERVICE_URL}/api/auth/user/${winningBid.bidderId}`
                         //  { headers: { Authorization: req.headers["authorization"] } }
                     );
                     enrichedItem.soldTo = profileResponse.data; // Attach the full profile object
                 }
             } catch (error) {
                 // If fetching extra info fails, just include what we have
-                console.error(`Could not fetch full details for sold item ${item.id}:`, error.message);
+                console.error(
+                    `Could not fetch full details for sold item ${item.id}:`,
+                    error.message
+                );
             }
             itemsWithFullInfo.push(enrichedItem);
         }
 
         res.json(itemsWithFullInfo);
-
     } catch (error) {
-        console.error("Error fetching sold items:", error.response ? error.response.data : error.message);
+        console.error(
+            "Error fetching sold items:",
+            error.response ? error.response.data : error.message
+        );
         res.status(500).json({ message: "Could not fetch sold items." });
     }
 };
@@ -106,7 +111,7 @@ exports.getUserBids = async (req, res) => {
         const bidderId = req.user.userId;
         // 1. Get all bids placed by the user from the bidding-service
         const bidsResponse = await axios.get(
-            `http://bidding-service:5003/api/bids?bidderId=${bidderId}`,
+            `${process.env.BIDDING_SERVICE_URL}/api/bids?bidderId=${bidderId}`,
             {
                 headers: { Authorization: req.headers["authorization"] },
             }
@@ -121,7 +126,7 @@ exports.getUserBids = async (req, res) => {
         for (const bid of userBids) {
             try {
                 const itemResponse = await axios.get(
-                    `http://items-service:5002/api/items/${bid.itemId}`
+                    `${process.env.ITEMS_SERVICE_URL}/api/items/${bid.itemId}`
                 );
                 // 3. Attach the item's status and title to the bid object
                 bidsWithStatus.push({
@@ -140,7 +145,6 @@ exports.getUserBids = async (req, res) => {
         }
 
         res.json(bidsWithStatus);
-
     } catch (error) {
         console.error(
             "Error fetching user bids:",
@@ -154,7 +158,7 @@ exports.getActiveBids = async (req, res) => {
     try {
         const bidderId = req.user.userId;
         const bidsResponse = await axios.get(
-            `http://bidding-service:5003/api/bids?bidderId=${bidderId}`,
+            `${process.env.BIDDING_SERVICE_URL}/api/bids?bidderId=${bidderId}`,
             {
                 headers: { Authorization: req.headers["authorization"] },
             }
@@ -166,7 +170,7 @@ exports.getActiveBids = async (req, res) => {
         for (const bid of allBids) {
             try {
                 const itemResponse = await axios.get(
-                    `http://items-service:5002/api/items/${bid.itemId}`
+                    `${process.env.ITEMS_SERVICE_URL}/api/items/${bid.itemId}`
                 );
                 if (
                     itemResponse.data &&
