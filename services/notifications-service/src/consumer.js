@@ -63,21 +63,33 @@ const run = async () => {
             let eventId;
             let handler;
 
-            // Determine the unique ID and correct handler
-            if (topic === "bids-topic" && event.bidId) {
-                eventId = event.bidId; // Use bidId from the "fat event"
-                handler = () => handleBidPlaced(event);
+            // --- THIS IS THE FIX ---
+            // We must check the standardized event envelope
+            if (!event.eventType || !event.payload) {
+                console.warn(
+                    "Received unknown event structure, skipping:",
+                    event
+                );
+                return;
+            }
+
+            if (topic === "bids-topic" && event.eventType === "BidPlaced") {
+                eventId = event.payload.bidId; // <-- Get ID from inner payload
+                handler = () => handleBidPlaced(event.payload); // <-- Pass inner payload
             } else if (
                 topic === "items-topic" &&
-                event.eventType === "ItemSold" &&
-                event.item
+                event.eventType === "ItemSold"
             ) {
-                eventId = event.item.id; // Use item.id as the unique ID
-                handler = () => handleItemSold(event);
+                eventId = event.payload.item.id; // <-- Get ID from inner payload
+                handler = () => handleItemSold(event.payload); // <-- Pass inner payload
             } else {
-                console.warn("Received unknown event, skipping:", event);
-                return; // Unknown event
+                console.warn(
+                    `Received unknown event type "${event.eventType}", skipping.`
+                );
+                return;
             }
+            // --- END FIX ---
+            // --- END FIX ---
 
             // --- IDEMPOTENCY LOGIC ---
             let transaction;

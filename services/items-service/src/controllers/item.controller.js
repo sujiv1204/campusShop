@@ -1,16 +1,16 @@
 const db = require("../models");
 const Item = db.Item;
+const EventOutbox = db.EventOutbox; // Import the Outbox model
+const sequelize = db.sequelize; // Import the sequelize instance
 const minioClient = require("../config/minioClient");
 const crypto = require("crypto");
 const { validate: isUuid } = require("uuid");
-const { publishItemSoldEvent } = require("../lib/kafka");
 const axios = require("axios");
+
 // Controller method for creating a new item
 exports.createItem = async (req, res) => {
-    // For now, we'll get sellerId from the request body.
-    // Later, this will come from the JWT token.
     const { title, description, price } = req.body;
-    const sellerId = req.user.userId;
+    const sellerId = req.user.userId; // Get sellerId from the JWT
 
     // Basic validation
     if (!title || !price || !sellerId) {
@@ -25,7 +25,6 @@ exports.createItem = async (req, res) => {
             description,
             price,
             sellerId,
-            // imageUrl will be added later
         });
 
         res.status(201).json(newItem);
@@ -35,22 +34,22 @@ exports.createItem = async (req, res) => {
     }
 };
 
-// Controller method for getting all items
+// Controller method for getting all items (reverted to non-paginated version)
 exports.getAllItems = async (req, res) => {
     try {
         const { sellerId, status } = req.query;
-        let queryOptions = {};
-
-        // Start with a base filter for 'available' unless another status is specified
-        queryOptions.where = { status: status || "available" };
+        let queryOptions = {
+            where: { status: status || "available" },
+        };
 
         // If a sellerId is provided, add it to the filter
         if (sellerId) {
             queryOptions.where.sellerId = sellerId;
         }
 
+        // Use the simple findAll, which returns just an array
         const items = await Item.findAll(queryOptions);
-        res.status(200).json(items);
+        res.status(200).json(items); // This returns a simple array
     } catch (error) {
         console.error("Error fetching items:", error);
         res.status(500).json({ message: "Server error while fetching items." });
@@ -60,13 +59,12 @@ exports.getAllItems = async (req, res) => {
 // Controller method for getting a single item by ID
 exports.getItemById = async (req, res) => {
     try {
-        const { id } = req.params; // Get the ID from the URL parameters
+        const { id } = req.params;
         if (!isUuid(id)) {
             return res.status(400).json({ message: "Invalid item ID format." });
         }
         const item = await Item.findByPk(id);
 
-        // If no item is found with that ID, return a 404 error
         if (!item) {
             return res.status(404).json({ message: "Item not found." });
         }
@@ -87,14 +85,9 @@ exports.uploadImage = async (req, res) => {
         if (!item) {
             return res.status(404).json({ message: "Item not found." });
         }
-
-        // Check if a file was uploaded
         if (!req.file) {
             return res.status(400).json({ message: "No image file uploaded." });
         }
-
-        // --- START: Authorization Check ---
-        // Verify that the logged-in user is the seller of the item.
         if (item.sellerId !== req.user.userId) {
             return res.status(403).json({
                 message:
@@ -103,20 +96,13 @@ exports.uploadImage = async (req, res) => {
         }
 
         const bucketName = process.env.MINIO_BUCKET;
-        // Create a unique object name for the file
         const objectName = `${Date.now()}_${crypto
             .randomBytes(8)
             .toString("hex")}_${req.file.originalname}`;
 
-        // --- START: UPDATED BUCKET CREATION AND POLICY LOGIC ---
-
         const bucketExists = await minioClient.bucketExists(bucketName);
         if (!bucketExists) {
-            // 1. Create the bucket
             await minioClient.makeBucket(bucketName, "us-east-1");
-            console.log(`Bucket ${bucketName} created.`);
-
-            // 2. Define the public-read policy
             const policy = {
                 Version: "2012-10-17",
                 Statement: [
@@ -128,20 +114,13 @@ exports.uploadImage = async (req, res) => {
                     },
                 ],
             };
-
-            // 3. Set the bucket policy
             await minioClient.setBucketPolicy(
                 bucketName,
                 JSON.stringify(policy)
             );
-            console.log(`Public read policy set for bucket ${bucketName}.`);
         }
 
-        // --- END: UPDATED LOGIC ---
-        const metadata = {
-            "Content-Type": req.file.mimetype,
-        };
-        // Upload the file to MinIO
+        const metadata = { "Content-Type": req.file.mimetype };
         await minioClient.putObject(
             bucketName,
             objectName,
@@ -149,10 +128,7 @@ exports.uploadImage = async (req, res) => {
             metadata
         );
 
-        // Construct the URL
         const imageUrl = `${process.env.MINIO_PUBLIC_URL}/${bucketName}/${objectName}`;
-
-        // Update the item in the database with the new image URL
         item.imageUrl = imageUrl;
         await item.save();
 
@@ -176,15 +152,12 @@ exports.updateItem = async (req, res) => {
             return res.status(404).json({ message: "Item not found." });
         }
 
-        // In the future, you'll add an authorization check here
-        // to ensure the person making the request is the item's seller.
         if (item.sellerId !== req.user.userId) {
             return res.status(403).json({
                 message: "Forbidden: You can only update your own items.",
             });
         }
 
-        // Update the item's properties
         item.title = title || item.title;
         item.description = description || item.description;
         item.price = price || item.price;
@@ -206,8 +179,6 @@ exports.deleteItem = async (req, res) => {
         if (!item) {
             return res.status(404).json({ message: "Item not found." });
         }
-
-        // Add authorization check here as well in the future.
         if (item.sellerId !== req.user.userId) {
             return res.status(403).json({
                 message: "Forbidden: You can only delete your own items.",
@@ -221,68 +192,91 @@ exports.deleteItem = async (req, res) => {
     }
 };
 
+// Controller method for marking an item as sold
 exports.markAsSold = async (req, res) => {
+    const t = await sequelize.transaction(); // Start transaction
     try {
-        const item = await Item.findByPk(req.params.id);
-        if (!item) return res.status(404).json({ message: "Item not found." });
-
-        // Authorization check
+        const item = await Item.findByPk(req.params.id, { transaction: t });
+        if (!item) {
+            await t.rollback();
+            return res.status(404).json({ message: "Item not found." });
+        }
         if (item.sellerId !== req.user.userId) {
+            await t.rollback();
             return res
                 .status(403)
                 .json({ message: "You can only update your own items." });
         }
         if (item.status === "sold") {
+            await t.rollback();
             return res.status(400).json({ message: "Item is already sold." });
         }
 
+        // 1. Update the item status
         item.status = "sold";
-        await item.save();
-        await publishItemSoldEvent(item.toJSON());
+        await item.save({ transaction: t });
 
-        // --- START: New "Fat Event" Logic for ItemSold ---
-        let eventPayload = { item: item.toJSON() }; 
-
+        // 2. Gather "Fat Event" data
+        let eventPayload = { item: item.toJSON() };
         try {
-            // 1. Find the winning bidder
-            const bidsResponse = await axios.get(`${process.env.BIDDING_SERVICE_URL}/api/bids/item/${item.id}`);
+            const bidsResponse = await axios.get(
+                `${process.env.BIDDING_SERVICE_URL}/api/bids/item/${item.id}`,
+                {
+                    headers: { Authorization: req.headers["authorization"] },
+                }
+            );
             const winningBid = bidsResponse.data[0];
 
             if (winningBid) {
-                // 2. Get contact info for seller and winner
-                const sellerResponse = await axios.get(`${process.env.AUTH_SERVICE_URL}/api/auth/user/${item.sellerId}`);
-                const winnerResponse = await axios.get(`${process.env.AUTH_SERVICE_URL}/api/auth/user/${winningBid.bidderId}`);
+                const sellerResponse = await axios.get(
+                    `${process.env.AUTH_SERVICE_URL}/api/auth/user/${item.sellerId}`
+                );
+                const winnerResponse = await axios.get(
+                    `${process.env.AUTH_SERVICE_URL}/api/auth/user/${winningBid.bidderId}`
+                );
 
-                // 3. Add all required data to the payload
                 eventPayload.winningBid = winningBid;
                 eventPayload.sellerEmail = sellerResponse.data.email;
                 eventPayload.winnerEmail = winnerResponse.data.email;
             }
         } catch (eventError) {
-            console.error("Failed to gather full event data for ItemSold, sending minimal event.", eventError.message);
+            console.error(
+                "Failed to gather full event data for ItemSold.",
+                eventError.message
+            );
         }
-        
-        // 4. Publish the (now "fat") event
-        await publishItemSoldEvent(eventPayload);
-        // --- END: New "Fat Event" Logic ---
-        
+
+        // 3. Create the outbox event
+        await EventOutbox.create(
+            {
+                topic: "items-topic",
+                payload: { eventType: "ItemSold", payload: eventPayload },
+                status: "pending",
+            },
+            { transaction: t }
+        );
+
+        // 4. Commit the transaction
+        await t.commit();
+
         res.status(200).json(item);
     } catch (error) {
+        await t.rollback();
         console.error("Error marking item as sold:", error);
         res.status(500).json({ message: "Server error." });
     }
 };
+
+// Controller method for getting bids for a seller's items
 exports.getBidsForSellerItems = async (req, res) => {
     try {
         const sellerId = req.user.userId;
 
-        // 1. Find all items posted by the seller
         const items = await Item.findAll({ where: { sellerId } });
         if (items.length === 0) {
             return res.status(200).json([]);
         }
 
-        // 2. For each item, fetch its bids from the bidding-service
         const itemsWithBids = [];
         for (const item of items) {
             try {
@@ -294,13 +288,11 @@ exports.getBidsForSellerItems = async (req, res) => {
                         },
                     }
                 );
-                // Attach the bids to the item object
                 itemsWithBids.push({
                     ...item.toJSON(),
                     bids: bidsResponse.data,
                 });
             } catch (bidError) {
-                // If fetching bids fails for one item, just add it without bids
                 itemsWithBids.push({ ...item.toJSON(), bids: [] });
             }
         }

@@ -4,10 +4,7 @@ require("dotenv").config();
 const kafka = new Kafka({
     clientId: "items-service",
     brokers: [process.env.KAFKA_BROKER],
-    retry: {
-        initialRetryTime: 300,
-        retries: 10,
-    },
+    retry: { initialRetryTime: 300, retries: 10 },
 });
 
 const producer = kafka.producer();
@@ -33,26 +30,20 @@ producer.on(producer.events.DISCONNECT, (err) => {
     connectProducer();
 });
 
-const publishItemSoldEvent = async (item) => {
+const publishEvent = async (topic, payload) => {
     try {
         await producer.send({
-            topic: "items-topic",
-            messages: [
-                {
-                    value: JSON.stringify({
-                        eventType: "ItemSold",
-                        payload: item,
-                    }),
-                },
-            ],
+            topic: topic,
+            messages: [{ value: JSON.stringify(payload) }],
         });
-        console.log("ItemSold event published.");
-    } catch (error) {
-        console.error("Error publishing ItemSold event:", error);
+        console.log(`Event published to ${topic}.`);
+    } catch (err) {
+        console.error(`Failed to publish event to ${topic}`, err);
+        throw err; // Re-throw error so the poller knows it failed
     }
 };
 
 module.exports = {
-    publishItemSoldEvent,
-    connectProducer, // Export connect function
+    publishEvent,
+    connectProducer,
 };

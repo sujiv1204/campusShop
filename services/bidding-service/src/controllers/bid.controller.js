@@ -53,11 +53,9 @@ exports.placeBid = async (req, res) => {
         }
         if (parseFloat(amount) < parseFloat(item.price)) {
             await t.rollback();
-            return res
-                .status(400)
-                .json({
-                    message: `Bid must be at least the starting price of ₹${item.price}.`,
-                });
+            return res.status(400).json({
+                message: `Bid must be at least the starting price of ₹${item.price}.`,
+            });
         }
         // --- End Business Logic Checks ---
 
@@ -72,11 +70,15 @@ exports.placeBid = async (req, res) => {
             {
                 topic: "bids-topic",
                 payload: {
-                    bidId: newBid.id, 
-                    bidAmount: newBid.amount,
-                    itemTitle: itemTitle,
-                    sellerEmail: sellerEmail, // <-- Add data
-                    bidderEmail: bidderEmail, // <-- Add data
+                    eventType: "BidPlaced", // <-- ADD THIS
+                    payload: {
+                        // <-- WRAP your data in this
+                        bidId: newBid.id,
+                        bidAmount: newBid.amount,
+                        itemTitle: item.title,
+                        sellerEmail: sellerResponse.data.email,
+                        bidderEmail: bidderResponse.data.email,
+                    },
                 },
                 status: "pending",
             },
