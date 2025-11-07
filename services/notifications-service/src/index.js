@@ -1,6 +1,6 @@
 const express = require("express");
-const { run: runConsumer } = require("./consumer");
-
+// Only import the wrapper function
+const { startConsumer } = require("./consumer");
 const app = express();
 
 app.get("/api/notifications/health", (req, res) => {
@@ -15,5 +15,5 @@ app.listen(PORT, () => {
     console.log(`Notifications health check server running on port ${PORT}`);
 });
 
-// Start the Kafka consumer
-runConsumer().catch(console.error);
+// Call only the startConsumer function
+startConsumer();

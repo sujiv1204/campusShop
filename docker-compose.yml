@@ -11,6 +11,7 @@ services:
             - auth-service
             - items-service
             - bidding-service
+            - profile-service
 
     auth-service:
         build: ./services/auth-service
@@ -35,6 +36,8 @@ services:
         depends_on:
             postgres-items-db:
                 condition: service_healthy
+            kafka:
+                condition: service_started
     zookeeper:
         image: confluentinc/cp-zookeeper:7.3.2
         environment:
@@ -63,6 +66,8 @@ services:
         depends_on:
             postgres-bids-db:
                 condition: service_healthy
+            kafka:
+                condition: service_started
 
     notifications-service: 
         build: ./services/notifications-service
@@ -87,6 +92,10 @@ services:
         depends_on:
             postgres-profiles-db:
                 condition: service_healthy
+            items-service:
+                condition: service_started
+            bidding-service:
+                condition: service_started
 
     postgres-auth-db:
         image: postgres:15

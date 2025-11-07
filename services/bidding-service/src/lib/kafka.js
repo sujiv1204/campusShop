@@ -3,15 +3,42 @@ require("dotenv").config();
 
 const kafka = new Kafka({
     clientId: "bidding-service",
-    brokers: [process.env.KAFKA_BROKER], // e.g., 'kafka:29092'
+    brokers: [process.env.KAFKA_BROKER],
+    retry: {
+        // Add Kafka-native retries
+        initialRetryTime: 300,
+        retries: 10,
+    },
 });
 
 const producer = kafka.producer();
 
-// Function to publish the event
-const publishBidPlacedEvent = async (bid) => {
+// 1. Connect the producer when the application starts
+const connectProducer = async () => {
     try {
         await producer.connect();
+        console.log("Bidding Service Kafka Producer connected successfully.");
+    } catch (err) {
+        console.error(
+            "Failed to connect Kafka Producer. Retrying in 5 seconds...",
+            err
+        );
+        setTimeout(connectProducer, 5000); // Retry connection
+    }
+};
+
+// Handle producer disconnects (e.g., if Kafka restarts)
+producer.on(producer.events.DISCONNECT, (err) => {
+    console.error(
+        "Kafka Producer disconnected. Attempting to reconnect...",
+        err
+    );
+    connectProducer();
+});
+
+// 2. The publish function now only sends
+const publishBidPlacedEvent = async (bid) => {
+    try {
         await producer.send({
             topic: "bids-topic",
             messages: [
@@ -29,11 +56,12 @@ const publishBidPlacedEvent = async (bid) => {
         console.log("BidPlaced event published successfully.");
     } catch (error) {
         console.error("Error publishing BidPlaced event:", error);
-    } finally {
-        // Disconnecting the producer is often done on application shutdown,
-        // but for simplicity, we can do it here. For high-throughput, you'd manage this differently.
-        await producer.disconnect();
+        // In a production system, you might add this to a retry queue
     }
+    // 3. Do NOT disconnect here
 };
 
-module.exports = { publishBidPlacedEvent };
+module.exports = {
+    publishBidPlacedEvent,
+    connectProducer, // Export connect function to be called in index.js
+};
