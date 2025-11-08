@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-profiles-pvc
+  namespace: app
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-profiles
+  namespace: app
+spec:
+  selector:
+    matchLabels:
+      app: postgres-profiles
+  template:
+    metadata:
+      labels:
+        app: postgres-profiles
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          env:
+            - name: POSTGRES_USER
+              value: admin
+            - name: POSTGRES_PASSWORD
+              value: secret_password
+            - name: POSTGRES_DB
+              value: profiles_db
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: postgres-profiles-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-profiles
+  namespace: app
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: postgres-profiles

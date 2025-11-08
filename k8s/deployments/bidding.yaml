@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bidding-service
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bidding-service
+  template:
+    metadata:
+      labels:
+        app: bidding-service
+    spec:
+      containers:
+        - name: bidding-service
+          image: bidding-service:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5003
+          env:
+            - name: DB_HOST
+              value: postgres-bids
+            - name: DB_USER
+              value: admin
+            - name: DB_PASSWORD
+              value: secret_password
+            - name: DB_NAME
+              value: bids_db
+            - name: DB_PORT
+              value: "5432"
+            - name: KAFKA_BROKER
+              value: kafka-service.app.svc.cluster.local:9092
+            - name: JWT_SECRET
+              value: yh3LtRFJ7V84Sr0QBG0vV08XFT4XMuxU4JPSzrzKLNbcu/R2QBQG5SJkrck6H0IwovxjFhGsphjg/yQl
+            - name: AUTH_SERVICE_URL
+              value: http://auth-service.app.svc.cluster.local
+            - name: ITEMS_SERVICE_URL
+              value: http://items-service.app.svc.cluster.local
+            - name: BIDDING_SERVICE_URL
+              value: http://bidding-service.app.svc.cluster.local
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Waiting for Postgres to be ready...";
+              echo "Running migrations...";
+              npx sequelize-cli db:migrate;
+              echo "Starting app...";
+              npm start;
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bidding-service
+  namespace: app
+spec:
+  ports:
+    - port: 80
+      targetPort: 5003
+  selector:
+    app: bidding-service

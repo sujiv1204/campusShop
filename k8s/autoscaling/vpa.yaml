@@ -1,0 +1,64 @@
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: auth-vpa
+  namespace: app
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: auth-service
+  updatePolicy:
+    updateMode: "Off"
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: items-vpa
+  namespace: app
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: items-service
+  updatePolicy:
+    updateMode: "Off"
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: bidding-vpa
+  namespace: app
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: bidding-service
+  updatePolicy:
+    updateMode: "Off"
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: notifications-vpa
+  namespace: app
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: notifications-service
+  updatePolicy:
+    updateMode: "Off"
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: profile-vpa
+  namespace: app
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: profile-service
+  updatePolicy:
+    updateMode: "Off"

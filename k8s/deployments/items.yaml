@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: items-service
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: items-service
+  template:
+    metadata:
+      labels:
+        app: items-service
+    spec:
+      containers:
+        - name: items-service
+          image: items-service:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5002
+          env:
+            - name : JWT_SECRET
+              value: yh3LtRFJ7V84Sr0QBG0vV08XFT4XMuxU4JPSzrzKLNbcu/R2QBQG5SJkrck6H0IwovxjFhGsphjg/yQl
+            - name: DB_HOST
+              value: postgres-items
+            - name: DB_USER
+              value: admin
+            - name: DB_PASSWORD
+              value: secret_password
+            - name: DB_NAME
+              value: items_db
+            - name: DB_PORT
+              value: "5432"
+
+            - name: MINIO_ENDPOINT
+              value: minio
+            - name: MINIO_PORT
+              value: "9000"  
+            - name: MINIO_ACCESS_KEY
+              value: minioadmin
+            - name: MINIO_SECRET_KEY
+              value: minioadmin
+            - name: MINIO_BUCKET
+              value: campusshop-items
+            - name: MINIO_PUBLIC_URL
+              value: http://localhost:9000
+            - name: KAFKA_BROKER
+              value: kafka-service.app.svc.cluster.local:9092
+            - name: AUTH_SERVICE_URL
+              value: http://auth-service.app.svc.cluster.local
+            - name: ITEMS_SERVICE_URL
+              value: http://items-service.app.svc.cluster.local
+            - name: BIDDING_SERVICE_URL
+              value: http://bidding-service.app.svc.cluster.local
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              npx sequelize-cli db:migrate;
+              npm start;  
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: items-service
+  namespace: app
+spec:
+  ports:
+    - port: 80
+      targetPort: 5002
+  selector:
+    app: items-service
