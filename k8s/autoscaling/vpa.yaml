@@ -2,7 +2,7 @@ apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
 metadata:
   name: auth-vpa
-  namespace: app
+  namespace: campus-shop
 spec:
   targetRef:
     apiVersion: apps/v1
@@ -15,7 +15,7 @@ apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
 metadata:
   name: items-vpa
-  namespace: app
+  namespace: campus-shop
 spec:
   targetRef:
     apiVersion: apps/v1
@@ -28,7 +28,7 @@ apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
 metadata:
   name: bidding-vpa
-  namespace: app
+  namespace: campus-shop
 spec:
   targetRef:
     apiVersion: apps/v1
@@ -41,7 +41,7 @@ apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
 metadata:
   name: notifications-vpa
-  namespace: app
+  namespace: campus-shop
 spec:
   targetRef:
     apiVersion: apps/v1
@@ -54,7 +54,7 @@ apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
 metadata:
   name: profile-vpa
-  namespace: app
+  namespace: campus-shop
 spec:
   targetRef:
     apiVersion: apps/v1

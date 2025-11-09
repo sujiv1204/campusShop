@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: notifications-service
-  namespace: app
+  namespace: campus-shop
 spec:
   replicas: 1
   selector:
@@ -19,39 +19,20 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5004
+          envFrom:
+            - secretRef:
+                name: notifications-service-secret
           env:
             - name: KAFKA_BROKER
-              value: kafka-service.app.svc.cluster.local:9092
-            - name: AUTH_SERVICE_URL
-              value: http://auth-service.app.svc.cluster.local
-            - name: ITEMS_SERVICE_URL
-              value: http://items-service.app.svc.cluster.local
-            - name: BIDDING_SERVICE_URL
-              value: http://bidding-service.app.svc.cluster.local
-
-            - name: DB_HOST
-              value: postgres-notifications
-            - name: DB_USER
-              value: admin
-            - name: DB_PASSWORD
-              value: secret_password
-            - name: DB_NAME
-              value: notifications_db
-            - name: DB_PORT
-              value: "5432"
-
+              value: kafka-service.campus-shop.svc.cluster.local:9092
             - name: CLIENT_URL
               value: http://localhost
-            - name: EMAIL_HOST
-              value: smtp-relay.brevo.com
-            - name: EMAIL_PORT
-              value: "587"
-            - name: EMAIL_USER
-              value: 97d919002@smtp-brevo.com
-            - name: EMAIL_PASS
-              value: DghMEdbUcZ2tHC98
-            - name: EMAIL_FROM
-              value: '"Campus Shop" <sujivraj1204@gmail.com>'
+            - name: AUTH_SERVICE_URL
+              value: http://auth-service.campus-shop.svc.cluster.local
+            - name: ITEMS_SERVICE_URL
+              value: http://items-service.campus-shop.svc.cluster.local
+            - name: BIDDING_SERVICE_URL
+              value: http://bidding-service.campus-shop.svc.cluster.local
           command: ["/bin/sh", "-c"]
           args:
             - |
@@ -72,7 +53,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: notifications-service
-  namespace: app
+  namespace: campus-shop
 spec:
   ports:
     - port: 80

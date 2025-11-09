@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: profile-service
-  namespace: app
+  namespace: campus-shop
 spec:
   replicas: 1
   selector:
@@ -19,25 +19,16 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5005
+          envFrom:
+            - secretRef:
+                name: profile-service-secret
           env:
-            - name: DB_HOST
-              value: postgres-profiles
-            - name: DB_USER
-              value: admin
-            - name: DB_PASSWORD
-              value: secret_password
-            - name: DB_NAME
-              value: profiles_db
-            - name: DB_PORT
-              value: "5432"
-            - name: JWT_SECRET
-              value: yh3LtRFJ7V84Sr0QBG0vV08XFT4XMuxU4JPSzrzKLNbcu/R2QBQG5SJkrck6H0IwovxjFhGsphjg/yQl
             - name: AUTH_SERVICE_URL
-              value: http://auth-service.app.svc.cluster.local
+              value: http://auth-service.campus-shop.svc.cluster.local
             - name: ITEMS_SERVICE_URL
-              value: http://items-service.app.svc.cluster.local
+              value: http://items-service.campus-shop.svc.cluster.local
             - name: BIDDING_SERVICE_URL
-              value: http://bidding-service.app.svc.cluster.local
+              value: http://bidding-service.campus-shop.svc.cluster.local
           command: ["/bin/sh", "-c"]
           args:
             - |
@@ -58,7 +49,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: profile-service
-  namespace: app
+  namespace: campus-shop
 spec:
   ports:
     - port: 80

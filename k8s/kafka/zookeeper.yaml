@@ -1,8 +1,19 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: zookeeper-pvc
+  namespace: campus-shop
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 2Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: zookeeper
-  namespace: app
+  namespace: campus-shop
 spec:
   selector:
     matchLabels:
@@ -20,12 +31,30 @@ spec:
           env:
             - name: ZOOKEEPER_CLIENT_PORT
               value: "2181"
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: zookeeper-data
+              mountPath: /var/lib/zookeeper/data
+            - name: zookeeper-log
+              mountPath: /var/lib/zookeeper/log
+      volumes:
+        - name: zookeeper-data
+          persistentVolumeClaim:
+            claimName: zookeeper-pvc
+        - name: zookeeper-log
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: zookeeper
-  namespace: app
+  name: zookeeper-service
+  namespace: campus-shop
 spec:
   ports:
     - port: 2181

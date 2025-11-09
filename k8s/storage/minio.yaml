@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: minio-pvc
-  namespace: app
+  namespace: campus-shop
 spec:
   accessModes: ["ReadWriteOnce"]
   resources:
@@ -13,7 +13,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: minio
-  namespace: app
+  namespace: campus-shop
 spec:
   selector:
     matchLabels:
@@ -29,11 +29,28 @@ spec:
           ports:
             - containerPort: 9000
             - containerPort: 9001
-          env:
-            - name: MINIO_ROOT_USER
-              value: minioadmin
-            - name: MINIO_ROOT_PASSWORD
-              value: minioadmin
+          envFrom:
+            - secretRef:
+                name: minio-secret
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          readinessProbe:
+            httpGet:
+              path: /minio/health/ready
+              port: 9000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: 9000
+            initialDelaySeconds: 30
+            periodSeconds: 10
           args: ["server", "/data", "--console-address", ":9001"]
           volumeMounts:
             - name: data
@@ -46,8 +63,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: minio
-  namespace: app
+  name: minio-service
+  namespace: campus-shop
 spec:
   ports:
     - name: api

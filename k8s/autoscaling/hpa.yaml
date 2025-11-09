@@ -2,7 +2,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: auth-hpa
-  namespace: app
+  namespace: campus-shop
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -22,7 +22,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: items-hpa
-  namespace: app
+  namespace: campus-shop
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -42,7 +42,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: bidding-hpa
-  namespace: app
+  namespace: campus-shop
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -62,7 +62,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: notifications-hpa
-  namespace: app
+  namespace: campus-shop
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -82,7 +82,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: profile-hpa
-  namespace: app
+  namespace: campus-shop
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

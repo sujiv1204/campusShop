@@ -1,2 +1,10 @@
 services_envs/
 services_envs.zip
+
+# Kubernetes secrets (sensitive data)
+k8s/secrets/
+
+# VPA certificates (generated locally)
+*.pem
+*.csr
+*.srl
