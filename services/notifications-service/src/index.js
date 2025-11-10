@@ -35,10 +35,10 @@ const startService = async () => {
 
         // 3. Start the HTTP server
         app.listen(PORT, () => {
+            console.log(`🚀 Notifications HTTP server running on port ${PORT}`);
             console.log(
-                `🚀 Notifications HTTP server running on port ${PORT}`
+                `📋 API endpoints available at http://localhost:${PORT}/api/notifications`
             );
-            console.log(`📋 API endpoints available at http://localhost:${PORT}/api/notifications`);
         });
 
         // 4. Start the Kafka consumer
