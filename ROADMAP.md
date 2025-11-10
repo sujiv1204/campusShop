@@ -11,16 +11,16 @@
 ## Phase 1: Database Infrastructure (Day 1)
 
 -   [x] Create feature branch
--   [ ] Deploy MongoDB for notification logs
--   [ ] Deploy PostgreSQL read replicas (1 primary + 1 replica per DB)
--   [ ] Deploy PgBouncer connection pooling
--   [ ] Implement read/write split in services
+-   [x] Deploy MongoDB for notification logs
+-   [x] Deploy PostgreSQL read replicas (1 primary + 1 replica per DB)
+-   [x] Implement read/write split in services
+-   [ ] Deploy PgBouncer connection pooling (Optional - deferred due to resource constraints)
 
 ## Phase 2: Notification System (Day 1)
 
--   [ ] Build notification center backend (MongoDB + API)
--   [ ] Add email preferences to profile service
--   [ ] Update notification consumer with preference checks
+-   [x] Build notification center backend (MongoDB + API)
+-   [x] Add email preferences to profile service
+-   [x] Update notification consumer with preference checks
 -   [ ] Fix items purchased tracking
 
 ## Phase 3: Frontend & UX (Day 2)
