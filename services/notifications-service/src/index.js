@@ -4,12 +4,14 @@ const { startConsumer } = require("./consumer");
 const db = require("./models"); // <-- Import the database
 const connectMongoDB = require("./config/mongodb");
 const notificationsRoutes = require("./routes/notifications.routes");
+const { register, metricsMiddleware } = require("./middleware/metrics");
 
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(metricsMiddleware);
 
 // Routes
 app.use("/api/notifications", notificationsRoutes);
@@ -19,6 +21,11 @@ app.get("/api/notifications/health", (req, res) => {
         status: "UP",
         message: "Notifications service is healthy!",
     });
+});
+
+app.get("/metrics", async (req, res) => {
+    res.set("Content-Type", register.contentType);
+    res.end(await register.metrics());
 });
 
 const PORT = process.env.PORT || 5004;

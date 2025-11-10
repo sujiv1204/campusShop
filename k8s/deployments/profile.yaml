@@ -12,6 +12,10 @@ spec:
     metadata:
       labels:
         app: profile-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "5005"
+        prometheus.io/path: "/metrics"
     spec:
       containers:
         - name: profile-service

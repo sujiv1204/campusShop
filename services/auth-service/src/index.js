@@ -2,11 +2,17 @@ require("dotenv").config();
 const express = require("express");
 const db = require("./models");
 const authRoutes = require("./routes/auth.routes");
+const { register, metricsMiddleware } = require("./middleware/metrics");
 
 const app = express();
 app.use(express.json());
+app.use(metricsMiddleware);
 
 app.get("/api/auth/health", (req, res) => res.send("Auth service is healthy!"));
+app.get("/metrics", async (req, res) => {
+    res.set("Content-Type", register.contentType);
+    res.end(await register.metrics());
+});
 app.use("/api/auth", authRoutes);
 
 const PORT = process.env.PORT || 5001;

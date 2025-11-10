@@ -4,9 +4,11 @@ const db = require("./models");
 const { connectProducer } = require("./lib/kafka");
 const { startPolling } = require("./poller");
 const itemRoutes = require("./routes/item.routes"); // Make sure you have this file
+const { register, metricsMiddleware } = require("./middleware/metrics");
 
 const app = express();
 app.use(express.json());
+app.use(metricsMiddleware);
 
 // Health check route
 app.get("/api/items/health", (req, res) => {
@@ -14,6 +16,11 @@ app.get("/api/items/health", (req, res) => {
         status: "UP",
         message: "Items service is healthy!",
     });
+});
+
+app.get("/metrics", async (req, res) => {
+    res.set("Content-Type", register.contentType);
+    res.end(await register.metrics());
 });
 
 // Main application routes
