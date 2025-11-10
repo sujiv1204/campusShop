@@ -236,6 +236,8 @@ exports.markAsSold = async (req, res) => {
                 );
 
                 eventPayload.winningBid = winningBid;
+                eventPayload.sellerId = item.sellerId;
+                eventPayload.winnerId = winningBid.bidderId;
                 eventPayload.sellerEmail = sellerResponse.data.email;
                 eventPayload.winnerEmail = winnerResponse.data.email;
             }

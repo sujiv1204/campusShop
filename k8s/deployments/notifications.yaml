@@ -38,6 +38,8 @@ spec:
               value: http://items-service.campus-shop.svc.cluster.local
             - name: BIDDING_SERVICE_URL
               value: http://bidding-service.campus-shop.svc.cluster.local
+            - name: PROFILE_SERVICE_URL
+              value: http://profile-service.campus-shop.svc.cluster.local
           command: ["/bin/sh", "-c"]
           args:
             - |

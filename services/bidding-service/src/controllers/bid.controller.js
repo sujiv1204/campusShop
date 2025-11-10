@@ -75,8 +75,11 @@ exports.placeBid = async (req, res) => {
                         // <-- WRAP your data in this
                         bidId: newBid.id,
                         bidAmount: newBid.amount,
+                        itemId: item.id,
                         itemTitle: item.title,
+                        sellerId: item.sellerId,
                         sellerEmail: sellerResponse.data.email,
+                        bidderId: bidderId,
                         bidderEmail: bidderResponse.data.email,
                     },
                 },
