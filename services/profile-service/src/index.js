@@ -11,8 +11,8 @@ app.get("/api/profiles/health", (req, res) =>
     res.send("profiles service is healthy!")
 );
 
+app.use("/api/profiles/preferences", preferencesRoutes);
 app.use("/api/profiles", profileRoutes);
-app.use("/api/profile/preferences", preferencesRoutes);
 
 const PORT = process.env.PORT || 5005;
 

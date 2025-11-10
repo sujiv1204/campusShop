@@ -23,20 +23,34 @@ const consumer = kafka.consumer({
 });
 
 let transporter;
-const PROFILE_SERVICE_URL = process.env.PROFILE_SERVICE_URL || "http://profile-service.campus-shop.svc.cluster.local";
+const PROFILE_SERVICE_URL =
+    process.env.PROFILE_SERVICE_URL ||
+    "http://profile-service.campus-shop.svc.cluster.local";
 
 // --- Helper to fetch email preferences ---
 async function getEmailPreferences(userId) {
     try {
-        const response = await axios.get(`${PROFILE_SERVICE_URL}/api/profile/preferences`, {
-            headers: {
-                Authorization: `Bearer ${process.env.JWT_SECRET}`,
-                "x-user-id": userId,
-            },
-        });
-        return response.data.emailPreferences || { bidReceived: true, itemSold: true, bidWon: true };
+        const response = await axios.get(
+            `${PROFILE_SERVICE_URL}/api/profile/preferences`,
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.JWT_SECRET}`,
+                    "x-user-id": userId,
+                },
+            }
+        );
+        return (
+            response.data.emailPreferences || {
+                bidReceived: true,
+                itemSold: true,
+                bidWon: true,
+            }
+        );
     } catch (error) {
-        console.error(`Failed to fetch email preferences for user ${userId}:`, error.message);
+        console.error(
+            `Failed to fetch email preferences for user ${userId}:`,
+            error.message
+        );
         return { bidReceived: true, itemSold: true, bidWon: true };
     }
 }
@@ -149,8 +163,16 @@ const run = async () => {
 // --- Fast, "Fat Event" Handlers (No API calls) ---
 
 async function handleBidPlaced(event) {
-    const { sellerEmail, bidderEmail, itemTitle, bidAmount, sellerId, itemId, bidId } = event;
-    
+    const {
+        sellerEmail,
+        bidderEmail,
+        itemTitle,
+        bidAmount,
+        sellerId,
+        itemId,
+        bidId,
+    } = event;
+
     // Create notification in MongoDB
     await Notification.create({
         userId: sellerId,
@@ -166,15 +188,20 @@ async function handleBidPlaced(event) {
         },
         emailSent: false,
     });
-    
+
     // Check email preferences
     const preferences = await getEmailPreferences(sellerId);
     if (!preferences.bidReceived) {
-        console.log(`Seller ${sellerId} has disabled bid notifications. Skipping email.`);
-        await Notification.updateOne({ userId: sellerId, type: "BID_RECEIVED", "metadata.bidId": bidId }, { emailSent: true });
+        console.log(
+            `Seller ${sellerId} has disabled bid notifications. Skipping email.`
+        );
+        await Notification.updateOne(
+            { userId: sellerId, type: "BID_RECEIVED", "metadata.bidId": bidId },
+            { emailSent: true }
+        );
         return;
     }
-    
+
     // Send email
     const mailInfo = await transporter.sendMail({
         from: process.env.EMAIL_FROM,
@@ -188,20 +215,27 @@ async function handleBidPlaced(event) {
             <p>Thank you,<br/>The Campus Marketplace Team</p>
         `,
     });
-    
+
     // Update emailSent flag
-    await Notification.updateOne({ userId: sellerId, type: "BID_RECEIVED", "metadata.bidId": bidId }, { emailSent: true });
-    
-    console.log(`Bid notification sent to ${sellerEmail}. Message ID: %s`, mailInfo.messageId);
+    await Notification.updateOne(
+        { userId: sellerId, type: "BID_RECEIVED", "metadata.bidId": bidId },
+        { emailSent: true }
+    );
+
+    console.log(
+        `Bid notification sent to ${sellerEmail}. Message ID: %s`,
+        mailInfo.messageId
+    );
 }
 
 async function handleItemSold(eventPayload) {
-    const { item, winningBid, sellerEmail, winnerEmail, sellerId, winnerId } = eventPayload;
+    const { item, winningBid, sellerEmail, winnerEmail, sellerId, winnerId } =
+        eventPayload;
     if (!winningBid) {
         console.log(`No bids for sold item ${item.id}, no notification sent.`);
         return;
     }
-    
+
     // Create notification for seller
     await Notification.create({
         userId: sellerId,
@@ -217,7 +251,7 @@ async function handleItemSold(eventPayload) {
         },
         emailSent: false,
     });
-    
+
     // Create notification for winner
     await Notification.create({
         userId: winnerId,
@@ -233,7 +267,7 @@ async function handleItemSold(eventPayload) {
         },
         emailSent: false,
     });
-    
+
     // Check seller email preferences
     const sellerPreferences = await getEmailPreferences(sellerId);
     if (sellerPreferences.itemSold) {
@@ -249,13 +283,24 @@ async function handleItemSold(eventPayload) {
                 <p>Thank you,<br/>The Campus Marketplace Team</p>
             `,
         });
-        await Notification.updateOne({ userId: sellerId, type: "ITEM_SOLD", "metadata.itemId": item.id }, { emailSent: true });
-        console.log(`ItemSold notification sent to seller. Message ID: %s`, sellerMailInfo.messageId);
+        await Notification.updateOne(
+            { userId: sellerId, type: "ITEM_SOLD", "metadata.itemId": item.id },
+            { emailSent: true }
+        );
+        console.log(
+            `ItemSold notification sent to seller. Message ID: %s`,
+            sellerMailInfo.messageId
+        );
     } else {
-        console.log(`Seller ${sellerId} has disabled item sold notifications. Skipping email.`);
-        await Notification.updateOne({ userId: sellerId, type: "ITEM_SOLD", "metadata.itemId": item.id }, { emailSent: true });
+        console.log(
+            `Seller ${sellerId} has disabled item sold notifications. Skipping email.`
+        );
+        await Notification.updateOne(
+            { userId: sellerId, type: "ITEM_SOLD", "metadata.itemId": item.id },
+            { emailSent: true }
+        );
     }
-    
+
     // Check winner email preferences
     const winnerPreferences = await getEmailPreferences(winnerId);
     if (winnerPreferences.bidWon) {
@@ -271,11 +316,22 @@ async function handleItemSold(eventPayload) {
                 <p>Thank you,<br/>The Campus Marketplace Team</p>
             `,
         });
-        await Notification.updateOne({ userId: winnerId, type: "BID_WON", "metadata.itemId": item.id }, { emailSent: true });
-        console.log(`ItemSold notification sent to winner. Message ID: %s`, winnerMailInfo.messageId);
+        await Notification.updateOne(
+            { userId: winnerId, type: "BID_WON", "metadata.itemId": item.id },
+            { emailSent: true }
+        );
+        console.log(
+            `ItemSold notification sent to winner. Message ID: %s`,
+            winnerMailInfo.messageId
+        );
     } else {
-        console.log(`Winner ${winnerId} has disabled bid won notifications. Skipping email.`);
-        await Notification.updateOne({ userId: winnerId, type: "BID_WON", "metadata.itemId": item.id }, { emailSent: true });
+        console.log(
+            `Winner ${winnerId} has disabled bid won notifications. Skipping email.`
+        );
+        await Notification.updateOne(
+            { userId: winnerId, type: "BID_WON", "metadata.itemId": item.id },
+            { emailSent: true }
+        );
     }
 }
 
