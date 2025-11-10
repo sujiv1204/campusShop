@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const db = require("./models");
 const profileRoutes = require("./routes/profile.routes");
+const preferencesRoutes = require("./routes/preferences.routes");
 
 const app = express();
 app.use(express.json());
@@ -11,6 +12,7 @@ app.get("/api/profiles/health", (req, res) =>
 );
 
 app.use("/api/profiles", profileRoutes);
+app.use("/api/profile/preferences", preferencesRoutes);
 
 const PORT = process.env.PORT || 5005;
 

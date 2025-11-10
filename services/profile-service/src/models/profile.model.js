@@ -11,6 +11,15 @@ module.exports = (sequelize, DataTypes) => {
             },
             displayName: { type: DataTypes.STRING, allowNull: false },
             phoneNumber: DataTypes.STRING,
+            emailPreferences: {
+                type: DataTypes.JSON,
+                allowNull: false,
+                defaultValue: {
+                    bidReceived: true,
+                    itemSold: true,
+                    bidWon: true,
+                },
+            },
         },
         { sequelize, modelName: "Profile" }
     );
