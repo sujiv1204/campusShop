@@ -86,8 +86,8 @@ const run = async () => {
     });
 
     await consumer.connect();
-    await consumer.subscribe({ topic: "bids-topic", fromBeginning: true });
-    await consumer.subscribe({ topic: "items-topic", fromBeginning: true });
+    await consumer.subscribe({ topic: "bids-topic", fromBeginning: false });
+    await consumer.subscribe({ topic: "items-topic", fromBeginning: false });
     console.log("Notifications service is listening for events...");
 
     await consumer.run({

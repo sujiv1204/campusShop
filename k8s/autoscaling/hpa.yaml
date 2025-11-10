@@ -58,25 +58,27 @@ spec:
           type: Utilization
           averageUtilization: 60
 ---
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: notifications-hpa
-  namespace: campus-shop
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: notifications-service
-  minReplicas: 1
-  maxReplicas: 5
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 60
+# Notifications service HPA disabled - Kafka consumer groups don't scale well horizontally
+# with single consumer group. Enable only if implementing unique consumer group per pod.
+# apiVersion: autoscaling/v2
+# kind: HorizontalPodAutoscaler
+# metadata:
+#   name: notifications-hpa
+#   namespace: campus-shop
+# spec:
+#   scaleTargetRef:
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     name: notifications-service
+#   minReplicas: 1
+#   maxReplicas: 5
+#   metrics:
+#     - type: Resource
+#       resource:
+#         name: cpu
+#         target:
+#           type: Utilization
+#           averageUtilization: 60
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
