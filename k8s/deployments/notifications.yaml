@@ -25,6 +25,11 @@ spec:
           env:
             - name: KAFKA_BROKER
               value: kafka-service.campus-shop.svc.cluster.local:9092
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: MONGODB_URI
             - name: CLIENT_URL
               value: http://localhost
             - name: AUTH_SERVICE_URL
