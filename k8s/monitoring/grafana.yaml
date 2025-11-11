@@ -27,6 +27,8 @@ spec:
         volumeMounts:
         - name: storage
           mountPath: /var/lib/grafana
+        - name: datasources
+          mountPath: /etc/grafana/provisioning/datasources
         resources:
           requests:
             cpu: 50m
@@ -37,6 +39,9 @@ spec:
       volumes:
       - name: storage
         emptyDir: {}
+      - name: datasources
+        configMap:
+          name: grafana-datasources
 ---
 apiVersion: v1
 kind: Service

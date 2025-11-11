@@ -1,0 +1,173 @@
+{
+    "title": "Service Metrics - Campus Marketplace",
+    "tags": ["microservices", "http", "performance"],
+    "timezone": "browser",
+    "panels": [
+        {
+            "id": 1,
+            "title": "HTTP Request Rate (req/s)",
+            "type": "graph",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 0
+            },
+            "targets": [
+                {
+                    "expr": "sum(rate(http_requests_total{namespace=\"campus-shop\"}[5m])) by (app)",
+                    "legendFormat": "{{app}}",
+                    "refId": "A"
+                }
+            ],
+            "yaxes": [
+                {
+                    "format": "reqps",
+                    "label": "Requests/sec"
+                },
+                {
+                    "format": "short"
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "title": "HTTP Request Duration (p95)",
+            "type": "graph",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 0
+            },
+            "targets": [
+                {
+                    "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{namespace=\"campus-shop\"}[5m])) by (app, le))",
+                    "legendFormat": "{{app}} p95",
+                    "refId": "A"
+                }
+            ],
+            "yaxes": [
+                {
+                    "format": "s",
+                    "label": "Duration"
+                },
+                {
+                    "format": "short"
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "title": "HTTP Status Codes",
+            "type": "graph",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 8
+            },
+            "targets": [
+                {
+                    "expr": "sum(rate(http_requests_total{namespace=\"campus-shop\"}[5m])) by (status_code)",
+                    "legendFormat": "{{status_code}}",
+                    "refId": "A"
+                }
+            ],
+            "yaxes": [
+                {
+                    "format": "reqps"
+                },
+                {
+                    "format": "short"
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "title": "Error Rate by Service",
+            "type": "graph",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 8
+            },
+            "targets": [
+                {
+                    "expr": "sum(rate(http_requests_total{namespace=\"campus-shop\",status_code=~\"5..\"}[5m])) by (app) / sum(rate(http_requests_total{namespace=\"campus-shop\"}[5m])) by (app) * 100",
+                    "legendFormat": "{{app}} error %",
+                    "refId": "A"
+                }
+            ],
+            "yaxes": [
+                {
+                    "format": "percent",
+                    "label": "Error Rate"
+                },
+                {
+                    "format": "short"
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "title": "Request Duration Heatmap",
+            "type": "heatmap",
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 16
+            },
+            "targets": [
+                {
+                    "expr": "sum(increase(http_request_duration_seconds_bucket{namespace=\"campus-shop\"}[5m])) by (le)",
+                    "format": "heatmap",
+                    "legendFormat": "{{le}}",
+                    "refId": "A"
+                }
+            ]
+        },
+        {
+            "id": 6,
+            "title": "Top 5 Slowest Routes",
+            "type": "table",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 24
+            },
+            "targets": [
+                {
+                    "expr": "topk(5, histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{namespace=\"campus-shop\"}[5m])) by (route, le)))",
+                    "format": "table",
+                    "instant": true,
+                    "refId": "A"
+                }
+            ]
+        },
+        {
+            "id": 7,
+            "title": "Requests per Service",
+            "type": "piechart",
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 24
+            },
+            "targets": [
+                {
+                    "expr": "sum(rate(http_requests_total{namespace=\"campus-shop\"}[5m])) by (app)",
+                    "legendFormat": "{{app}}",
+                    "refId": "A"
+                }
+            ]
+        }
+    ],
+    "refresh": "10s",
+    "schemaVersion": 27,
+    "version": 1
+}

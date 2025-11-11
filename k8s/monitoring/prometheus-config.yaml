@@ -35,6 +35,14 @@ data:
           - source_labels: [__meta_kubernetes_namespace]
             action: replace
             target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            action: replace
+            target_label: app
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            regex: '([a-z-]+)-[0-9a-f]+-[a-z0-9]+'
+            replacement: '$1'
+            target_label: service
 
       - job_name: 'postgres-exporter'
         static_configs:
