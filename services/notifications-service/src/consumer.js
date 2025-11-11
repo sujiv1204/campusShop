@@ -1,6 +1,7 @@
 const { Kafka } = require("kafkajs");
 const nodemailer = require("nodemailer");
 const axios = require("axios");
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const db = require("./models"); // Import the database
 const ProcessedEvent = db.ProcessedEvent; // Import the model
@@ -30,17 +31,31 @@ const PROFILE_SERVICE_URL =
 // --- Helper to fetch email preferences ---
 async function getEmailPreferences(userId) {
     try {
+        // Create a service token for service-to-service communication
+        const serviceToken = jwt.sign(
+            { userId: userId, service: "notifications" },
+            process.env.JWT_SECRET,
+            { expiresIn: "5m" }
+        );
+
+        console.log(`Fetching preferences for user ${userId}...`);
+        console.log(
+            `Profile service URL: ${PROFILE_SERVICE_URL}/api/profiles/preferences`
+        );
+
         const response = await axios.get(
-            `${PROFILE_SERVICE_URL}/api/profile/preferences`,
+            `${PROFILE_SERVICE_URL}/api/profiles/preferences`,
             {
                 headers: {
-                    Authorization: `Bearer ${process.env.JWT_SECRET}`,
-                    "x-user-id": userId,
+                    Authorization: `Bearer ${serviceToken}`,
                 },
             }
         );
+
+        console.log(`✅ Preferences fetched for ${userId}:`, response.data);
+
         return (
-            response.data.emailPreferences || {
+            response.data || {
                 bidReceived: true,
                 itemSold: true,
                 bidWon: true,
@@ -48,9 +63,11 @@ async function getEmailPreferences(userId) {
         );
     } catch (error) {
         console.error(
-            `Failed to fetch email preferences for user ${userId}:`,
-            error.message
+            `❌ Failed to fetch email preferences for user ${userId}:`,
+            error.response?.status,
+            error.response?.data || error.message
         );
+        console.error("Full error:", error.toJSON ? error.toJSON() : error);
         return { bidReceived: true, itemSold: true, bidWon: true };
     }
 }

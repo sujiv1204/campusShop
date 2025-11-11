@@ -150,8 +150,6 @@
 
 // export default UserProfile;
 
-
-
 // import React, { useState, useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom';
 // import { itemsAPI } from '../../services/api';
@@ -223,7 +221,6 @@
 //       setLoading(false);
 //     }
 //   };
-  
 
 //   const handleDeleteItem = async (itemId, itemTitle) => {
 //     if (window.confirm(`Are you sure you want to delete "${itemTitle}"?`)) {
@@ -329,7 +326,7 @@
 //                   <div className="empty-icon">📦</div>
 //                   <h3>No Items Posted Yet</h3>
 //                   <p>Start selling by posting your first item!</p>
-//                   <button 
+//                   <button
 //                     onClick={() => navigate('/create-item')}
 //                     className="cta-button"
 //                   >
@@ -355,19 +352,19 @@
 //                           </span>
 //                         </div>
 //                         <div className="item-actions">
-//                           <button 
+//                           <button
 //                             onClick={() => handleEditItem(item)}
 //                             className="action-btn edit-btn"
 //                           >
 //                             ✏️ Edit
 //                           </button>
-//                           <button 
+//                           <button
 //                             onClick={() => handleMarkAsSold(item.id, item.title)}
 //                             className="action-btn sold-btn"
 //                           >
 //                             ✅ Mark Sold
 //                           </button>
-//                           <button 
+//                           <button
 //                             onClick={() => handleDeleteItem(item.id, item.title)}
 //                             className="action-btn delete-btn"
 //                           >
@@ -408,8 +405,6 @@
 // };
 
 // export default UserProfile;
-
-
 
 // import React, { useState, useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom';
@@ -584,7 +579,7 @@
 //                 <div className="empty-icon">📦</div>
 //                 <h3>No Items Posted Yet</h3>
 //                 <p>Start selling by posting your first item!</p>
-//                 <button 
+//                 <button
 //                   onClick={() => navigate('/create-item')}
 //                   className="cta-button"
 //                 >
@@ -610,19 +605,19 @@
 //                         </span>
 //                       </div>
 //                       <div className="item-actions">
-//                         <button 
+//                         <button
 //                           onClick={() => handleEditItem(item)}
 //                           className="action-btn edit-btn"
 //                         >
 //                           ✏️ Edit
 //                         </button>
-//                         <button 
+//                         <button
 //                           onClick={() => handleMarkAsSold(item.id, item.title)}
 //                           className="action-btn sold-btn"
 //                         >
 //                           ✅ Mark Sold
 //                         </button>
-//                         <button 
+//                         <button
 //                           onClick={() => handleDeleteItem(item.id, item.title)}
 //                           className="action-btn delete-btn"
 //                         >
@@ -644,9 +639,6 @@
 // };
 
 // export default UserProfile;
-
-
-
 
 // import React, { useState, useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom';
@@ -724,7 +716,7 @@
 //   };
 
 //   const handleEditItem = (item) => {
-//   navigate(`/edit-item/${item.id}`, { 
+//   navigate(`/edit-item/${item.id}`, {
 //     state: { item }  // Pass the entire item object
 //   });
 // };
@@ -733,7 +725,7 @@
 //     if (window.confirm(`Mark "${itemTitle}" as sold?`)) {
 //       try {
 //         console.log('Attempting to mark item as sold:', itemId);
-        
+
 //         // Check if token exists
 //         const token = localStorage.getItem('token');
 //         if (!token) {
@@ -743,25 +735,25 @@
 //         }
 
 //         console.log('Token exists, making API call...');
-        
+
 //         // Make the API call to mark as sold
 //         const response = await itemsAPI.markAsSold(itemId);
-        
+
 //         console.log('Mark as sold successful:', response.data);
-        
+
 //         // Remove the item from the list
 //         setMyItems(myItems.filter(item => item.id !== itemId));
 //         alert('Item marked as sold successfully!');
-        
+
 //       } catch (err) {
 //         console.error('Error marking item as sold:', err);
-        
+
 //         // Detailed error information
 //         if (err.response) {
 //           console.error('Response status:', err.response.status);
 //           console.error('Response data:', err.response.data);
 //           console.error('Response headers:', err.response.headers);
-          
+
 //           if (err.response.status === 401) {
 //             alert('Authentication failed. Please login again.');
 //             localStorage.removeItem('token');
@@ -794,7 +786,7 @@
 //   //       }
 
 //   //       console.log('Using direct fetch to mark item as sold...');
-        
+
 //   //       const response = await fetch(`/api/items/${itemId}/sell`, {
 //   //         method: 'PATCH',
 //   //         headers: {
@@ -809,10 +801,10 @@
 
 //   //       const result = await response.json();
 //   //       console.log('Direct fetch successful:', result);
-        
+
 //   //       setMyItems(myItems.filter(item => item.id !== itemId));
 //   //       alert('Item marked as sold successfully!');
-        
+
 //   //     } catch (err) {
 //   //       console.error('Direct fetch error:', err);
 //   //       alert(`Failed to mark item as sold: ${err.message}`);
@@ -879,8 +871,8 @@
 
 //       {/* Debug Info */}
 //       {/* <div className="debug-info" style={{background: '#f0f8ff', padding: '10px', borderRadius: '5px', marginBottom: '20px', fontSize: '12px'}}>
-//         <strong>Debug Info:</strong> Token: {localStorage.getItem('token') ? 'Exists' : 'Missing'} | 
-//         Items: {myItems.length} | 
+//         <strong>Debug Info:</strong> Token: {localStorage.getItem('token') ? 'Exists' : 'Missing'} |
+//         Items: {myItems.length} |
 //         API Base: /api/items/ID/sell
 //       </div> */}
 
@@ -905,7 +897,6 @@
 //           🏷️ My Bids
 //         </button>
 //       </div>
-      
 
 //       {/* Tab Content */}
 //       <div className="profile-tab-content">
@@ -916,7 +907,7 @@
 //                 <div className="empty-icon">📦</div>
 //                 <h3>No Items Posted Yet</h3>
 //                 <p>Start selling by posting your first item!</p>
-//                 <button 
+//                 <button
 //                   onClick={() => navigate('/create-item')}
 //                   className="cta-button"
 //                 >
@@ -945,20 +936,20 @@
 //                         </span>
 //                       </div>
 //                       <div className="item-actions">
-//                         <button 
+//                         <button
 //                           onClick={() => handleEditItem(item)}
 //                           className="action-btn edit-btn"
 //                         >
 //                           ✏️ Edit
 //                         </button>
-//                         <button 
+//                         <button
 //                           onClick={() => handleMarkAsSold(item.id, item.title)}
 //                           className="action-btn sold-btn"
 //                         >
 //                           ✅ Mark Sold
 //                         </button>
 //                         {/* Alternative button for testing */}
-//                         {/* <button 
+//                         {/* <button
 //                           onClick={() => handleMarkAsSoldDirect(item.id, item.title)}
 //                           className="action-btn test-btn"
 //                           style={{background: '#6f42c1'}}
@@ -966,7 +957,7 @@
 //                         >
 //                           🔧 Test Sell
 //                         </button> */}
-//                         <button 
+//                         <button
 //                           onClick={() => handleDeleteItem(item.id, item.title)}
 //                           className="action-btn delete-btn"
 //                         >
@@ -989,347 +980,403 @@
 
 // export default UserProfile;
 
-
-
-
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { itemsAPI, bidsAPI, profileAPI } from '../../services/api';
-import BidsManager from '../../components/BidsManager/bidsManager';
-import './userProfile.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { itemsAPI, bidsAPI, profileAPI } from "../../services/api";
+import BidsManager from "../../components/BidsManager/bidsManager";
+import EmailPreferences from "../../components/EmailPreferences/EmailPreferences";
+import "./userProfile.css";
 import { Button } from "flowbite-react";
 
 const UserProfile = () => {
-  const [user, setUser] = useState(null);
-  const [myItems, setMyItems] = useState([]);
-  const [myBids, setMyBids] = useState([]);
-  const [activeTab, setActiveTab] = useState('items');
-  const [loading, setLoading] = useState(true);
-  const [bidsLoading, setBidsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [soldItems,setSoldItems]=useState([])
-  const navigate = useNavigate();
+    const [user, setUser] = useState(null);
+    const [myItems, setMyItems] = useState([]);
+    const [myBids, setMyBids] = useState([]);
+    const [activeTab, setActiveTab] = useState("items");
+    const [loading, setLoading] = useState(true);
+    const [bidsLoading, setBidsLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [soldItems, setSoldItems] = useState([]);
+    const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchUserData();
-  }, []);
+    useEffect(() => {
+        fetchUserData();
+    }, []);
 
-  useEffect(() => {
-    if (activeTab === 'my-bids') {
-      fetchUserBids();
-    }
-    else if(activeTab==='sold-item'){
-      fetchUserSoldItems()
-    }
-  }, [activeTab]);
+    useEffect(() => {
+        if (activeTab === "my-bids") {
+            fetchUserBids();
+        } else if (activeTab === "sold-item") {
+            fetchUserSoldItems();
+        }
+    }, [activeTab]);
 
-  const getUserInfo = () => {
-    const token = localStorage.getItem('token');
-    let userInfo = {
-      id: 'current-user',
-      name: 'Current User',
-      email: 'user@campus.edu'
+    const getUserInfo = () => {
+        const token = localStorage.getItem("token");
+        let userInfo = {
+            id: "current-user",
+            name: "Current User",
+            email: "user@campus.edu",
+        };
+
+        if (token) {
+            try {
+                const payload = JSON.parse(atob(token.split(".")[1]));
+                userInfo = {
+                    id: payload.userId || userInfo.id,
+                    name: payload.name || userInfo.name,
+                    email: payload.email || userInfo.email,
+                };
+            } catch (error) {
+                console.log("Token is not JWT or cannot be decoded", error);
+            }
+        }
+
+        return userInfo;
     };
 
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        userInfo = {
-          id: payload.userId || userInfo.id,
-          name: payload.name || userInfo.name,
-          email: payload.email || userInfo.email
-        };
-      } catch (error) {
-        console.log('Token is not JWT or cannot be decoded', error);
-      }
-    }
+    const fetchUserData = async () => {
+        try {
+            setLoading(true);
+            setError("");
 
-    return userInfo;
-  };
+            const userInfo = getUserInfo();
+            setUser(userInfo);
 
-  
-  const fetchUserData = async () => {
-    try {
-      setLoading(true);
-      setError('');
+            const itemsResponse = await profileAPI.getMyPosted();
 
-      const userInfo = getUserInfo();
-      setUser(userInfo);
-
-      const itemsResponse = await profileAPI.getMyPosted();
-      
-      setMyItems(itemsResponse.data);
-      console.log(itemsResponse.data);
-
-    } catch (err) {
-      console.error('Error fetching user data:', err);
-      setError('Failed to load profile data. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-const fetchUserSoldItems=async()=>{
-  try {
-    const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found. Please login again.');
-      }
-
-      const response = await profileAPI.getMySoldItems();
-      console.log("sold items",response.data);
-      setSoldItems(response.data);
-      // console.log(response.data);
-  }
-  catch(err){
-    console.error(err);
-    setError('Failed to load sold items. Please try again.');
-  }
-}
-
-  const fetchUserBids = async () => {
-    try {
-      setBidsLoading(true);
-      setError('');
-
-      console.log('Fetching user bids from /api/items/me/bids...');
-      
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found. Please login again.');
-      }
-
-      // Use the updated bidsAPI with the new endpoint
-      const response = await bidsAPI.getMyBids();
-      console.log("jai",response.data);
-      // const itemDetails=await itemsAPI.getById(itemsResponse.data.id);
-      // console.log(itemDetails);
-      for(let a=0;a<response.data.length;a++){
-        const itemDetails=await itemsAPI.getById(response.data[a].itemId);
-        // console.log("itemDetails",itemDetails);
-        response.data[a].title=itemDetails.data.title;
-        response.data[a].description=itemDetails.data.description;
-      }
-      // const itemDetails=await itemsAPI.getById(response.data[0].itemId);
-      // console.log("asdfasd",itemDetails)
-      console.log('Bids API response:', response);
-      console.log('Bids data received:', response.data);
-      
-      setMyBids(response.data);
-      console.log(response.data)
-
-    } catch (err) {
-      console.error('Error fetching user bids:', err);
-      
-      // Detailed error handling
-      if (err.response) {
-        console.error('Response status:', err.response.status);
-        console.error('Response data:', err.response.data);
-        
-        if (err.response.status === 401) {
-          setError('Please login again. Your session may have expired.');
-          localStorage.removeItem('token');
-          navigate('/login');
-        } else if (err.response.status === 404) {
-          setError('Bids endpoint not found. The API may have changed.');
-        } else {
-          setError(err.response.data?.message || `Server error: ${err.response.status}`);
+            setMyItems(itemsResponse.data);
+            console.log(itemsResponse.data);
+        } catch (err) {
+            console.error("Error fetching user data:", err);
+            setError("Failed to load profile data. Please try again.");
+        } finally {
+            setLoading(false);
         }
-      } else if (err.request) {
-        setError('Cannot connect to the server. Please check if the backend is running.');
-      } else {
-        setError(err.message || 'Failed to fetch your bids. Please try again.');
-      }
-    } finally {
-      setBidsLoading(false);
-    }
-  };
+    };
+    const fetchUserSoldItems = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error(
+                    "No authentication token found. Please login again."
+                );
+            }
 
+            const response = await profileAPI.getMySoldItems();
+            console.log("sold items", response.data);
+            setSoldItems(response.data);
+            // console.log(response.data);
+        } catch (err) {
+            console.error(err);
+            setError("Failed to load sold items. Please try again.");
+        }
+    };
 
-  const handleDeleteItem = async (itemId, itemTitle) => {
-    if (window.confirm(`Are you sure you want to delete "${itemTitle}"?`)) {
-      try {
-        await itemsAPI.delete(itemId);
-        setMyItems(myItems.filter(item => item.id !== itemId));
-        alert('Item deleted successfully!');
-      } catch (err) {
-        console.error('Error deleting item:', err);
-        alert('Failed to delete item. Please try again.');
-      }
-    }
-  };
+    const fetchUserBids = async () => {
+        try {
+            setBidsLoading(true);
+            setError("");
 
-  const handleEditItem = (item) => {
-    navigate(`/edit-item/${item.id}`, { 
-      state: { item }
-    });
-  };
+            console.log("Fetching user bids from /api/items/me/bids...");
 
-  const handleMarkAsSold = async (itemId, itemTitle) => {
-    if (window.confirm(`Mark "${itemTitle}" as sold?`)) {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          alert('Please login again. Your session may have expired.');
-          navigate('/login');
-          return;
+            const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error(
+                    "No authentication token found. Please login again."
+                );
+            }
+
+            // Use the updated bidsAPI with the new endpoint
+            const response = await bidsAPI.getMyBids();
+            console.log("jai", response.data);
+            // const itemDetails=await itemsAPI.getById(itemsResponse.data.id);
+            // console.log(itemDetails);
+            for (let a = 0; a < response.data.length; a++) {
+                const itemDetails = await itemsAPI.getById(
+                    response.data[a].itemId
+                );
+                // console.log("itemDetails",itemDetails);
+                response.data[a].title = itemDetails.data.title;
+                response.data[a].description = itemDetails.data.description;
+            }
+            // const itemDetails=await itemsAPI.getById(response.data[0].itemId);
+            // console.log("asdfasd",itemDetails)
+            console.log("Bids API response:", response);
+            console.log("Bids data received:", response.data);
+
+            setMyBids(response.data);
+            console.log(response.data);
+        } catch (err) {
+            console.error("Error fetching user bids:", err);
+
+            // Detailed error handling
+            if (err.response) {
+                console.error("Response status:", err.response.status);
+                console.error("Response data:", err.response.data);
+
+                if (err.response.status === 401) {
+                    setError(
+                        "Please login again. Your session may have expired."
+                    );
+                    localStorage.removeItem("token");
+                    navigate("/login");
+                } else if (err.response.status === 404) {
+                    setError(
+                        "Bids endpoint not found. The API may have changed."
+                    );
+                } else {
+                    setError(
+                        err.response.data?.message ||
+                            `Server error: ${err.response.status}`
+                    );
+                }
+            } else if (err.request) {
+                setError(
+                    "Cannot connect to the server. Please check if the backend is running."
+                );
+            } else {
+                setError(
+                    err.message ||
+                        "Failed to fetch your bids. Please try again."
+                );
+            }
+        } finally {
+            setBidsLoading(false);
+        }
+    };
+
+    const handleDeleteItem = async (itemId, itemTitle) => {
+        if (window.confirm(`Are you sure you want to delete "${itemTitle}"?`)) {
+            try {
+                await itemsAPI.delete(itemId);
+                setMyItems(myItems.filter((item) => item.id !== itemId));
+                alert("Item deleted successfully!");
+            } catch (err) {
+                console.error("Error deleting item:", err);
+                alert("Failed to delete item. Please try again.");
+            }
+        }
+    };
+
+    const handleEditItem = (item) => {
+        navigate(`/edit-item/${item.id}`, {
+            state: { item },
+        });
+    };
+
+    const handleMarkAsSold = async (itemId, itemTitle) => {
+        if (window.confirm(`Mark "${itemTitle}" as sold?`)) {
+            try {
+                const token = localStorage.getItem("token");
+                if (!token) {
+                    alert("Please login again. Your session may have expired.");
+                    navigate("/login");
+                    return;
+                }
+
+                const response = await itemsAPI.markAsSold(itemId);
+                console.log(response.data);
+                setMyItems(myItems.filter((item) => item.id !== itemId));
+                alert("Item marked as sold successfully!");
+            } catch (err) {
+                console.error("Error marking item as sold:", err);
+                if (err.response) {
+                    if (err.response.status === 401) {
+                        alert("Authentication failed. Please login again.");
+                        localStorage.removeItem("token");
+                        navigate("/login");
+                    } else {
+                        alert(
+                            `Failed to mark item as sold: ${
+                                err.response.data?.message ||
+                                "Please try again."
+                            }`
+                        );
+                    }
+                } else {
+                    alert(`Error: ${err.message}`);
+                }
+            }
+        }
+    };
+
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    };
+
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "INR",
+        }).format(amount);
+    };
+
+    // Render My Bids tab content
+    const renderMyBids = () => {
+        if (bidsLoading) {
+            return (
+                <div className="bids-loading">
+                    <div className="loading-spinner"></div>
+                    <p>Loading your bids...</p>
+                </div>
+            );
         }
 
-        const response = await itemsAPI.markAsSold(itemId);
-        console.log(response.data);
-        setMyItems(myItems.filter(item => item.id !== itemId));
-        alert('Item marked as sold successfully!');
-        
-      } catch (err) {
-        console.error('Error marking item as sold:', err);
-        if (err.response) {
-          if (err.response.status === 401) {
-            alert('Authentication failed. Please login again.');
-            localStorage.removeItem('token');
-            navigate('/login');
-          } else {
-            alert(`Failed to mark item as sold: ${err.response.data?.message || 'Please try again.'}`);
-          }
-        } else {
-          alert(`Error: ${err.message}`);
+        if (error && activeTab === "my-bids") {
+            return (
+                <div className="bids-error">
+                    <div className="error-icon">⚠️</div>
+                    <h3>Error Loading Bids</h3>
+                    <p>{error}</p>
+                    <button onClick={fetchUserBids} className="retry-btn">
+                        Try Again
+                    </button>
+                </div>
+            );
         }
-      }
-    }
-  };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'INR'
-    }).format(amount);
-  };
-
-  // Render My Bids tab content
-  const renderMyBids = () => {
-    if (bidsLoading) {
-      return (
-        <div className="bids-loading">
-          <div className="loading-spinner"></div>
-          <p>Loading your bids...</p>
-        </div>
-      );
-    }
-
-    if (error && activeTab === 'my-bids') {
-      return (
-        <div className="bids-error">
-          <div className="error-icon">⚠️</div>
-          <h3>Error Loading Bids</h3>
-          <p>{error}</p>
-          <button onClick={fetchUserBids} className="retry-btn">Try Again</button>
-        </div>
-      );
-    }
-
-    if (myBids.length === 0) {
-      return (
-        <div className="empty-state">
-          <div className="empty-icon">🏷️</div>
-          <h3>No Bids Yet</h3>
-          <p>You haven't placed any bids yet. Start bidding on items to see them here!</p>
-          <button 
-            onClick={() => navigate('/items')}
-            className="cta-button"
-          >
-            Browse Items
-          </button>
-        </div>
-      );
-    }
-
-    return (
-      <div className="my-bids-tab">
-        <div className="bids-header">
-          <h2>My Bids ({myBids.length})</h2>
-          <button onClick={fetchUserBids} className="refresh-btn">
-            🔄 Refresh
-          </button>
-        </div>
-
-        <div className="bids-grid">
-          {myBids.map(bid => (
-            <div key={bid.id || bid._id} className="bid-card">
-              {/* Item Image */}
-              {bid.itemImage || bid.imageUrl ? (
-                <div className="bid-item-image">
-                  <img src={bid.itemImage || bid.imageUrl} alt={bid.itemName || bid.itemTitle} />
+        if (myBids.length === 0) {
+            return (
+                <div className="empty-state">
+                    <div className="empty-icon">🏷️</div>
+                    <h3>No Bids Yet</h3>
+                    <p>
+                        You haven't placed any bids yet. Start bidding on items
+                        to see them here!
+                    </p>
+                    <button
+                        onClick={() => navigate("/items")}
+                        className="cta-button"
+                    >
+                        Browse Items
+                    </button>
                 </div>
-              ) : (
-                <div className="bid-item-image placeholder">
-                  <span></span>
-                </div>
-              )}
-              
-              <div className="bid-content">
-                {/* Item Info */}
-                <div className="bid-item-info">
-                  <h4 className="bid-item-title">{bid.itemName || bid.title || 'Unnamed Item'}</h4>
-                  <p className="bid-item-description">
-                    {bid.itemDescription || bid.description || 'No description available'}
-                  </p>
+            );
+        }
+
+        return (
+            <div className="my-bids-tab">
+                <div className="bids-header">
+                    <h2>My Bids ({myBids.length})</h2>
+                    <button onClick={fetchUserBids} className="refresh-btn">
+                        🔄 Refresh
+                    </button>
                 </div>
 
-                {/* Bid Details */}
-                <div className="bid-details">
-                  <div className="bid-amount">
-                    <span className="label">Your Bid:</span>
-                    <span className="value">{formatCurrency(bid.price || bid.amount)}</span>
-                  </div>
-                  
-                  <div className="bid-time">
-                    <span className="label">Placed:</span>
-                    <span className="value">{formatDate(bid.bidTime || bid.createdAt || bid.timestamp)}</span>
-                  </div>
-                  
-                  <div className={`bid-status ${(bid.status || 'active').toLowerCase()}`}>
-                    <span className="label">Status:</span>
-                    <span className="value">{bid.itemStatus || 'Active'}</span>
-                  </div>
+                <div className="bids-grid">
+                    {myBids.map((bid) => (
+                        <div key={bid.id || bid._id} className="bid-card">
+                            {/* Item Image */}
+                            {bid.itemImage || bid.imageUrl ? (
+                                <div className="bid-item-image">
+                                    <img
+                                        src={bid.itemImage || bid.imageUrl}
+                                        alt={bid.itemName || bid.itemTitle}
+                                    />
+                                </div>
+                            ) : (
+                                <div className="bid-item-image placeholder">
+                                    <span></span>
+                                </div>
+                            )}
 
-                  {/* Current highest bid if available */}
-                  {bid.currentHighestBid && (
-                    <div className="current-highest">
-                      <span className="label">Current Highest:</span>
-                      <span className="value">{formatCurrency(bid.currentHighestBid)}</span>
-                    </div>
-                  )}
+                            <div className="bid-content">
+                                {/* Item Info */}
+                                <div className="bid-item-info">
+                                    <h4 className="bid-item-title">
+                                        {bid.itemName ||
+                                            bid.title ||
+                                            "Unnamed Item"}
+                                    </h4>
+                                    <p className="bid-item-description">
+                                        {bid.itemDescription ||
+                                            bid.description ||
+                                            "No description available"}
+                                    </p>
+                                </div>
 
-                  {/* Item price if available */}
-                  {bid.itemPrice && (
-                    <div className="item-price">
-                      <span className="label">Item Price:</span>
-                      <span className="value">{formatCurrency(bid.itemPrice)}</span>
-                    </div>
-                  )}
+                                {/* Bid Details */}
+                                <div className="bid-details">
+                                    <div className="bid-amount">
+                                        <span className="label">Your Bid:</span>
+                                        <span className="value">
+                                            {formatCurrency(
+                                                bid.price || bid.amount
+                                            )}
+                                        </span>
+                                    </div>
 
-                  {/* Time remaining if available */}
-                  {bid.auctionEndTime && (
-                    <div className="time-remaining">
-                      <span className="label">Auction Ends:</span>
-                      <span className="value">{formatDate(bid.auctionEndTime)}</span>
-                    </div>
-                  )}
-                </div>
+                                    <div className="bid-time">
+                                        <span className="label">Placed:</span>
+                                        <span className="value">
+                                            {formatDate(
+                                                bid.bidTime ||
+                                                    bid.createdAt ||
+                                                    bid.timestamp
+                                            )}
+                                        </span>
+                                    </div>
 
-                {/* Bid Actions */}
-                <div className="bid-actions">
-                  
-                  
-                  {/* {(bid.status === 'active' || !bid.status) && (
+                                    <div
+                                        className={`bid-status ${(
+                                            bid.status || "active"
+                                        ).toLowerCase()}`}
+                                    >
+                                        <span className="label">Status:</span>
+                                        <span className="value">
+                                            {bid.itemStatus || "Active"}
+                                        </span>
+                                    </div>
+
+                                    {/* Current highest bid if available */}
+                                    {bid.currentHighestBid && (
+                                        <div className="current-highest">
+                                            <span className="label">
+                                                Current Highest:
+                                            </span>
+                                            <span className="value">
+                                                {formatCurrency(
+                                                    bid.currentHighestBid
+                                                )}
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    {/* Item price if available */}
+                                    {bid.itemPrice && (
+                                        <div className="item-price">
+                                            <span className="label">
+                                                Item Price:
+                                            </span>
+                                            <span className="value">
+                                                {formatCurrency(bid.itemPrice)}
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    {/* Time remaining if available */}
+                                    {bid.auctionEndTime && (
+                                        <div className="time-remaining">
+                                            <span className="label">
+                                                Auction Ends:
+                                            </span>
+                                            <span className="value">
+                                                {formatDate(bid.auctionEndTime)}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Bid Actions */}
+                                <div className="bid-actions">
+                                    {/* {(bid.status === 'active' || !bid.status) && (
                     <button 
                       onClick={() => handlePlaceNewBid(bid.itemId)}
                       className="action-btn bid-again-btn"
@@ -1338,143 +1385,153 @@ const fetchUserSoldItems=async()=>{
                     </button>
                   )} */}
 
-                  {bid.status === 'won' && (
-                    <button 
-                      onClick={() => handleContactSeller(bid)}
-                      className="action-btn contact-btn"
-                    >
-                      📞 Contact Seller
-                    </button>
-                  )}
+                                    {bid.status === "won" && (
+                                        <button
+                                            onClick={() =>
+                                                handleContactSeller(bid)
+                                            }
+                                            className="action-btn contact-btn"
+                                        >
+                                            📞 Contact Seller
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-              </div>
             </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-const renderSoldItems=()=>{
-    // if (bidsLoading) {
-    //   return (
-    //     <div className="bids-loading">
-    //       <div className="loading-spinner"></div>
-    //       <p>Loading your bids...</p>
-    //     </div>
-    //   );
-    // }
+        );
+    };
+    const renderSoldItems = () => {
+        // if (bidsLoading) {
+        //   return (
+        //     <div className="bids-loading">
+        //       <div className="loading-spinner"></div>
+        //       <p>Loading your bids...</p>
+        //     </div>
+        //   );
+        // }
 
-    // if (error && activeTab === 'sold-item') {
-    //   return (
-    //     <div className="bids-error">
-    //       <div className="error-icon">⚠️</div>
-    //       <h3>Error Loading Bids</h3>
-    //       <p>{error}</p>
-    //       <button onClick={fetchUserBids} className="retry-btn">Try Again</button>
-    //     </div>
-    //   );
-    // }
+        // if (error && activeTab === 'sold-item') {
+        //   return (
+        //     <div className="bids-error">
+        //       <div className="error-icon">⚠️</div>
+        //       <h3>Error Loading Bids</h3>
+        //       <p>{error}</p>
+        //       <button onClick={fetchUserBids} className="retry-btn">Try Again</button>
+        //     </div>
+        //   );
+        // }
 
-    if (soldItems.length === 0) {
-      return (
-        <div className="empty-state">
-          <div className="empty-icon">🏷️</div>
-          <h3>No sold Items Yet</h3>
-          {/* <p>You haven't placed any bids yet. Start bidding on items to see them here!</p> */}
-          {/* <button 
+        if (soldItems.length === 0) {
+            return (
+                <div className="empty-state">
+                    <div className="empty-icon">🏷️</div>
+                    <h3>No sold Items Yet</h3>
+                    {/* <p>You haven't placed any bids yet. Start bidding on items to see them here!</p> */}
+                    {/* <button 
             onClick={() => navigate('/items')}
             className="cta-button"
           >
             Browse Items
           </button> */}
-        </div>
-      );
-    }
-
-    return (
-      <div className="my-bids-tab">
-        <div className="bids-header">
-          <h2>Sold Items ({soldItems.length})</h2>
-          <button onClick={fetchUserBids} className="refresh-btn">
-            🔄 Refresh
-          </button>
-        </div>
-
-        <div className="bids-grid">
-          {soldItems.map(bid => (
-            <div key={bid.id || bid._id} className="bid-card">
-              {/* Item Image */}
-              {bid.itemImage || bid.imageUrl ? (
-                <div className="bid-item-image">
-                  <img src={bid.itemImage || bid.imageUrl} alt={bid.itemName || bid.itemTitle} />
                 </div>
-              ) : (
-                <div className="bid-item-image placeholder">
-                  <span></span>
-                </div>
-              )}
-              
-              <div className="bid-content">
-                {/* Item Info */}
-                <div className="bid-item-info">
-                  <h4 className="bid-item-title">{bid.itemName || bid.title || 'Unnamed Item'}</h4>
-                  {/* <p className="bid-item-description"> */}
-                    {/* {bid.itemDescription || bid.description || 'No description available'} */}
-                    <p>sold for: </p>{bid.finalPrice}
-                    <p>Original price: </p>{bid.price}
-                    {/* ################################################################################ */}
-                    <p>Sold to: </p>{bid?.soldTo?.email}
-                    {/* ####################################################################################### */}
-                  {/* </p> */}
+            );
+        }
+
+        return (
+            <div className="my-bids-tab">
+                <div className="bids-header">
+                    <h2>Sold Items ({soldItems.length})</h2>
+                    <button onClick={fetchUserBids} className="refresh-btn">
+                        🔄 Refresh
+                    </button>
                 </div>
 
-                {/* Bid Details */}
-                {/* <div className="bid-details"> */}
-                  {/* <div className="bid-amount">
+                <div className="bids-grid">
+                    {soldItems.map((bid) => (
+                        <div key={bid.id || bid._id} className="bid-card">
+                            {/* Item Image */}
+                            {bid.itemImage || bid.imageUrl ? (
+                                <div className="bid-item-image">
+                                    <img
+                                        src={bid.itemImage || bid.imageUrl}
+                                        alt={bid.itemName || bid.itemTitle}
+                                    />
+                                </div>
+                            ) : (
+                                <div className="bid-item-image placeholder">
+                                    <span></span>
+                                </div>
+                            )}
+
+                            <div className="bid-content">
+                                {/* Item Info */}
+                                <div className="bid-item-info">
+                                    <h4 className="bid-item-title">
+                                        {bid.itemName ||
+                                            bid.title ||
+                                            "Unnamed Item"}
+                                    </h4>
+                                    {/* <p className="bid-item-description"> */}
+                                    {/* {bid.itemDescription || bid.description || 'No description available'} */}
+                                    <p>sold for: </p>
+                                    {bid.finalPrice}
+                                    <p>Original price: </p>
+                                    {bid.price}
+                                    {/* ################################################################################ */}
+                                    <p>Sold to: </p>
+                                    {bid?.soldTo?.email}
+                                    {/* ####################################################################################### */}
+                                    {/* </p> */}
+                                </div>
+
+                                {/* Bid Details */}
+                                {/* <div className="bid-details"> */}
+                                {/* <div className="bid-amount">
                     <span className="label">Your Bid:</span>
                     <span className="value">{formatCurrency(bid.price || bid.amount)}</span>
                   </div> */}
-                  
-                  {/* <div className="bid-time">
+
+                                {/* <div className="bid-time">
                     <span className="label">Placed:</span>
                     <span className="value">{formatDate(bid.bidTime || bid.createdAt || bid.timestamp)}</span>
                   </div> */}
-                  
-                  {/* <div className={`bid-status ${(bid.status || 'active').toLowerCase()}`}>
+
+                                {/* <div className={`bid-status ${(bid.status || 'active').toLowerCase()}`}>
                     <span className="label">Status:</span>
                     <span className="value">{bid.status || 'Active'}</span>
                   </div> */}
 
-                  {/* Current highest bid if available */}
-                  {/* {bid.currentHighestBid && (
+                                {/* Current highest bid if available */}
+                                {/* {bid.currentHighestBid && (
                     <div className="current-highest">
                       <span className="label">Current Highest:</span>
                       <span className="value">{formatCurrency(bid.currentHighestBid)}</span>
                     </div>
                   )} */}
 
-                  {/* Item price if available */}
-                  {/* {bid.itemPrice && (
+                                {/* Item price if available */}
+                                {/* {bid.itemPrice && (
                     <div className="item-price">
                       <span className="label">Item Price:</span>
                       <span className="value">{formatCurrency(bid.itemPrice)}</span>
                     </div>
                   )} */}
 
-                  {/* Time remaining if available */}
-                  {/* {bid.auctionEndTime && (
+                                {/* Time remaining if available */}
+                                {/* {bid.auctionEndTime && (
                     <div className="time-remaining">
                       <span className="label">Auction Ends:</span>
                       <span className="value">{formatDate(bid.auctionEndTime)}</span>
                     </div>
                   )} */}
-                {/* </div> */}
+                                {/* </div> */}
 
-                {/* Bid Actions */}
-                <div className="bid-actions">
-                  
-                  
-                  {/* {(bid.status === 'active' || !bid.status) && (
+                                {/* Bid Actions */}
+                                <div className="bid-actions">
+                                    {/* {(bid.status === 'active' || !bid.status) && (
                     <button 
                       onClick={() => handlePlaceNewBid(bid.itemId)}
                       className="action-btn bid-again-btn"
@@ -1483,90 +1540,105 @@ const renderSoldItems=()=>{
                     </button>
                   )} */}
 
-                  {bid.status === 'won' && (
-                    <button 
-                      onClick={() => handleContactSeller(bid)}
-                      className="action-btn contact-btn"
-                    >
-                      📞 Contact Seller
-                    </button>
-                  )}
+                                    {bid.status === "won" && (
+                                        <button
+                                            onClick={() =>
+                                                handleContactSeller(bid)
+                                            }
+                                            className="action-btn contact-btn"
+                                        >
+                                            📞 Contact Seller
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-              </div>
             </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-  // const handlePlaceNewBid = (itemId) => {
-  //   navigate(`/item/${itemId}`, { state: { focusBid: true } });
-  // };
+        );
+    };
+    // const handlePlaceNewBid = (itemId) => {
+    //   navigate(`/item/${itemId}`, { state: { focusBid: true } });
+    // };
 
-  const handleContactSeller = (bid) => {
-    // Implement contact seller functionality
-    alert(`Contact seller for ${bid.itemName || 'this item'} to complete the purchase.`);
-  };
+    const handleContactSeller = (bid) => {
+        // Implement contact seller functionality
+        alert(
+            `Contact seller for ${
+                bid.itemName || "this item"
+            } to complete the purchase.`
+        );
+    };
 
-  if (loading && activeTab === 'items') {
+    if (loading && activeTab === "items") {
+        return (
+            <div className="profile-loading">
+                <div className="loading-spinner"></div>
+                <p>Loading your profile...</p>
+            </div>
+        );
+    }
+
+    if (error && activeTab === "items") {
+        return (
+            <div className="profile-error">
+                <div className="error-icon">⚠️</div>
+                <h3>Error Loading Profile</h3>
+                <p>{error}</p>
+                <button onClick={fetchUserData} className="retry-btn">
+                    Try Again
+                </button>
+            </div>
+        );
+    }
+
     return (
-      <div className="profile-loading">
-        <div className="loading-spinner"></div>
-        <p>Loading your profile...</p>
-      </div>
-    );
-  }
-
-  if (error && activeTab === 'items') {
-    return (
-      <div className="profile-error">
-        <div className="error-icon">⚠️</div>
-        <h3>Error Loading Profile</h3>
-        <p>{error}</p>
-        <button onClick={fetchUserData} className="retry-btn">Try Again</button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="user-profile">
-      {/* Profile Header */}
-      <div className="profile-header">
-        <div className="profile-avatar">
-          <div className="avatar-placeholder">
-            {user?.name?.charAt(0)?.toUpperCase() || 'U'}
-          </div>
-        </div>
-        <div className="profile-info">
-          <h1 className="profile-name">
-            {/* {user?.name || 'User Profile'} */}<p>Hi</p>
-          </h1>
-          <p className="profile-email">{user?.email}</p>
-          <div className="profile-stats">
-            <div className="stat">
-              <span className="stat-number">{myItems.length}</span>
-              <span className="stat-label">Items Posted</span>
+        <div className="user-profile">
+            {/* Profile Header */}
+            <div className="profile-header">
+                <div className="profile-avatar">
+                    <div className="avatar-placeholder">
+                        {user?.name?.charAt(0)?.toUpperCase() || "U"}
+                    </div>
+                </div>
+                <div className="profile-info">
+                    <h1 className="profile-name">
+                        {/* {user?.name || 'User Profile'} */}
+                        <p>Hi</p>
+                    </h1>
+                    <p className="profile-email">{user?.email}</p>
+                    <div className="profile-stats">
+                        <div className="stat">
+                            <span className="stat-number">
+                                {myItems.length}
+                            </span>
+                            <span className="stat-label">Items Posted</span>
+                        </div>
+                        <div className="stat">
+                            <span className="stat-number">
+                                {activeTab === "my-bids"
+                                    ? myBids.length
+                                    : "..."}
+                            </span>
+                            <span className="stat-label">My Bids</span>
+                        </div>
+                        <div className="stat">
+                            <span className="stat-number">
+                                {activeTab === "sold-item"
+                                    ? soldItems.length
+                                    : "..."}
+                            </span>
+                            <span className="stat-label">Items Sold</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className="stat">
-              <span className="stat-number">
-                {activeTab === 'my-bids' ? myBids.length : '...'}
-              </span>
-              <span className="stat-label">My Bids</span>
-            </div>
-            <div className="stat">
-              <span className="stat-number">
-                {activeTab === 'sold-item' ? soldItems.length:'...'}
-              </span>
-              <span className="stat-label">Items Sold</span>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Tab Navigation */}
-      <div className="profile-tabs-navigation">
-        <button
-          className={`
+            {/* Tab Navigation */}
+            <div className="profile-tabs-navigation">
+                <button
+                    className={`
           m-2
     px-4 py-2
     bg-gray-200
@@ -1577,14 +1649,14 @@ const renderSoldItems=()=>{
     transition-colors duration-200 ease-in-out
     hover:bg-gray-300 hover:border-gray-500
     focus:outline-none focus:ring-2 focus:ring-gray-400
-    ${activeTab === 'items' ? 'bg-gray-800 text-white border-gray-900' : ''}
+    ${activeTab === "items" ? "bg-gray-800 text-white border-gray-900" : ""}
   `}
-          onClick={() => setActiveTab('items')}
-        >
-          My Items ({myItems.length})
-        </button>
-        <button
-          className={`
+                    onClick={() => setActiveTab("items")}
+                >
+                    My Items ({myItems.length})
+                </button>
+                <button
+                    className={`
           m-2
     px-4 py-2
     bg-gray-200
@@ -1595,14 +1667,14 @@ const renderSoldItems=()=>{
     transition-colors duration-200 ease-in-out
     hover:bg-gray-300 hover:border-gray-500
     focus:outline-none focus:ring-2 focus:ring-gray-400
-    ${activeTab === 'bids' ? 'bg-gray-800 text-white border-gray-900' : ''}
+    ${activeTab === "bids" ? "bg-gray-800 text-white border-gray-900" : ""}
   `}
-          onClick={() => setActiveTab('bids')}
-        >
-           Manage Bids
-        </button>
-        <button
-          className={`
+                    onClick={() => setActiveTab("bids")}
+                >
+                    Manage Bids
+                </button>
+                <button
+                    className={`
           m-2
     px-4 py-2
     bg-gray-200
@@ -1613,21 +1685,21 @@ const renderSoldItems=()=>{
     transition-colors duration-200 ease-in-out
     hover:bg-gray-300 hover:border-gray-500
     focus:outline-none focus:ring-2 focus:ring-gray-400
-    ${activeTab === 'my-bids' ? 'bg-gray-800 text-white border-gray-900' : ''}
+    ${activeTab === "my-bids" ? "bg-gray-800 text-white border-gray-900" : ""}
   `}
-          onClick={() => setActiveTab('my-bids')}
-        >
-           My Bids ({activeTab === 'my-bids' ? myBids.length : '...'})
-        </button>
-        {/* <button 
+                    onClick={() => setActiveTab("my-bids")}
+                >
+                    My Bids ({activeTab === "my-bids" ? myBids.length : "..."})
+                </button>
+                {/* <button 
           className={`tab-nav ${activeTab === 'sold-item' ? 'active' : ''}`}
           onClick={() => setActiveTab('sold-item')}
         >
           🏷️ Sold Items ({activeTab === 'sold-item' ? soldItems.length : '...'})
         </button> */}
 
-        <button
-  className={`
+                <button
+                    className={`
   m-2
     px-4 py-2
     bg-gray-200
@@ -1638,98 +1710,166 @@ const renderSoldItems=()=>{
     transition-colors duration-200 ease-in-out
     hover:bg-gray-300 hover:border-gray-500
     focus:outline-none focus:ring-2 focus:ring-gray-400
-    ${activeTab === 'sold-item' ? 'bg-gray-800 text-white border-gray-900' : ''}
+    ${activeTab === "sold-item" ? "bg-gray-800 text-white border-gray-900" : ""}
   `}
-  onClick={() => setActiveTab('sold-item')}
->
-   Sold Items ({activeTab === 'sold-item' ? soldItems.length : '...'})
-</button>
-     </div>
-
-      {/* Tab Content */}
-      <div className="profile-tab-content p-4 bg-gray-100 rounded-lg">
-  {activeTab === 'items' && (
-    <div className="items-tab">
-      {myItems.length === 0 ? (
-        // Professional Empty State (Light Grey Theme)
-        <div className="text-center py-16 px-6 bg-white rounded-lg shadow-sm">
-          <div className="mx-auto w-16 h-16 text-gray-400">
-            {/* SVG Icon for "Package" */}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-16 h-16">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
-            </svg>
-          </div>
-          <h3 className="mt-4 text-xl font-semibold text-gray-900">No Items Posted Yet</h3>
-          <p className="mt-2 text-gray-600">Start selling by posting your first item!</p>
-          <button 
-            onClick={() => navigate('/create-item')}
-            className="mt-6 inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
-          >
-            Create Your First Item
-          </button>
-        </div>
-      ) : (
-        // Responsive Grid for Item Cards (Light Grey Theme)
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {myItems.map(item => (
-            // Professional Item Card (Light Grey Theme)
-            <div key={item.id} className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col">
-              {item.imageUrl && (
-                <a href="#"> {/* You can link to an item details page here */}
-                  <img className="rounded-t-lg w-full h-48 object-cover" src={item.imageUrl} alt={item.title} />
-                </a>
-              )}
-              <div className="p-5 flex-grow flex flex-col">
-                <div className="flex-grow">
-                    <a href="#">
-                        <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900">{item.title}</h5>
-                    </a>
-                    <p className="mb-3 font-normal text-gray-700 line-clamp-3">
-                        {item.description}
-                    </p>
-                </div>
-                
-                <div className="flex justify-between items-center mt-4">
-                  <span className="text-2xl font-bold text-gray-900">₹{parseFloat(item.price).toFixed(2)}</span>
-                  <span className="text-xs text-gray-500">
-                    Listed: {formatDate(item.createdAt)}
-                  </span>
-                </div>
-                
-                <div className="border-t border-gray-200 mt-4 pt-4 flex justify-end space-x-2">
-                  <button 
-                    onClick={() => handleEditItem(item)}
-                    className="inline-flex items-center px-3 py-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-200"
-                  >
-                    Edit
-                  </button>
-                  <button 
-                    onClick={() => handleDeleteItem(item.id, item.title)}
-                    className="inline-flex items-center px-3 py-2 text-xs font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300"
-                  >
-                    Delete
-                  </button>
-                   <button 
-                    onClick={() => handleMarkAsSold(item.id, item.title)}
-                    className="inline-flex items-center px-3 py-2 text-xs font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300"
-                  >
-                    Mark Sold
-                  </button>
-                </div>
-              </div>
+                    onClick={() => setActiveTab("sold-item")}
+                >
+                    Sold Items (
+                    {activeTab === "sold-item" ? soldItems.length : "..."})
+                </button>
+                <button
+                    className={`
+  m-2
+    px-4 py-2
+    bg-gray-200
+    blue
+    border border-gray-400
+    rounded-lg
+    font-semibold
+    transition-colors duration-200 ease-in-out
+    hover:bg-gray-300 hover:border-gray-500
+    focus:outline-none focus:ring-2 focus:ring-gray-400
+    ${
+        activeTab === "preferences"
+            ? "bg-gray-800 text-white border-gray-900"
+            : ""
+    }
+  `}
+                    onClick={() => setActiveTab("preferences")}
+                >
+                    Email Preferences
+                </button>
             </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )}
 
-  {activeTab === 'bids' && <BidsManager />}
-  {activeTab === 'my-bids' && renderMyBids()}
-  {activeTab === 'sold-item' && renderSoldItems()}
-</div>
-    </div>
-  );
+            {/* Tab Content */}
+            <div className="profile-tab-content p-4 bg-gray-100 rounded-lg">
+                {activeTab === "items" && (
+                    <div className="items-tab">
+                        {myItems.length === 0 ? (
+                            // Professional Empty State (Light Grey Theme)
+                            <div className="text-center py-16 px-6 bg-white rounded-lg shadow-sm">
+                                <div className="mx-auto w-16 h-16 text-gray-400">
+                                    {/* SVG Icon for "Package" */}
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth={1.5}
+                                        stroke="currentColor"
+                                        className="w-16 h-16"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9"
+                                        />
+                                    </svg>
+                                </div>
+                                <h3 className="mt-4 text-xl font-semibold text-gray-900">
+                                    No Items Posted Yet
+                                </h3>
+                                <p className="mt-2 text-gray-600">
+                                    Start selling by posting your first item!
+                                </p>
+                                <button
+                                    onClick={() => navigate("/create-item")}
+                                    className="mt-6 inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
+                                >
+                                    Create Your First Item
+                                </button>
+                            </div>
+                        ) : (
+                            // Responsive Grid for Item Cards (Light Grey Theme)
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                {myItems.map((item) => (
+                                    // Professional Item Card (Light Grey Theme)
+                                    <div
+                                        key={item.id}
+                                        className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col"
+                                    >
+                                        {item.imageUrl && (
+                                            <a href="#">
+                                                {" "}
+                                                {/* You can link to an item details page here */}
+                                                <img
+                                                    className="rounded-t-lg w-full h-48 object-cover"
+                                                    src={item.imageUrl}
+                                                    alt={item.title}
+                                                />
+                                            </a>
+                                        )}
+                                        <div className="p-5 flex-grow flex flex-col">
+                                            <div className="flex-grow">
+                                                <a href="#">
+                                                    <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900">
+                                                        {item.title}
+                                                    </h5>
+                                                </a>
+                                                <p className="mb-3 font-normal text-gray-700 line-clamp-3">
+                                                    {item.description}
+                                                </p>
+                                            </div>
+
+                                            <div className="flex justify-between items-center mt-4">
+                                                <span className="text-2xl font-bold text-gray-900">
+                                                    ₹
+                                                    {parseFloat(
+                                                        item.price
+                                                    ).toFixed(2)}
+                                                </span>
+                                                <span className="text-xs text-gray-500">
+                                                    Listed:{" "}
+                                                    {formatDate(item.createdAt)}
+                                                </span>
+                                            </div>
+
+                                            <div className="border-t border-gray-200 mt-4 pt-4 flex justify-end space-x-2">
+                                                <button
+                                                    onClick={() =>
+                                                        handleEditItem(item)
+                                                    }
+                                                    className="inline-flex items-center px-3 py-2 text-xs font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-200"
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        handleDeleteItem(
+                                                            item.id,
+                                                            item.title
+                                                        )
+                                                    }
+                                                    className="inline-flex items-center px-3 py-2 text-xs font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300"
+                                                >
+                                                    Delete
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        handleMarkAsSold(
+                                                            item.id,
+                                                            item.title
+                                                        )
+                                                    }
+                                                    className="inline-flex items-center px-3 py-2 text-xs font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300"
+                                                >
+                                                    Mark Sold
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {activeTab === "bids" && <BidsManager />}
+                {activeTab === "my-bids" && renderMyBids()}
+                {activeTab === "sold-item" && renderSoldItems()}
+                {activeTab === "preferences" && <EmailPreferences />}
+            </div>
+        </div>
+    );
 };
 
 export default UserProfile;

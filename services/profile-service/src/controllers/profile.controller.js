@@ -192,3 +192,40 @@ exports.getActiveBids = async (req, res) => {
         res.status(500).json({ message: "Could not fetch active bids." });
     }
 };
+
+exports.getPurchasedItems = async (req, res) => {
+    try {
+        const buyerId = req.user.userId;
+        const bidsResponse = await axios.get(
+            `${process.env.BIDDING_SERVICE_URL}/api/bids?bidderId=${buyerId}`,
+            { headers: { Authorization: req.headers["authorization"] } }
+        );
+        const userBids = bidsResponse.data;
+
+        const purchasedItems = [];
+        for (const bid of userBids) {
+            try {
+                const itemResponse = await axios.get(
+                    `${process.env.ITEMS_SERVICE_URL}/api/items/${bid.itemId}`
+                );
+                if (itemResponse.data.status === "sold") {
+                    purchasedItems.push({
+                        ...itemResponse.data,
+                        purchasePrice: bid.amount,
+                        purchasedAt: bid.createdAt,
+                    });
+                }
+            } catch (itemError) {
+                console.log(
+                    `Could not fetch item ${bid.itemId}:`,
+                    itemError.message
+                );
+            }
+        }
+
+        res.json(purchasedItems);
+    } catch (error) {
+        console.error("Error fetching purchased items:", error.message);
+        res.status(500).json({ message: "Could not fetch purchased items." });
+    }
+};

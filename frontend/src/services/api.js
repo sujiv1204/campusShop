@@ -50,7 +50,7 @@
 //   acceptBid: (bidId) => api.patch(`/bids/${bidId}/accept`),
 //   rejectBid: (bidId) => api.patch(`/bids/${bidId}/reject`),
 //   getReceivedBids: () => api.get('/bids/received'),
-  
+
 // };
 
 // // User API - Add this section
@@ -70,7 +70,7 @@
 //     if (!token) {
 //       return Promise.reject(new Error('No token found'));
 //     }
-    
+
 //     // Try to decode the token to get user info (if it's a JWT)
 //     try {
 //       const payload = JSON.parse(atob(token.split('.')[1]));
@@ -97,9 +97,6 @@
 
 // export default api;
 
-
-
-
 // import axios from 'axios';
 
 // const API_BASE = '/api';
@@ -120,7 +117,7 @@
 // const getUserIdFromToken = () => {
 //   const token = localStorage.getItem('token');
 //   if (!token) return null;
-  
+
 //   try {
 //     const payload = JSON.parse(atob(token.split('.')[1]));
 //     return payload.userId;
@@ -158,7 +155,7 @@
 // export const bidsAPI = {
 //   placeBid: (bidData) => api.post('/bids/', bidData),
 //   getBidsByItem: (itemId) => api.get(`/bids/item/${itemId}`),
-  
+
 //   // CORRECTED: Get user's bids with bidderId parameter
 //   getMyBids: () => {
 //     const bidderId = getUserIdFromToken();
@@ -168,10 +165,10 @@
 //     console.log('##########', bidderId);
 //     return api.get(`/bids?bidderId=${bidderId}`);
 //   },
-  
+
 //   // Alternative method if you want to keep the backend route structure
 //   getMyBidsAlt: () => api.get('/bids/my-bids'), // This would require backend route change
-  
+
 //   acceptBid: (bidId) => api.patch(`/bids/${bidId}/accept`),
 //   rejectBid: (bidId) => api.patch(`/bids/${bidId}/reject`),
 //   getReceivedBids: () => api.get('/bids/received'),
@@ -189,7 +186,7 @@
 //     if (!token) {
 //       return Promise.reject(new Error('No token found'));
 //     }
-    
+
 //     try {
 //       const payload = JSON.parse(atob(token.split('.')[1]));
 //       return Promise.resolve({
@@ -214,71 +211,89 @@
 
 // export default api;
 
+import axios from "axios";
 
-
-import axios from 'axios';
-
-const API_BASE = '/api';
+const API_BASE = "/api";
 
 const api = axios.create({
-  baseURL: API_BASE,
+    baseURL: API_BASE,
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
+    const token = localStorage.getItem("token");
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
 });
 
 // Items API
 export const profileAPI = {
-  getProfile: () => api.get('/profiles/me'),
-  updateProfile: (profileData) => api.put('/profiles/me', profileData),
-  getMyBids: () => api.get('/profiles/me/bids'), 
-  getMyPosted:()=>api.get('/profiles/me/items/posted'), // New endpoint to get items posted by the user
-  getBidderProfile:(id)=>api.get(`auth/user/${id}`), 
-  getMySoldItems:()=>api.get('/profiles/me/items/sold') // New endpoint to get sold items by the user
+    getProfile: () => api.get("/profiles/me"),
+    updateProfile: (profileData) => api.put("/profiles/me", profileData),
+    getMyBids: () => api.get("/profiles/me/bids"),
+    getMyPosted: () => api.get("/profiles/me/items/posted"),
+    getBidderProfile: (id) => api.get(`auth/user/${id}`),
+    getMySoldItems: () => api.get("/profiles/me/items/sold"),
+    getMyPurchasedItems: () => api.get("/profiles/me/items/purchased"),
 };
 export const itemsAPI = {
-  getAll: () => api.get('/items/'),
-  getById: (id) => api.get(`/items/${id}`),
-  create: (itemData) => api.post('/items/', itemData),
-  update: (id, itemData) => api.put(`/items/${id}`, itemData),
-  delete: (id) => api.delete(`/items/${id}`),
-  uploadImage: (id, imageFile) => {
-    const formData = new FormData();
-    formData.append('itemImage', imageFile);
-    return api.post(`/items/${id}/image`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-  },
-  markAsSold: (id) => {
-    return api.post(`/items/${id}/sell`, {}, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-  },
-  getMyItems: () => api.get('/items/my-items'),
-  
-  // NEW: Get bids for items I've made (as a seller)
-  getMyItemBids: () => api.get('/items/me/bids'),
+    getAll: () => api.get("/items/"),
+    getById: (id) => api.get(`/items/${id}`),
+    create: (itemData) => api.post("/items/", itemData),
+    update: (id, itemData) => api.put(`/items/${id}`, itemData),
+    delete: (id) => api.delete(`/items/${id}`),
+    uploadImage: (id, imageFile) => {
+        const formData = new FormData();
+        formData.append("itemImage", imageFile);
+        return api.post(`/items/${id}/image`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+    },
+    markAsSold: (id) => {
+        return api.post(
+            `/items/${id}/sell`,
+            {},
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+    },
+    getMyItems: () => api.get("/items/my-items"),
 
+    // NEW: Get bids for items I've made (as a seller)
+    getMyItemBids: () => api.get("/items/me/bids"),
 };
 
 // Bids API
 export const bidsAPI = {
-  placeBid: (bidData) => api.post('/bids/', bidData),
-  getBidsByItem: (itemId) => api.get(`/bids/item/${itemId}`),
-  
-  // UPDATED: Use the new endpoint
-  getMyBids: () => api.get('/profiles/me/bids'), // This is the correct endpoint now
-  
-  acceptBid: (bidId) => api.patch(`/bids/${bidId}/accept`),
-  rejectBid: (bidId) => api.patch(`/bids/${bidId}/reject`),
-  getReceivedBids: () => api.get('/bids/received'),
+    placeBid: (bidData) => api.post("/bids/", bidData),
+    getBidsByItem: (itemId) => api.get(`/bids/item/${itemId}`),
+
+    // UPDATED: Use the new endpoint
+    getMyBids: () => api.get("/profiles/me/bids"), // This is the correct endpoint now
+
+    acceptBid: (bidId) => api.patch(`/bids/${bidId}/accept`),
+    rejectBid: (bidId) => api.patch(`/bids/${bidId}/reject`),
+    getReceivedBids: () => api.get("/bids/received"),
+};
+
+// Notifications API
+export const notificationsAPI = {
+    getAll: (params) => api.get("/notifications", { params }),
+    getUnreadCount: () => api.get("/notifications/unread-count"),
+    markAsRead: (id) => api.patch(`/notifications/${id}/read`),
+    markAllAsRead: () => api.patch("/notifications/mark-all-read"),
+    delete: (id) => api.delete(`/notifications/${id}`),
+    getStats: () => api.get("/notifications/stats"),
+};
+
+// Email Preferences API
+export const preferencesAPI = {
+    get: () => api.get("/profiles/preferences"),
+    update: (preferences) => api.patch("/profiles/preferences", preferences),
 };
 
 export default api;
