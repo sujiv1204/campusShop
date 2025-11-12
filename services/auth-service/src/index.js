@@ -7,6 +7,7 @@ const { register, metricsMiddleware } = require("./middleware/metrics");
 const app = express();
 app.use(express.json());
 app.use(metricsMiddleware);
+app.set('trust proxy', 1); // Trust first proxy for rate limiting with K8s
 
 app.get("/api/auth/health", (req, res) => res.send("Auth service is healthy!"));
 app.get("/metrics", async (req, res) => {
