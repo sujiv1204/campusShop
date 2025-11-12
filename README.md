@@ -1,6 +1,54 @@
-# campusShop
+# Campus Shop - Microservices Marketplace
 
-A microservices-based web platform that empowers students to buy and sell used items within their campus community.
+A scalable e-commerce platform built with microservices architecture on Kubernetes.
+
+## Quick Start
+
+```bash
+# Install and setup cluster
+See INSTALLATION.md
+
+# Run system tests
+cd scripts
+./test-system.sh --quick          # Quick test (5/10/5)
+./test-system.sh --small          # Small test (50/100/50)
+./test-system.sh --medium         # Medium test (200/500/200)
+./test-system.sh --large          # Large test (500/2000/1000)
+
+# Test specific components
+./test-system.sh --auth           # Test auth service only
+./test-system.sh --items          # Test items service only
+./test-system.sh --bidding        # Test bidding service only
+./test-system.sh --db             # Test databases and replicas
+./test-system.sh --kafka          # Test Kafka
+
+# Custom log file
+./test-system.sh --large --log my-test.log
+
+# Check databases
+See DATABASE_GUIDE.md
+```
+
+## System Tests
+
+The `test-system.sh` script tests:
+
+-   All 5 microservices (auth, items, bidding, notifications, profile)
+-   PostgreSQL read/write replicas
+-   Kafka event pipeline
+-   MongoDB notifications
+-   HPA autoscaling
+-   Complete data flow
+
+Results are logged to `test-results.log` (appended, not overwritten).
+
+## Documentation
+
+-   `README.md` - This file (project overview)
+-   `TESTING.md` - Complete testing guide
+-   `DATABASE_GUIDE.md` - Database inspection commands
+-   `INSTALLATION.md` - Kubernetes setup guide
+-   `ROADMAP.md` - Development phases
 
 ---
 
@@ -29,7 +77,6 @@ A microservices-based web platform that empowers students to buy and sell used i
 
 -   [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
 -   [Node.js](https://nodejs.org/) (v18 or higher) and [npm](https://www.npmjs.com/) (for frontend development)
-
 
 ---
 

@@ -33,13 +33,16 @@
 -   [x] Add email preferences settings page (Toggle switches for 3 preference types)
 -   [x] Integrate frontend with notification & preferences APIs
 -   [x] Fix email preferences enforcement in notification consumer
+-   [x] Add purchased items API endpoint to profile service
+-   [x] Install react-hot-toast for UI notifications
+-   [x] Create example file for toast integration (main_with_toast.jsx.example)
 
-### 🚧 Pending (Identified in Deep Scan)
+### 🚧 Remaining (Required for Phase 3 Completion)
 
--   [ ] **Add Purchased Items Tab** - Backend API exists (`/api/profiles/me/items/purchased`), but no UI displays purchased items in UserProfile
--   [ ] **Add Search & Filter to BuyItems Page** - Currently only LandingPage has search/sort. BuyItems needs search by title/description and price/date filters
--   [ ] **Complete Profile Management UI** - UserProfile page missing: edit profile info (name, phone), upload avatar, better mobile layout
--   [ ] UI polish (loading states, error boundaries, toast notifications)
+-   [ ] **Add Purchased Items Tab to UserProfile** - Backend API ready (`/api/profiles/me/items/purchased`), need UI implementation
+-   [ ] **Add Search & Filter to BuyItems Page** - Template exists in LandingPage, needs replication to main browsing page
+-   [ ] **Complete Profile Management UI** - Add profile editing form (displayName, phoneNumber, avatar upload)
+-   [ ] UI polish (loading states, error boundaries, toast notifications integration)
 -   [ ] Mobile responsiveness improvements across all pages
 
 ## Phase 4: Monitoring & Observability (Day 2) ✅

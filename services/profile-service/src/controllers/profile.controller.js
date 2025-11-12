@@ -13,6 +13,42 @@ exports.getProfile = async (req, res) => {
     }
 };
 
+exports.getMyProfile = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+
+        // Get profile from database
+        let profile = await Profile.findByPk(userId);
+
+        // If profile doesn't exist, get user info from auth service
+        if (!profile) {
+            try {
+                const userResponse = await axios.get(
+                    `${process.env.AUTH_SERVICE_URL}/api/auth/user/${userId}`
+                );
+                // Return basic info even if no profile exists
+                return res.status(200).json({
+                    userId: userId,
+                    email: userResponse.data.email,
+                    displayName: null,
+                    phoneNumber: null,
+                    profileExists: false,
+                });
+            } catch (authError) {
+                return res.status(404).json({ message: "User not found." });
+            }
+        }
+
+        res.status(200).json({
+            ...profile.toJSON(),
+            profileExists: true,
+        });
+    } catch (error) {
+        console.error("Error fetching my profile:", error);
+        res.status(500).json({ message: "Server error." });
+    }
+};
+
 exports.upsertProfile = async (req, res) => {
     const userId = req.user.userId;
     const { displayName, phoneNumber } = req.body;

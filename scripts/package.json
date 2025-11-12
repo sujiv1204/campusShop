@@ -1,0 +1,15 @@
+{
+    "name": "campus-shop-seed",
+    "version": "1.0.0",
+    "description": "Data seeding scripts for Campus Shop",
+    "scripts": {
+        "seed": "node seed-data.js 10 50 100",
+        "seed:small": "node seed-data.js 50 100 200",
+        "seed:medium": "node seed-data.js 200 500 500",
+        "seed:full": "node seed-data.js 500 2000 5000"
+    },
+    "dependencies": {
+        "axios": "^1.6.2",
+        "@faker-js/faker": "^8.3.1"
+    }
+}

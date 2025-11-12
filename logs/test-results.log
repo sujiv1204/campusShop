@@ -1,0 +1,1068 @@
+2025-11-12 23:54:11 | 
+==========================================
+2025-11-12 23:54:11 | Campus Shop System Test - Wednesday 12 November 2025 11:54:11 PM IST
+2025-11-12 23:54:11 | ==========================================
+2025-11-12 23:54:11 | Test Size: small
+2025-11-12 23:54:11 | Parameters: 50 users, 100 items, 50 bids
+2025-11-12 23:54:11 | Log File: logs/test-results.log
+2025-11-12 23:54:11 | 
+==========================================
+2025-11-12 23:54:11 | Checking Prerequisites
+2025-11-12 23:54:11 | ==========================================
+2025-11-12 23:54:11 | [0;32mAll prerequisites met[0m
+2025-11-12 23:54:11 | 
+==========================================
+2025-11-12 23:54:11 | Checking Services Health
+2025-11-12 23:54:11 | ==========================================
+2025-11-12 23:54:11 |   [0;32m✓[0m Auth Service: Healthy
+2025-11-12 23:54:11 |   [0;32m✓[0m Items Service: Healthy
+2025-11-12 23:54:11 |   [0;32m✓[0m Bidding Service: Healthy
+2025-11-12 23:54:11 |   [0;32m✓[0m Profile Service: Healthy
+2025-11-12 23:54:11 |   [0;32m✓[0m Notifications Service: Healthy
+2025-11-12 23:54:11 | [0;32mAll services are healthy[0m
+2025-11-12 23:54:11 | 
+==========================================
+2025-11-12 23:54:11 | System Overview
+2025-11-12 23:54:11 | ==========================================
+2025-11-12 23:54:11 | Pods:
+NAME                                     READY   STATUS    RESTARTS        AGE
+auth-service-8bcf45f78-zkwcm             1/1     Running   5 (4h4m ago)    14h
+bidding-service-6c65b5474f-tzg4j         1/1     Running   4 (4h5m ago)    42h
+curl-test                                0/1     Error     0               43h
+items-service-9476658b7-7t4tp            1/1     Running   3 (4h5m ago)    30h
+kafka-5b6d6b77b-prhz9                    1/1     Running   15 (4h4m ago)   2d22h
+minio-7df8c7cf5d-xkfdx                   1/1     Running   8 (4h5m ago)    2d23h
+mongodb-64c8bc95c7-bxn28                 1/1     Running   7 (3h21m ago)   47h
+notifications-service-84579b49ff-s5jlw   1/1     Running   0               3h32m
+postgres-auth-0                          1/1     Running   6 (4h5m ago)    44h
+postgres-auth-1                          1/1     Running   6 (4h5m ago)    44h
+postgres-bids-0                          1/1     Running   6 (4h5m ago)    44h
+postgres-bids-1                          1/1     Running   6 (4h5m ago)    44h
+postgres-items-0                         1/1     Running   6 (4h5m ago)    44h
+postgres-items-1                         1/1     Running   6 (4h5m ago)    44h
+postgres-notifications-0                 1/1     Running   6 (4h5m ago)    44h
+postgres-notifications-1                 1/1     Running   6 (4h5m ago)    44h
+postgres-profiles-0                      1/1     Running   6 (4h5m ago)    44h
+postgres-profiles-1                      1/1     Running   6 (4h5m ago)    44h
+profile-service-6897779687-2547s         1/1     Running   0               10m
+zookeeper-686bd674b-rntg9                1/1     Running   8 (4h5m ago)    2d22h
+2025-11-12 23:54:11 | 
+HPA Status:
+NAME          REFERENCE                    TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+auth-hpa      Deployment/auth-service      3%/60%    1         5         1          2d23h
+bidding-hpa   Deployment/bidding-service   3%/60%    1         5         1          2d23h
+items-hpa     Deployment/items-service     3%/60%    1         5         1          2d23h
+profile-hpa   Deployment/profile-service   3%/60%    1         5         1          2d23h
+2025-11-12 23:54:11 | 
+==========================================
+2025-11-12 23:54:11 | Testing Database Replicas (Read/Write)
+2025-11-12 23:54:11 | ==========================================
+2025-11-12 23:54:11 | 
+Testing postgres-auth...
+2025-11-12 23:54:11 |   Primary (postgres-auth-0):
+2025-11-12 23:54:11 |     Active connections: 1
+2025-11-12 23:54:12 |     Replication status: streaming
+2025-11-12 23:54:12 |   Replica (postgres-auth-1):
+2025-11-12 23:54:12 |     Active connections: 1
+2025-11-12 23:54:12 |     Replication lag: 566.612149s
+2025-11-12 23:54:12 |     [0;32mStatus: HEALTHY[0m
+2025-11-12 23:54:12 | 
+Testing postgres-items...
+2025-11-12 23:54:12 |   Primary (postgres-items-0):
+2025-11-12 23:54:12 |     Active connections: 1
+2025-11-12 23:54:13 |     Replication status: streaming
+2025-11-12 23:54:13 |   Replica (postgres-items-1):
+2025-11-12 23:54:13 |     Active connections: 2
+2025-11-12 23:54:13 |     Replication lag: 1223.296738s
+2025-11-12 23:54:13 |     [0;32mStatus: HEALTHY[0m
+2025-11-12 23:54:13 | 
+Testing postgres-bids...
+2025-11-12 23:54:13 |   Primary (postgres-bids-0):
+2025-11-12 23:54:13 |     Active connections: 1
+2025-11-12 23:54:13 |     Replication status: streaming
+2025-11-12 23:54:13 |   Replica (postgres-bids-1):
+2025-11-12 23:54:14 |     Active connections: 2
+2025-11-12 23:54:14 |     Replication lag: 1733.585891s
+2025-11-12 23:54:14 |     [0;32mStatus: HEALTHY[0m
+2025-11-12 23:54:14 | 
+Testing postgres-profiles...
+2025-11-12 23:54:14 |   Primary (postgres-profiles-0):
+2025-11-12 23:54:14 |     Active connections: 1
+2025-11-12 23:54:14 |     Replication status: streaming
+2025-11-12 23:54:14 |   Replica (postgres-profiles-1):
+2025-11-12 23:54:15 |     Active connections: 1
+2025-11-12 23:54:15 |     Replication lag: 568.988030s
+2025-11-12 23:54:15 |     [0;32mStatus: HEALTHY[0m
+2025-11-12 23:54:15 | 
+Testing postgres-notifications...
+2025-11-12 23:54:15 |   Primary (postgres-notifications-0):
+2025-11-12 23:54:15 |     Active connections: 1
+2025-11-12 23:54:15 |     Replication status: streaming
+2025-11-12 23:54:15 |   Replica (postgres-notifications-1):
+2025-11-12 23:54:16 |     Active connections: 1
+2025-11-12 23:54:16 |     Replication lag: 1226.012775s
+2025-11-12 23:54:16 |     [0;32mStatus: HEALTHY[0m
+2025-11-12 23:54:16 | 
+==========================================
+2025-11-12 23:54:16 | Testing Kafka
+2025-11-12 23:54:16 | ==========================================
+2025-11-12 23:54:16 | Kafka pod: kafka-5b6d6b77b-prhz9
+2025-11-12 23:54:16 | 
+Kafka topics:
+__consumer_offsets
+bids-topic
+items-topic
+2025-11-12 23:54:22 | 
+Consumer groups:
+notifications-group
+2025-11-12 23:54:26 | 
+Consumer lag (notifications-group):
+
+GROUP               TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                                HOST            CLIENT-ID
+notifications-group items-topic     0          16              16              0               notifications-service-a17ea5c9-56e4-4abd-839c-63750fce48f5 /10.244.0.35    notifications-service
+notifications-group bids-topic      0          7443            7443            0               notifications-service-a17ea5c9-56e4-4abd-839c-63750fce48f5 /10.244.0.35    notifications-service
+2025-11-12 23:54:31 | 
+==========================================
+2025-11-12 23:54:31 | Testing Auth Service (50 users)
+2025-11-12 23:54:31 | ==========================================
+2025-11-12 23:56:31 | Results:
+2025-11-12 23:56:31 |   Successful: [0;32m50[0m
+2025-11-12 23:56:31 |   Failed: [0;31m0[0m
+2025-11-12 23:56:31 |   Duration: 120s
+2025-11-12 23:56:31 |   Throughput: 0 req/sec
+2025-11-12 23:56:31 |   Total users in DB: 1087
+2025-11-12 23:56:31 | 
+==========================================
+2025-11-12 23:56:31 | Testing Items Service (100 items)
+2025-11-12 23:56:31 | ==========================================
+2025-11-12 23:56:39 | Item Creation Results:
+2025-11-12 23:56:39 |   Successful: [0;32m100[0m
+2025-11-12 23:56:39 |   Failed: [0;31m0[0m
+2025-11-12 23:56:39 |   Duration: 4s
+2025-11-12 23:56:39 |   Throughput: 25 req/sec
+2025-11-12 23:56:39 | ✓ Get All Items: [0;32mSUCCESS[0m (3891 items)
+2025-11-12 23:56:39 | ✓ Get Item by ID: [0;32mSUCCESS[0m
+2025-11-12 23:56:39 | ✓ Update Item: [0;32mSUCCESS[0m
+2025-11-12 23:56:39 | 
+2025-11-12 23:56:40 | Testing Mark as Sold (100 items)...
+2025-11-12 23:56:44 |   Mark as Sold - Successful: [0;32m100[0m
+2025-11-12 23:56:44 |   Mark as Sold - Failed: [0;31m0[0m
+2025-11-12 23:56:44 | ✓ Delete Item: [0;32mSUCCESS[0m
+2025-11-12 23:56:44 |   Total items in DB: 3906
+2025-11-12 23:56:44 |   Sold items in DB: 115
+2025-11-12 23:56:44 | 
+==========================================
+2025-11-12 23:56:44 | Testing Bidding Service (50 bids)
+2025-11-12 23:56:44 | ==========================================
+2025-11-12 23:56:47 |   Creating 50 items from seller...
+2025-11-12 23:56:48 |   Created 50 items
+2025-11-12 23:56:53 | Results:
+2025-11-12 23:56:53 |   Successful: [0;32m50[0m
+2025-11-12 23:56:53 |   Failed: [0;31m0[0m
+2025-11-12 23:56:53 |   Duration: 2s
+2025-11-12 23:56:53 |   Throughput: 25 req/sec
+2025-11-12 23:56:54 |   Total bids in DB: 6821
+2025-11-12 23:56:54 | 
+2025-11-12 23:56:54 | Testing Bidding GET Endpoints...
+2025-11-12 23:56:54 | ✓ Get All Bids: [0;32mSUCCESS[0m (50 bids)
+2025-11-12 23:56:54 | ✓ Get Bids for Item: [0;32mSUCCESS[0m (1 bids)
+2025-11-12 23:56:54 | 
+==========================================
+2025-11-12 23:56:54 | Testing Notifications Service
+2025-11-12 23:56:54 | ==========================================
+2025-11-12 23:56:54 | Processed Kafka events: 6807
+2025-11-12 23:56:55 | Total notifications in MongoDB: 6775
+2025-11-12 23:56:55 | Emails skipped (DISABLE_EMAILS): 1085
+2025-11-12 23:56:55 | 
+2025-11-12 23:56:55 | Testing Notifications API Endpoints...
+2025-11-12 23:56:58 | ✓ Get Notifications: [0;32mSUCCESS[0m (0 notifications)
+2025-11-12 23:56:58 | ✓ Get Unread Count: [0;32mSUCCESS[0m (0 unread)
+2025-11-12 23:56:58 | ✓ Get Notification Stats: [0;32mSUCCESS[0m
+2025-11-12 23:56:58 | 
+==========================================
+2025-11-12 23:56:58 | Testing Profile Service
+2025-11-12 23:56:58 | ==========================================
+2025-11-12 23:56:58 | Total profiles in DB: 592
+2025-11-12 23:57:01 | ✓ Get Profile: [0;32mSUCCESS[0m
+2025-11-12 23:57:01 | ✓ Get Posted Items: [0;32mSUCCESS[0m
+2025-11-12 23:57:01 | ✓ Get Sold Items: [0;32mSUCCESS[0m
+2025-11-12 23:57:01 | ✓ Get My Bids: [0;32mSUCCESS[0m
+2025-11-12 23:57:01 | ✓ Update Profile: [0;32mSUCCESS[0m
+2025-11-12 23:57:01 | 
+==========================================
+2025-11-12 23:57:01 | Test Summary
+2025-11-12 23:57:01 | ==========================================
+2025-11-12 23:57:01 | Total users: 1092
+2025-11-12 23:57:01 | Total items: 3956
+2025-11-12 23:57:01 | Total bids: 6821
+2025-11-12 23:57:02 | Total profiles: 593
+2025-11-12 23:57:02 | Processed events: 6847
+2025-11-12 23:57:02 | 
+[0;32mTest completed successfully![0m
+2025-11-12 23:57:02 | Full results saved to: logs/test-results.log
+2025-11-13 00:05:00 | 
+==========================================
+2025-11-13 00:05:00 | Campus Shop System Test - Thursday 13 November 2025 12:05:00 AM IST
+2025-11-13 00:05:00 | ==========================================
+2025-11-13 00:05:00 | Test Size: small
+2025-11-13 00:05:00 | Parameters: 50 users, 100 items, 50 bids
+2025-11-13 00:05:00 | Log File: logs/test-results.log
+2025-11-13 00:05:00 | 
+==========================================
+2025-11-13 00:05:00 | Checking Prerequisites
+2025-11-13 00:05:00 | ==========================================
+2025-11-13 00:05:00 | [0;32mAll prerequisites met[0m
+2025-11-13 00:05:00 | 
+==========================================
+2025-11-13 00:05:00 | Checking Services Health
+2025-11-13 00:05:00 | ==========================================
+2025-11-13 00:05:00 |   [0;32m✓[0m Auth Service: Healthy
+2025-11-13 00:05:00 |   [0;32m✓[0m Items Service: Healthy
+2025-11-13 00:05:00 |   [0;32m✓[0m Bidding Service: Healthy
+2025-11-13 00:05:00 |   [0;32m✓[0m Profile Service: Healthy
+2025-11-13 00:05:00 |   [0;32m✓[0m Notifications Service: Healthy
+2025-11-13 00:05:00 | [0;32mAll services are healthy[0m
+2025-11-13 00:05:00 | 
+==========================================
+2025-11-13 00:05:00 | System Overview
+2025-11-13 00:05:00 | ==========================================
+2025-11-13 00:05:00 | Pods:
+NAME                                     READY   STATUS    RESTARTS         AGE
+auth-service-8bcf45f78-zkwcm             1/1     Running   5 (4h15m ago)    14h
+bidding-service-6c65b5474f-tzg4j         1/1     Running   4 (4h16m ago)    43h
+curl-test                                0/1     Error     0                43h
+items-service-9476658b7-7t4tp            1/1     Running   3 (4h16m ago)    31h
+kafka-5b6d6b77b-prhz9                    1/1     Running   15 (4h15m ago)   2d22h
+minio-7df8c7cf5d-xkfdx                   1/1     Running   8 (4h16m ago)    2d23h
+mongodb-64c8bc95c7-bxn28                 1/1     Running   7 (3h32m ago)    47h
+notifications-service-84579b49ff-s5jlw   1/1     Running   0                3h43m
+postgres-auth-0                          1/1     Running   6 (4h16m ago)    44h
+postgres-auth-1                          1/1     Running   6 (4h16m ago)    44h
+postgres-bids-0                          1/1     Running   6 (4h16m ago)    44h
+postgres-bids-1                          1/1     Running   6 (4h16m ago)    44h
+postgres-items-0                         1/1     Running   6 (4h16m ago)    44h
+postgres-items-1                         1/1     Running   6 (4h16m ago)    44h
+postgres-notifications-0                 1/1     Running   6 (4h16m ago)    44h
+postgres-notifications-1                 1/1     Running   6 (4h16m ago)    44h
+postgres-profiles-0                      1/1     Running   6 (4h16m ago)    44h
+postgres-profiles-1                      1/1     Running   6 (4h16m ago)    44h
+profile-service-6897779687-2547s         1/1     Running   0                20m
+zookeeper-686bd674b-rntg9                1/1     Running   8 (4h16m ago)    2d22h
+2025-11-13 00:05:00 | 
+HPA Status:
+NAME          REFERENCE                    TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+auth-hpa      Deployment/auth-service      3%/60%    1         5         1          2d23h
+bidding-hpa   Deployment/bidding-service   27%/60%   1         5         1          2d23h
+items-hpa     Deployment/items-service     27%/60%   1         5         1          2d23h
+profile-hpa   Deployment/profile-service   4%/60%    1         5         1          2d23h
+2025-11-13 00:05:00 | 
+==========================================
+2025-11-13 00:05:00 | Testing Database Replicas (Read/Write)
+2025-11-13 00:05:00 | ==========================================
+2025-11-13 00:05:00 | 
+Testing postgres-auth...
+2025-11-13 00:05:00 |   Primary (postgres-auth-0):
+2025-11-13 00:05:00 |     Active connections: 1
+2025-11-13 00:05:00 |     Replication status: streaming
+2025-11-13 00:05:00 |   Replica (postgres-auth-1):
+2025-11-13 00:05:00 |     Active connections: 1
+2025-11-13 00:05:01 |     Replication lag: 479.964840s
+2025-11-13 00:05:01 |     [0;32mStatus: HEALTHY[0m
+2025-11-13 00:05:01 | 
+Testing postgres-items...
+2025-11-13 00:05:01 |   Primary (postgres-items-0):
+2025-11-13 00:05:01 |     Active connections: 1
+2025-11-13 00:05:01 |     Replication status: streaming
+2025-11-13 00:05:01 |   Replica (postgres-items-1):
+2025-11-13 00:05:01 |     Active connections: 2
+2025-11-13 00:05:01 |     Replication lag: 431.241076s
+2025-11-13 00:05:01 |     [0;32mStatus: HEALTHY[0m
+2025-11-13 00:05:01 | 
+Testing postgres-bids...
+2025-11-13 00:05:01 |   Primary (postgres-bids-0):
+2025-11-13 00:05:02 |     Active connections: 1
+2025-11-13 00:05:02 |     Replication status: streaming
+2025-11-13 00:05:02 |   Replica (postgres-bids-1):
+2025-11-13 00:05:02 |     Active connections: 2
+2025-11-13 00:05:02 |     Replication lag: 466.621351s
+2025-11-13 00:05:02 |     [0;32mStatus: HEALTHY[0m
+2025-11-13 00:05:02 | 
+Testing postgres-profiles...
+2025-11-13 00:05:02 |   Primary (postgres-profiles-0):
+2025-11-13 00:05:02 |     Active connections: 1
+2025-11-13 00:05:03 |     Replication status: streaming
+2025-11-13 00:05:03 |   Replica (postgres-profiles-1):
+2025-11-13 00:05:03 |     Active connections: 1
+2025-11-13 00:05:03 |     Replication lag: 482.122418s
+2025-11-13 00:05:03 |     [0;32mStatus: HEALTHY[0m
+2025-11-13 00:05:03 | 
+Testing postgres-notifications...
+2025-11-13 00:05:03 |   Primary (postgres-notifications-0):
+2025-11-13 00:05:03 |     Active connections: 1
+2025-11-13 00:05:03 |     Replication status: streaming
+2025-11-13 00:05:03 |   Replica (postgres-notifications-1):
+2025-11-13 00:05:04 |     Active connections: 1
+2025-11-13 00:05:04 |     Replication lag: 416.743235s
+2025-11-13 00:05:04 |     [0;32mStatus: HEALTHY[0m
+2025-11-13 00:05:04 | 
+==========================================
+2025-11-13 00:05:04 | Testing Kafka
+2025-11-13 00:05:04 | ==========================================
+2025-11-13 00:05:04 | Kafka pod: kafka-5b6d6b77b-prhz9
+2025-11-13 00:05:04 | 
+Kafka topics:
+__consumer_offsets
+bids-topic
+items-topic
+2025-11-13 00:05:08 | 
+Consumer groups:
+notifications-group
+2025-11-13 00:05:13 | 
+Consumer lag (notifications-group):
+
+GROUP               TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                                HOST            CLIENT-ID
+notifications-group items-topic     0          116             116             0               notifications-service-a17ea5c9-56e4-4abd-839c-63750fce48f5 /10.244.0.35    notifications-service
+notifications-group bids-topic      0          7493            7493            0               notifications-service-a17ea5c9-56e4-4abd-839c-63750fce48f5 /10.244.0.35    notifications-service
+2025-11-13 00:05:17 | 
+==========================================
+2025-11-13 00:05:17 | Testing Auth Service (50 users)
+2025-11-13 00:05:17 | ==========================================
+2025-11-13 00:06:02 | Results:
+2025-11-13 00:06:02 |   Successful: [0;32m50[0m
+2025-11-13 00:06:02 |   Failed: [0;31m0[0m
+2025-11-13 00:06:02 |   Duration: 45s
+2025-11-13 00:06:02 |   Throughput: 1 req/sec
+2025-11-13 00:06:02 |   Total users in DB: 1142
+2025-11-13 00:06:02 | 
+==========================================
+2025-11-13 00:06:02 | Testing Items Service (100 items)
+2025-11-13 00:06:02 | ==========================================
+2025-11-13 00:06:07 | Item Creation Results:
+2025-11-13 00:06:07 |   Successful: [0;32m100[0m
+2025-11-13 00:06:07 |   Failed: [0;31m0[0m
+2025-11-13 00:06:07 |   Duration: 3s
+2025-11-13 00:06:07 |   Throughput: 33 req/sec
+2025-11-13 00:06:07 | ✓ Get All Items: [0;32mSUCCESS[0m (3941 items)
+2025-11-13 00:06:07 | ✓ Get Item by ID: [0;32mSUCCESS[0m
+2025-11-13 00:06:07 | ✓ Update Item: [0;32mSUCCESS[0m
+2025-11-13 00:06:07 | 
+2025-11-13 00:06:07 | Testing Mark as Sold (100 items)...
+2025-11-13 00:06:11 |   Mark as Sold - Successful: [0;32m100[0m
+2025-11-13 00:06:11 |   Mark as Sold - Failed: [0;31m0[0m
+2025-11-13 00:06:11 | ✓ Delete Item: [0;32mSUCCESS[0m
+2025-11-13 00:06:11 | ✓ Upload Image: [0;32mSUCCESS[0m (http://localhost:9000/campusshop-items/17629725713...)
+2025-11-13 00:06:11 |   Total items in DB: 4055
+2025-11-13 00:06:11 |   Sold items in DB: 214
+2025-11-13 00:06:11 | 
+==========================================
+2025-11-13 00:06:11 | Testing Bidding Service (50 bids)
+2025-11-13 00:06:11 | ==========================================
+2025-11-13 00:06:13 |   Creating 50 items from seller...
+2025-11-13 00:06:14 |   Created 50 items
+2025-11-13 00:06:18 | Results:
+2025-11-13 00:06:18 |   Successful: [0;32m50[0m
+2025-11-13 00:06:18 |   Failed: [0;31m0[0m
+2025-11-13 00:06:18 |   Duration: 3s
+2025-11-13 00:06:18 |   Throughput: 16 req/sec
+2025-11-13 00:06:18 |   Total bids in DB: 6871
+2025-11-13 00:06:18 | 
+2025-11-13 00:06:18 | Testing Bidding GET Endpoints...
+2025-11-13 00:06:18 | ✓ Get All Bids: [0;32mSUCCESS[0m (50 bids)
+2025-11-13 00:06:18 | ✓ Get Bids for Item: [0;32mSUCCESS[0m (1 bids)
+2025-11-13 00:06:18 | 
+==========================================
+2025-11-13 00:06:18 | Testing Notifications Service
+2025-11-13 00:06:18 | ==========================================
+2025-11-13 00:06:18 | Processed Kafka events: 6962
+2025-11-13 00:06:19 | Total notifications in MongoDB: 6830
+2025-11-13 00:06:20 | Emails skipped (DISABLE_EMAILS): 1025
+2025-11-13 00:06:20 | 
+2025-11-13 00:06:20 | Testing Notifications API Endpoints...
+2025-11-13 00:06:24 | ✓ Get Notifications: [0;32mSUCCESS[0m (0 notifications)
+2025-11-13 00:06:24 | ✓ Get Unread Count: [0;32mSUCCESS[0m (0 unread)
+2025-11-13 00:06:24 | ✓ Get Notification Stats: [0;32mSUCCESS[0m
+2025-11-13 00:06:24 | 
+==========================================
+2025-11-13 00:06:24 | Testing Profile Service
+2025-11-13 00:06:24 | ==========================================
+2025-11-13 00:06:25 | Total profiles in DB: 594
+2025-11-13 00:06:26 | ✓ Get Profile: [0;32mSUCCESS[0m
+2025-11-13 00:06:26 | ✓ Get Posted Items: [0;32mSUCCESS[0m
+2025-11-13 00:06:26 | ✓ Get Sold Items: [0;32mSUCCESS[0m
+2025-11-13 00:06:26 | ✓ Get My Bids: [0;32mSUCCESS[0m
+2025-11-13 00:06:26 | ✓ Update Profile: [0;32mSUCCESS[0m
+2025-11-13 00:06:26 | 
+==========================================
+2025-11-13 00:06:26 | Test Summary
+2025-11-13 00:06:26 | ==========================================
+2025-11-13 00:06:26 | Total users: 1148
+2025-11-13 00:06:26 | Total items: 4106
+2025-11-13 00:06:26 | Total bids: 6872
+2025-11-13 00:06:27 | Total profiles: 595
+2025-11-13 00:06:27 | Processed events: 7002
+2025-11-13 00:06:27 | 
+[0;32mTest completed successfully![0m
+2025-11-13 00:06:27 | Full results saved to: logs/test-results.log
+2025-11-13 00:07:36 | 
+==========================================
+2025-11-13 00:07:36 | Campus Shop System Test - Thursday 13 November 2025 12:07:36 AM IST
+2025-11-13 00:07:36 | ==========================================
+2025-11-13 00:07:36 | Test Size: quick
+2025-11-13 00:07:36 | Parameters: 5 users, 10 items, 5 bids
+2025-11-13 00:07:36 | Log File: logs/test-results.log
+2025-11-13 00:07:36 | 
+==========================================
+2025-11-13 00:07:36 | Checking Prerequisites
+2025-11-13 00:07:36 | ==========================================
+2025-11-13 00:07:36 | [0;32mAll prerequisites met[0m
+2025-11-13 00:07:36 | 
+==========================================
+2025-11-13 00:07:36 | Checking Services Health
+2025-11-13 00:07:36 | ==========================================
+2025-11-13 00:07:36 |   [0;32m✓[0m Auth Service: Healthy
+2025-11-13 00:07:36 |   [0;32m✓[0m Items Service: Healthy
+2025-11-13 00:07:36 |   [0;32m✓[0m Bidding Service: Healthy
+2025-11-13 00:07:36 |   [0;32m✓[0m Profile Service: Healthy
+2025-11-13 00:07:36 |   [0;32m✓[0m Notifications Service: Healthy
+2025-11-13 00:07:36 | [0;32mAll services are healthy[0m
+2025-11-13 00:07:36 | 
+==========================================
+2025-11-13 00:07:36 | System Overview
+2025-11-13 00:07:36 | ==========================================
+2025-11-13 00:07:36 | Pods:
+NAME                                     READY   STATUS    RESTARTS         AGE
+auth-service-8bcf45f78-zkwcm             1/1     Running   5 (4h18m ago)    14h
+bidding-service-6c65b5474f-tzg4j         1/1     Running   4 (4h18m ago)    43h
+curl-test                                0/1     Error     0                43h
+items-service-9476658b7-7t4tp            1/1     Running   3 (4h18m ago)    31h
+items-service-9476658b7-zlm94            1/1     Running   0                64s
+kafka-5b6d6b77b-prhz9                    1/1     Running   15 (4h18m ago)   2d22h
+minio-7df8c7cf5d-xkfdx                   1/1     Running   8 (4h18m ago)    2d23h
+mongodb-64c8bc95c7-bxn28                 1/1     Running   7 (3h35m ago)    47h
+notifications-service-84579b49ff-s5jlw   1/1     Running   0                3h45m
+postgres-auth-0                          1/1     Running   6 (4h18m ago)    44h
+postgres-auth-1                          1/1     Running   6 (4h18m ago)    44h
+postgres-bids-0                          1/1     Running   6 (4h18m ago)    44h
+postgres-bids-1                          1/1     Running   6 (4h18m ago)    44h
+postgres-items-0                         1/1     Running   6 (4h18m ago)    44h
+postgres-items-1                         1/1     Running   6 (4h18m ago)    44h
+postgres-notifications-0                 1/1     Running   6 (4h18m ago)    44h
+postgres-notifications-1                 1/1     Running   6 (4h18m ago)    44h
+postgres-profiles-0                      1/1     Running   6 (4h18m ago)    44h
+postgres-profiles-1                      1/1     Running   6 (4h18m ago)    44h
+profile-service-6897779687-2547s         1/1     Running   0                23m
+zookeeper-686bd674b-rntg9                1/1     Running   8 (4h18m ago)    2d22h
+2025-11-13 00:07:37 | 
+HPA Status:
+NAME          REFERENCE                    TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+auth-hpa      Deployment/auth-service      3%/60%    1         5         1          2d23h
+bidding-hpa   Deployment/bidding-service   25%/60%   1         5         1          2d23h
+items-hpa     Deployment/items-service     27%/60%   1         5         2          2d23h
+profile-hpa   Deployment/profile-service   3%/60%    1         5         1          2d23h
+2025-11-13 00:07:37 | 
+==========================================
+2025-11-13 00:07:37 | Testing Notifications Service
+2025-11-13 00:07:37 | ==========================================
+2025-11-13 00:07:37 | Processed Kafka events: 7088
+2025-11-13 00:07:38 | Total notifications in MongoDB: 6876
+2025-11-13 00:07:38 | Emails skipped (DISABLE_EMAILS): 971
+2025-11-13 00:07:38 | 
+2025-11-13 00:07:38 | Testing Notifications API Endpoints...
+2025-11-13 00:07:47 | ✓ Get Notifications: [0;32mSUCCESS[0m (1 notifications)
+2025-11-13 00:07:47 | ✓ Get Unread Count: [0;32mSUCCESS[0m (1 unread)
+2025-11-13 00:07:47 | ✓ Get Notification Stats: [0;32mSUCCESS[0m
+2025-11-13 00:07:47 | ✓ Mark Notification as Read: [0;32mSUCCESS[0m
+2025-11-13 00:07:47 | ✓ Mark All as Read: [0;32mSUCCESS[0m (0 marked)
+2025-11-13 00:07:47 | 
+==========================================
+2025-11-13 00:07:47 | Test Summary
+2025-11-13 00:07:47 | ==========================================
+2025-11-13 00:07:47 | Total users: 1150
+2025-11-13 00:07:47 | Total items: 4107
+2025-11-13 00:07:47 | Total bids: 6873
+2025-11-13 00:07:47 | Total profiles: 597
+2025-11-13 00:07:48 | Processed events: 7089
+2025-11-13 00:07:48 | 
+[0;32mTest completed successfully![0m
+2025-11-13 00:07:48 | Full results saved to: logs/test-results.log
+2025-11-13 00:08:27 | 
+==========================================
+2025-11-13 00:08:27 | Campus Shop System Test - Thursday 13 November 2025 12:08:27 AM IST
+2025-11-13 00:08:27 | ==========================================
+2025-11-13 00:08:27 | Test Size: quick
+2025-11-13 00:08:27 | Parameters: 5 users, 10 items, 5 bids
+2025-11-13 00:08:27 | Log File: logs/test-results.log
+2025-11-13 00:08:27 | 
+==========================================
+2025-11-13 00:08:27 | Checking Prerequisites
+2025-11-13 00:08:27 | ==========================================
+2025-11-13 00:08:27 | [0;32mAll prerequisites met[0m
+2025-11-13 00:08:27 | 
+==========================================
+2025-11-13 00:08:27 | Checking Services Health
+2025-11-13 00:08:27 | ==========================================
+2025-11-13 00:08:27 |   [0;32m✓[0m Auth Service: Healthy
+2025-11-13 00:08:27 |   [0;32m✓[0m Items Service: Healthy
+2025-11-13 00:08:27 |   [0;32m✓[0m Bidding Service: Healthy
+2025-11-13 00:08:27 |   [0;32m✓[0m Profile Service: Healthy
+2025-11-13 00:08:27 |   [0;32m✓[0m Notifications Service: Healthy
+2025-11-13 00:08:27 | [0;32mAll services are healthy[0m
+2025-11-13 00:08:27 | 
+==========================================
+2025-11-13 00:08:27 | System Overview
+2025-11-13 00:08:27 | ==========================================
+2025-11-13 00:08:27 | Pods:
+NAME                                     READY   STATUS    RESTARTS         AGE
+auth-service-8bcf45f78-zkwcm             1/1     Running   5 (4h19m ago)    14h
+bidding-service-6c65b5474f-tzg4j         1/1     Running   4 (4h19m ago)    43h
+curl-test                                0/1     Error     0                43h
+items-service-9476658b7-7t4tp            1/1     Running   3 (4h19m ago)    31h
+items-service-9476658b7-zlm94            1/1     Running   0                115s
+kafka-5b6d6b77b-prhz9                    1/1     Running   15 (4h18m ago)   2d22h
+minio-7df8c7cf5d-xkfdx                   1/1     Running   8 (4h19m ago)    2d23h
+mongodb-64c8bc95c7-bxn28                 1/1     Running   7 (3h36m ago)    47h
+notifications-service-84579b49ff-s5jlw   1/1     Running   0                3h46m
+postgres-auth-0                          1/1     Running   6 (4h19m ago)    44h
+postgres-auth-1                          1/1     Running   6 (4h19m ago)    44h
+postgres-bids-0                          1/1     Running   6 (4h19m ago)    44h
+postgres-bids-1                          1/1     Running   6 (4h19m ago)    44h
+postgres-items-0                         1/1     Running   6 (4h19m ago)    44h
+postgres-items-1                         1/1     Running   6 (4h19m ago)    44h
+postgres-notifications-0                 1/1     Running   6 (4h19m ago)    44h
+postgres-notifications-1                 1/1     Running   6 (4h19m ago)    44h
+postgres-profiles-0                      1/1     Running   6 (4h19m ago)    44h
+postgres-profiles-1                      1/1     Running   6 (4h19m ago)    44h
+profile-service-6897779687-2547s         1/1     Running   0                24m
+zookeeper-686bd674b-rntg9                1/1     Running   8 (4h19m ago)    2d22h
+2025-11-13 00:08:28 | 
+HPA Status:
+NAME          REFERENCE                    TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+auth-hpa      Deployment/auth-service      13%/60%   1         5         1          2d23h
+bidding-hpa   Deployment/bidding-service   24%/60%   1         5         1          2d23h
+items-hpa     Deployment/items-service     23%/60%   1         5         2          2d23h
+profile-hpa   Deployment/profile-service   3%/60%    1         5         1          2d23h
+2025-11-13 00:08:28 | 
+==========================================
+2025-11-13 00:08:28 | Testing Notifications Service
+2025-11-13 00:08:28 | ==========================================
+2025-11-13 00:08:28 | Processed Kafka events: 7089
+2025-11-13 00:08:29 | Total notifications in MongoDB: 6877
+2025-11-13 00:08:29 | Emails skipped (DISABLE_EMAILS): 971
+2025-11-13 00:08:29 | 
+2025-11-13 00:08:29 | Testing Notifications API Endpoints...
+2025-11-13 00:08:37 | ✓ Get Notifications: [0;32mSUCCESS[0m (2 notifications)
+2025-11-13 00:08:37 | ✓ Get Unread Count: [0;32mSUCCESS[0m (2 unread)
+2025-11-13 00:08:37 | ✓ Get Notification Stats: [0;32mSUCCESS[0m
+2025-11-13 00:08:37 | ✓ Mark Notification as Read: [0;32mSUCCESS[0m
+2025-11-13 00:08:37 | ✓ Mark All as Read: [0;32mSUCCESS[0m (1 marked)
+2025-11-13 00:08:37 | ✓ Delete Notification: [0;32mSUCCESS[0m
+2025-11-13 00:08:37 | 
+==========================================
+2025-11-13 00:08:37 | Test Summary
+2025-11-13 00:08:37 | ==========================================
+2025-11-13 00:08:37 | Total users: 1152
+2025-11-13 00:08:38 | Total items: 4109
+2025-11-13 00:08:38 | Total bids: 6875
+2025-11-13 00:08:38 | Total profiles: 598
+2025-11-13 00:08:38 | Processed events: 7091
+2025-11-13 00:08:38 | 
+[0;32mTest completed successfully![0m
+2025-11-13 00:08:38 | Full results saved to: logs/test-results.log
+2025-11-13 00:11:04 | 
+==========================================
+2025-11-13 00:11:04 | Campus Shop System Test - Thursday 13 November 2025 12:11:04 AM IST
+2025-11-13 00:11:04 | ==========================================
+2025-11-13 00:11:04 | Test Size: small
+2025-11-13 00:11:04 | Parameters: 50 users, 100 items, 50 bids
+2025-11-13 00:11:04 | Log File: logs/test-results.log
+2025-11-13 00:11:04 | 
+==========================================
+2025-11-13 00:11:04 | Checking Prerequisites
+2025-11-13 00:11:04 | ==========================================
+2025-11-13 00:11:04 | [0;32mAll prerequisites met[0m
+2025-11-13 00:11:04 | 
+==========================================
+2025-11-13 00:11:04 | Checking Services Health
+2025-11-13 00:11:04 | ==========================================
+2025-11-13 00:11:04 |   [0;32m✓[0m Auth Service: Healthy
+2025-11-13 00:11:04 |   [0;32m✓[0m Items Service: Healthy
+2025-11-13 00:11:04 |   [0;32m✓[0m Bidding Service: Healthy
+2025-11-13 00:11:05 |   [0;32m✓[0m Profile Service: Healthy
+2025-11-13 00:11:05 |   [0;32m✓[0m Notifications Service: Healthy
+2025-11-13 00:11:05 | [0;32mAll services are healthy[0m
+2025-11-13 00:11:05 | 
+==========================================
+2025-11-13 00:11:05 | System Overview
+2025-11-13 00:11:05 | ==========================================
+2025-11-13 00:11:05 | Pods:
+NAME                                     READY   STATUS    RESTARTS         AGE
+auth-service-8bcf45f78-zkwcm             1/1     Running   5 (4h21m ago)    14h
+bidding-service-6c65b5474f-tzg4j         1/1     Running   4 (4h22m ago)    43h
+curl-test                                0/1     Error     0                43h
+items-service-9476658b7-7t4tp            1/1     Running   3 (4h22m ago)    31h
+items-service-9476658b7-zlm94            1/1     Running   0                4m32s
+kafka-5b6d6b77b-prhz9                    1/1     Running   15 (4h21m ago)   2d22h
+minio-7df8c7cf5d-xkfdx                   1/1     Running   8 (4h22m ago)    2d23h
+mongodb-64c8bc95c7-bxn28                 1/1     Running   7 (3h38m ago)    47h
+notifications-service-84579b49ff-s5jlw   1/1     Running   0                3h49m
+postgres-auth-0                          1/1     Running   6 (4h22m ago)    44h
+postgres-auth-1                          1/1     Running   6 (4h22m ago)    44h
+postgres-bids-0                          1/1     Running   6 (4h22m ago)    44h
+postgres-bids-1                          1/1     Running   6 (4h22m ago)    44h
+postgres-items-0                         1/1     Running   6 (4h22m ago)    44h
+postgres-items-1                         1/1     Running   6 (4h22m ago)    44h
+postgres-notifications-0                 1/1     Running   6 (4h22m ago)    44h
+postgres-notifications-1                 1/1     Running   6 (4h22m ago)    44h
+postgres-profiles-0                      1/1     Running   6 (4h22m ago)    44h
+postgres-profiles-1                      1/1     Running   6 (4h22m ago)    44h
+profile-service-6897779687-2547s         1/1     Running   0                27m
+zookeeper-686bd674b-rntg9                1/1     Running   8 (4h22m ago)    2d22h
+2025-11-13 00:11:05 | 
+HPA Status:
+NAME          REFERENCE                    TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+auth-hpa      Deployment/auth-service      4%/60%    1         5         1          2d23h
+bidding-hpa   Deployment/bidding-service   26%/60%   1         5         1          2d23h
+items-hpa     Deployment/items-service     25%/60%   1         5         2          2d23h
+profile-hpa   Deployment/profile-service   4%/60%    1         5         1          2d23h
+2025-11-13 00:11:05 | 
+==========================================
+2025-11-13 00:11:05 | Testing Database Replicas (Read/Write)
+2025-11-13 00:11:05 | ==========================================
+2025-11-13 00:11:05 | 
+Testing postgres-auth...
+2025-11-13 00:11:05 |   Primary (postgres-auth-0):
+2025-11-13 00:11:05 |     Active connections: 1
+2025-11-13 00:11:05 |     Replication status: streaming
+2025-11-13 00:11:05 |   Replica (postgres-auth-1):
+2025-11-13 00:11:05 |     Active connections: 1
+2025-11-13 00:11:06 |     Replication lag: 153.678877s
+2025-11-13 00:11:06 |     [0;32mStatus: HEALTHY[0m
+2025-11-13 00:11:06 | 
+Testing postgres-items...
+2025-11-13 00:11:06 |   Primary (postgres-items-0):
+2025-11-13 00:11:06 |     Active connections: 1
+2025-11-13 00:11:06 |     Replication status: streaming
+2025-11-13 00:11:06 |   Replica (postgres-items-1):
+2025-11-13 00:11:06 |     Active connections: 3
+2025-11-13 00:11:06 |     Replication lag: 154.359003s
+2025-11-13 00:11:06 |     [0;32mStatus: HEALTHY[0m
+2025-11-13 00:11:06 | 
+Testing postgres-bids...
+2025-11-13 00:11:06 |   Primary (postgres-bids-0):
+2025-11-13 00:11:07 |     Active connections: 1
+2025-11-13 00:11:07 |     Replication status: streaming
+2025-11-13 00:11:07 |   Replica (postgres-bids-1):
+2025-11-13 00:11:07 |     Active connections: 2
+2025-11-13 00:11:07 |     Replication lag: 151.434639s
+2025-11-13 00:11:07 |     [0;32mStatus: HEALTHY[0m
+2025-11-13 00:11:07 | 
+Testing postgres-profiles...
+2025-11-13 00:11:07 |   Primary (postgres-profiles-0):
+2025-11-13 00:11:07 |     Active connections: 1
+2025-11-13 00:11:08 |     Replication status: streaming
+2025-11-13 00:11:08 |   Replica (postgres-profiles-1):
+2025-11-13 00:11:08 |     Active connections: 1
+2025-11-13 00:11:08 |     Replication lag: 152.182278s
+2025-11-13 00:11:08 |     [0;32mStatus: HEALTHY[0m
+2025-11-13 00:11:08 | 
+Testing postgres-notifications...
+2025-11-13 00:11:08 |   Primary (postgres-notifications-0):
+2025-11-13 00:11:08 |     Active connections: 1
+2025-11-13 00:11:08 |     Replication status: streaming
+2025-11-13 00:11:08 |   Replica (postgres-notifications-1):
+2025-11-13 00:11:08 |     Active connections: 1
+2025-11-13 00:11:09 |     Replication lag: 152.917184s
+2025-11-13 00:11:09 |     [0;32mStatus: HEALTHY[0m
+2025-11-13 00:11:09 | 
+==========================================
+2025-11-13 00:11:09 | Testing Kafka
+2025-11-13 00:11:09 | ==========================================
+2025-11-13 00:11:09 | Kafka pod: kafka-5b6d6b77b-prhz9
+2025-11-13 00:11:09 | 
+Kafka topics:
+__consumer_offsets
+bids-topic
+items-topic
+2025-11-13 00:11:13 | 
+Consumer groups:
+notifications-group
+2025-11-13 00:11:17 | 
+Consumer lag (notifications-group):
+
+GROUP               TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                                HOST            CLIENT-ID
+notifications-group items-topic     0          216             216             0               notifications-service-a17ea5c9-56e4-4abd-839c-63750fce48f5 /10.244.0.35    notifications-service
+notifications-group bids-topic      0          7547            7547            0               notifications-service-a17ea5c9-56e4-4abd-839c-63750fce48f5 /10.244.0.35    notifications-service
+2025-11-13 00:11:22 | 
+==========================================
+2025-11-13 00:11:22 | Testing Auth Service (50 users)
+2025-11-13 00:11:22 | ==========================================
+2025-11-13 00:13:32 | Results:
+2025-11-13 00:13:32 |   Successful: [0;32m50[0m
+2025-11-13 00:13:32 |   Failed: [0;31m0[0m
+2025-11-13 00:13:32 |   Duration: 130s
+2025-11-13 00:13:32 |   Throughput: 0 req/sec
+2025-11-13 00:13:32 |   Total users in DB: 1202
+2025-11-13 00:13:32 | 
+==========================================
+2025-11-13 00:13:32 | Testing Items Service (100 items)
+2025-11-13 00:13:32 | ==========================================
+2025-11-13 00:13:38 | Item Creation Results:
+2025-11-13 00:13:38 |   Successful: [0;32m100[0m
+2025-11-13 00:13:38 |   Failed: [0;31m0[0m
+2025-11-13 00:13:38 |   Duration: 3s
+2025-11-13 00:13:38 |   Throughput: 33 req/sec
+2025-11-13 00:13:38 | ✓ Get All Items: [0;32mSUCCESS[0m (3995 items)
+2025-11-13 00:13:38 | ✓ Get Item by ID: [0;32mSUCCESS[0m
+2025-11-13 00:13:38 | ✓ Update Item: [0;32mSUCCESS[0m
+2025-11-13 00:13:38 | 
+2025-11-13 00:13:38 | Testing Mark as Sold (100 items)...
+2025-11-13 00:13:42 |   Mark as Sold - Successful: [0;32m100[0m
+2025-11-13 00:13:42 |   Mark as Sold - Failed: [0;31m0[0m
+2025-11-13 00:13:42 | ✓ Delete Item: [0;32mSUCCESS[0m
+2025-11-13 00:13:42 | ✓ Upload Image: [0;32mSUCCESS[0m (http://localhost:9000/campusshop-items/17629730223...)
+2025-11-13 00:13:42 |   Total items in DB: 4208
+2025-11-13 00:13:42 |   Sold items in DB: 313
+2025-11-13 00:13:42 | 
+==========================================
+2025-11-13 00:13:42 | Testing Bidding Service (50 bids)
+2025-11-13 00:13:42 | ==========================================
+2025-11-13 00:13:45 |   Creating 50 items from seller...
+2025-11-13 00:13:47 |   Created 50 items
+2025-11-13 00:13:52 | Results:
+2025-11-13 00:13:52 |   Successful: [0;32m50[0m
+2025-11-13 00:13:52 |   Failed: [0;31m0[0m
+2025-11-13 00:13:52 |   Duration: 2s
+2025-11-13 00:13:52 |   Throughput: 25 req/sec
+2025-11-13 00:13:52 |   Total bids in DB: 6925
+2025-11-13 00:13:52 | 
+2025-11-13 00:13:52 | Testing Bidding GET Endpoints...
+2025-11-13 00:13:52 | ✓ Get All Bids: [0;32mSUCCESS[0m (50 bids)
+2025-11-13 00:13:52 | ✓ Get Bids for Item: [0;32mSUCCESS[0m (1 bids)
+2025-11-13 00:13:52 | 
+==========================================
+2025-11-13 00:13:52 | Testing Notifications Service
+2025-11-13 00:13:52 | ==========================================
+2025-11-13 00:13:52 | Processed Kafka events: 7131
+2025-11-13 00:13:53 | Total notifications in MongoDB: 6888
+2025-11-13 00:13:54 | Emails skipped (DISABLE_EMAILS): 951
+2025-11-13 00:13:54 | 
+2025-11-13 00:13:54 | Testing Notifications API Endpoints...
+2025-11-13 00:14:14 | ✓ Get Notifications: [0;32mSUCCESS[0m (0 notifications)
+2025-11-13 00:14:14 | ✓ Get Unread Count: [0;32mSUCCESS[0m (0 unread)
+2025-11-13 00:14:14 | ✓ Get Notification Stats: [0;32mSUCCESS[0m
+2025-11-13 00:14:14 | 
+==========================================
+2025-11-13 00:14:14 | Testing Profile Service
+2025-11-13 00:14:14 | ==========================================
+2025-11-13 00:14:14 | Total profiles in DB: 599
+2025-11-13 00:14:18 | ✓ Get Profile: [0;32mSUCCESS[0m
+2025-11-13 00:14:18 | ✓ Get Posted Items: [0;32mSUCCESS[0m
+2025-11-13 00:14:18 | ✓ Get Sold Items: [0;32mSUCCESS[0m
+2025-11-13 00:14:18 | ✓ Get My Bids: [0;32mSUCCESS[0m
+2025-11-13 00:14:18 | ✓ Update Profile: [0;32mSUCCESS[0m
+2025-11-13 00:14:18 | 
+==========================================
+2025-11-13 00:14:18 | Test Summary
+2025-11-13 00:14:18 | ==========================================
+2025-11-13 00:14:18 | Total users: 1208
+2025-11-13 00:14:19 | Total items: 4260
+2025-11-13 00:14:19 | Total bids: 6927
+2025-11-13 00:14:19 | Total profiles: 601
+2025-11-13 00:14:19 | Processed events: 7233
+2025-11-13 00:14:19 | 
+[0;32mTest completed successfully![0m
+2025-11-13 00:14:19 | Full results saved to: logs/test-results.log
+2025-11-13 00:17:45 | 
+==========================================
+2025-11-13 00:17:45 | Campus Shop System Test - Thursday 13 November 2025 12:17:45 AM IST
+2025-11-13 00:17:45 | ==========================================
+2025-11-13 00:17:45 | Test Size: quick
+2025-11-13 00:17:45 | Parameters: 5 users, 10 items, 5 bids
+2025-11-13 00:17:45 | Log File: logs/test-results.log
+2025-11-13 00:17:45 | 
+==========================================
+2025-11-13 00:17:45 | Checking Prerequisites
+2025-11-13 00:17:45 | ==========================================
+2025-11-13 00:17:45 | [0;32mAll prerequisites met[0m
+2025-11-13 00:17:45 | 
+==========================================
+2025-11-13 00:17:45 | Checking Services Health
+2025-11-13 00:17:45 | ==========================================
+2025-11-13 00:17:45 |   [0;32m✓[0m Auth Service: Healthy
+2025-11-13 00:17:45 |   [0;32m✓[0m Items Service: Healthy
+2025-11-13 00:17:45 |   [0;32m✓[0m Bidding Service: Healthy
+2025-11-13 00:17:45 |   [0;32m✓[0m Profile Service: Healthy
+2025-11-13 00:17:45 |   [0;32m✓[0m Notifications Service: Healthy
+2025-11-13 00:17:45 | [0;32mAll services are healthy[0m
+2025-11-13 00:17:45 | 
+==========================================
+2025-11-13 00:17:45 | System Overview
+2025-11-13 00:17:45 | ==========================================
+2025-11-13 00:17:45 | Pods:
+NAME                                     READY   STATUS    RESTARTS         AGE
+auth-service-8bcf45f78-zkwcm             1/1     Running   5 (4h28m ago)    14h
+bidding-service-6c65b5474f-tzg4j         1/1     Running   4 (4h29m ago)    43h
+curl-test                                0/1     Error     0                43h
+items-service-9476658b7-4wnjt            1/1     Running   0                3m41s
+items-service-9476658b7-7t4tp            1/1     Running   3 (4h29m ago)    31h
+kafka-5b6d6b77b-prhz9                    1/1     Running   15 (4h28m ago)   2d22h
+minio-7df8c7cf5d-xkfdx                   1/1     Running   8 (4h29m ago)    2d23h
+mongodb-64c8bc95c7-bxn28                 1/1     Running   7 (3h45m ago)    47h
+notifications-service-84579b49ff-s5jlw   1/1     Running   0                3h55m
+postgres-auth-0                          1/1     Running   6 (4h29m ago)    45h
+postgres-auth-1                          1/1     Running   6 (4h29m ago)    45h
+postgres-bids-0                          1/1     Running   6 (4h29m ago)    44h
+postgres-bids-1                          1/1     Running   6 (4h29m ago)    44h
+postgres-items-0                         1/1     Running   6 (4h29m ago)    44h
+postgres-items-1                         1/1     Running   6 (4h29m ago)    44h
+postgres-notifications-0                 1/1     Running   6 (4h29m ago)    44h
+postgres-notifications-1                 1/1     Running   6 (4h29m ago)    44h
+postgres-profiles-0                      1/1     Running   6 (4h29m ago)    44h
+postgres-profiles-1                      1/1     Running   6 (4h29m ago)    44h
+profile-service-6897779687-2547s         1/1     Running   0                33m
+zookeeper-686bd674b-rntg9                1/1     Running   8 (4h29m ago)    2d22h
+2025-11-13 00:17:45 | 
+HPA Status:
+NAME          REFERENCE                    TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+auth-hpa      Deployment/auth-service      3%/60%    1         5         1          2d23h
+bidding-hpa   Deployment/bidding-service   24%/60%   1         5         1          2d23h
+items-hpa     Deployment/items-service     25%/60%   1         5         2          2d23h
+profile-hpa   Deployment/profile-service   3%/60%    1         5         1          2d23h
+2025-11-13 00:17:45 | 
+==========================================
+2025-11-13 00:17:45 | Testing Profile Service
+2025-11-13 00:17:45 | ==========================================
+2025-11-13 00:17:45 | Total profiles in DB: 601
+2025-11-13 00:17:48 | ✓ Get Profile: [0;32mSUCCESS[0m
+2025-11-13 00:17:48 | ✓ Get Posted Items: [0;32mSUCCESS[0m
+2025-11-13 00:17:48 | ✓ Get Sold Items: [0;32mSUCCESS[0m
+2025-11-13 00:17:48 | ✓ Get My Bids: [0;32mSUCCESS[0m
+2025-11-13 00:17:48 | ✓ Update Profile: [0;32mSUCCESS[0m
+2025-11-13 00:17:48 | 
+2025-11-13 00:17:48 | Testing Medium Priority Endpoints...
+2025-11-13 00:17:51 | ✓ Get Active Bids: [0;32mSUCCESS[0m (1 active bids)
+2025-11-13 00:17:51 | ✓ Get Purchased Items: [0;32mSUCCESS[0m (0 purchased)
+2025-11-13 00:17:51 | ✓ Get Other User Profile: [0;32mSUCCESS[0m
+2025-11-13 00:17:51 | ✓ Get Bids on My Items: [0;32mSUCCESS[0m (1 bids received)
+2025-11-13 00:17:51 | 
+==========================================
+2025-11-13 00:17:51 | Test Summary
+2025-11-13 00:17:51 | ==========================================
+2025-11-13 00:17:51 | Total users: 1210
+2025-11-13 00:17:51 | Total items: 4261
+2025-11-13 00:17:52 | Total bids: 6928
+2025-11-13 00:17:52 | Total profiles: 602
+2025-11-13 00:17:52 | Processed events: 7243
+2025-11-13 00:17:52 | 
+[0;32mTest completed successfully![0m
+2025-11-13 00:17:52 | Full results saved to: logs/test-results.log
+2025-11-13 00:18:06 | 
+==========================================
+2025-11-13 00:18:06 | Campus Shop System Test - Thursday 13 November 2025 12:18:06 AM IST
+2025-11-13 00:18:06 | ==========================================
+2025-11-13 00:18:06 | Test Size: small
+2025-11-13 00:18:06 | Parameters: 50 users, 100 items, 50 bids
+2025-11-13 00:18:06 | Log File: logs/test-results.log
+2025-11-13 00:18:06 | 
+==========================================
+2025-11-13 00:18:06 | Checking Prerequisites
+2025-11-13 00:18:06 | ==========================================
+2025-11-13 00:18:06 | [0;32mAll prerequisites met[0m
+2025-11-13 00:18:06 | 
+==========================================
+2025-11-13 00:18:06 | Checking Services Health
+2025-11-13 00:18:06 | ==========================================
+2025-11-13 00:18:06 |   [0;32m✓[0m Auth Service: Healthy
+2025-11-13 00:18:06 |   [0;32m✓[0m Items Service: Healthy
+2025-11-13 00:18:06 |   [0;32m✓[0m Bidding Service: Healthy
+2025-11-13 00:18:06 |   [0;32m✓[0m Profile Service: Healthy
+2025-11-13 00:18:06 |   [0;32m✓[0m Notifications Service: Healthy
+2025-11-13 00:18:06 | [0;32mAll services are healthy[0m
+2025-11-13 00:18:06 | 
+==========================================
+2025-11-13 00:18:06 | System Overview
+2025-11-13 00:18:06 | ==========================================
+2025-11-13 00:18:06 | Pods:
+NAME                                     READY   STATUS    RESTARTS         AGE
+auth-service-8bcf45f78-zkwcm             1/1     Running   5 (4h28m ago)    14h
+bidding-service-6c65b5474f-tzg4j         1/1     Running   4 (4h29m ago)    43h
+curl-test                                0/1     Error     0                43h
+items-service-9476658b7-4wnjt            1/1     Running   0                4m2s
+items-service-9476658b7-7t4tp            1/1     Running   3 (4h29m ago)    31h
+kafka-5b6d6b77b-prhz9                    1/1     Running   15 (4h28m ago)   2d22h
+minio-7df8c7cf5d-xkfdx                   1/1     Running   8 (4h29m ago)    2d23h
+mongodb-64c8bc95c7-bxn28                 1/1     Running   7 (3h45m ago)    47h
+notifications-service-84579b49ff-s5jlw   1/1     Running   0                3h56m
+postgres-auth-0                          1/1     Running   6 (4h29m ago)    45h
+postgres-auth-1                          1/1     Running   6 (4h29m ago)    45h
+postgres-bids-0                          1/1     Running   6 (4h29m ago)    44h
+postgres-bids-1                          1/1     Running   6 (4h29m ago)    44h
+postgres-items-0                         1/1     Running   6 (4h29m ago)    44h
+postgres-items-1                         1/1     Running   6 (4h29m ago)    44h
+postgres-notifications-0                 1/1     Running   6 (4h29m ago)    44h
+postgres-notifications-1                 1/1     Running   6 (4h29m ago)    44h
+postgres-profiles-0                      1/1     Running   6 (4h29m ago)    44h
+postgres-profiles-1                      1/1     Running   6 (4h29m ago)    44h
+profile-service-6897779687-2547s         1/1     Running   0                34m
+zookeeper-686bd674b-rntg9                1/1     Running   8 (4h29m ago)    2d22h
+2025-11-13 00:18:06 | 
+HPA Status:
+NAME          REFERENCE                    TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+auth-hpa      Deployment/auth-service      3%/60%    1         5         1          2d23h
+bidding-hpa   Deployment/bidding-service   21%/60%   1         5         1          2d23h
+items-hpa     Deployment/items-service     23%/60%   1         5         2          2d23h
+profile-hpa   Deployment/profile-service   4%/60%    1         5         1          2d23h
+2025-11-13 00:18:06 | 
+==========================================
+2025-11-13 00:18:06 | Testing Database Replicas (Read/Write)
+2025-11-13 00:18:06 | ==========================================
+2025-11-13 00:18:06 | 
+Testing postgres-auth...
+2025-11-13 00:18:06 |   Primary (postgres-auth-0):
+2025-11-13 00:18:07 |     Active connections: 1
+2025-11-13 00:18:07 |     Replication status: streaming
+2025-11-13 00:18:07 |   Replica (postgres-auth-1):
+2025-11-13 00:18:08 |     Active connections: 1
+2025-11-13 00:18:08 |     Replication lag: 17.364697s
+2025-11-13 00:18:08 |     [0;32mStatus: HEALTHY[0m
+2025-11-13 00:18:08 | 
+Testing postgres-items...
+2025-11-13 00:18:08 |   Primary (postgres-items-0):
+2025-11-13 00:18:08 |     Active connections: 1
+2025-11-13 00:18:09 |     Replication status: streaming
+2025-11-13 00:18:09 |   Replica (postgres-items-1):
+2025-11-13 00:18:09 |     Active connections: 3
+2025-11-13 00:18:09 |     Replication lag: 20.576086s
+2025-11-13 00:18:09 |     [0;32mStatus: HEALTHY[0m
+2025-11-13 00:18:09 | 
+Testing postgres-bids...
+2025-11-13 00:18:09 |   Primary (postgres-bids-0):
+2025-11-13 00:18:09 |     Active connections: 1
+2025-11-13 00:18:10 |     Replication status: streaming
+2025-11-13 00:18:10 |   Replica (postgres-bids-1):
+2025-11-13 00:18:10 |     Active connections: 2
+2025-11-13 00:18:10 |     Replication lag: 14.275917s
+2025-11-13 00:18:10 |     [0;32mStatus: HEALTHY[0m
+2025-11-13 00:18:10 | 
+Testing postgres-profiles...
+2025-11-13 00:18:10 |   Primary (postgres-profiles-0):
+2025-11-13 00:18:10 |     Active connections: 1
+2025-11-13 00:18:10 |     Replication status: streaming
+2025-11-13 00:18:10 |   Replica (postgres-profiles-1):
+2025-11-13 00:18:11 |     Active connections: 1
+2025-11-13 00:18:11 |     Replication lag: 22.277207s
+2025-11-13 00:18:11 |     [0;32mStatus: HEALTHY[0m
+2025-11-13 00:18:11 | 
+Testing postgres-notifications...
+2025-11-13 00:18:11 |   Primary (postgres-notifications-0):
+2025-11-13 00:18:11 |     Active connections: 1
+2025-11-13 00:18:11 |     Replication status: streaming
+2025-11-13 00:18:11 |   Replica (postgres-notifications-1):
+2025-11-13 00:18:11 |     Active connections: 1
+2025-11-13 00:18:12 |     Replication lag: 15.775991s
+2025-11-13 00:18:12 |     [0;32mStatus: HEALTHY[0m
+2025-11-13 00:18:12 | 
+==========================================
+2025-11-13 00:18:12 | Testing Kafka
+2025-11-13 00:18:12 | ==========================================
+2025-11-13 00:18:12 | Kafka pod: kafka-5b6d6b77b-prhz9
+2025-11-13 00:18:12 | 
+Kafka topics:
+__consumer_offsets
+bids-topic
+items-topic
+2025-11-13 00:18:16 | 
+Consumer groups:
+notifications-group
+2025-11-13 00:18:20 | 
+Consumer lag (notifications-group):
+
+GROUP               TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                                HOST            CLIENT-ID
+notifications-group items-topic     0          316             316             0               notifications-service-a17ea5c9-56e4-4abd-839c-63750fce48f5 /10.244.0.35    notifications-service
+notifications-group bids-topic      0          7600            7600            0               notifications-service-a17ea5c9-56e4-4abd-839c-63750fce48f5 /10.244.0.35    notifications-service
+2025-11-13 00:18:25 | 
+==========================================
+2025-11-13 00:18:25 | Testing Auth Service (50 users)
+2025-11-13 00:18:25 | ==========================================
+2025-11-13 00:20:30 | Results:
+2025-11-13 00:20:30 |   Successful: [0;32m50[0m
+2025-11-13 00:20:30 |   Failed: [0;31m0[0m
+2025-11-13 00:20:30 |   Duration: 125s
+2025-11-13 00:20:30 |   Throughput: 0 req/sec
+2025-11-13 00:20:31 |   Total users in DB: 1260
+2025-11-13 00:20:31 | 
+==========================================
+2025-11-13 00:20:31 | Testing Items Service (100 items)
+2025-11-13 00:20:31 | ==========================================
+2025-11-13 00:20:37 | Item Creation Results:
+2025-11-13 00:20:37 |   Successful: [0;32m100[0m
+2025-11-13 00:20:37 |   Failed: [0;31m0[0m
+2025-11-13 00:20:37 |   Duration: 3s
+2025-11-13 00:20:37 |   Throughput: 33 req/sec
+2025-11-13 00:20:38 | ✓ Get All Items: [0;32mSUCCESS[0m (4048 items)
+2025-11-13 00:20:38 | ✓ Get Item by ID: [0;32mSUCCESS[0m
+2025-11-13 00:20:38 | ✓ Update Item: [0;32mSUCCESS[0m
+2025-11-13 00:20:38 | 
+2025-11-13 00:20:38 | Testing Mark as Sold (100 items)...
+2025-11-13 00:20:41 |   Mark as Sold - Successful: [0;32m100[0m
+2025-11-13 00:20:41 |   Mark as Sold - Failed: [0;31m0[0m
+2025-11-13 00:20:41 | ✓ Delete Item: [0;32mSUCCESS[0m
+2025-11-13 00:20:41 | ✓ Upload Image: [0;32mSUCCESS[0m (http://localhost:9000/campusshop-items/17629734416...)
+2025-11-13 00:20:41 |   Total items in DB: 4360
+2025-11-13 00:20:42 |   Sold items in DB: 412
+2025-11-13 00:20:42 | 
+==========================================
+2025-11-13 00:20:42 | Testing Bidding Service (50 bids)
+2025-11-13 00:20:42 | ==========================================
+2025-11-13 00:20:44 |   Creating 50 items from seller...
+2025-11-13 00:20:46 |   Created 50 items
+2025-11-13 00:20:50 | Results:
+2025-11-13 00:20:50 |   Successful: [0;32m50[0m
+2025-11-13 00:20:50 |   Failed: [0;31m0[0m
+2025-11-13 00:20:50 |   Duration: 1s
+2025-11-13 00:20:50 |   Throughput: 50 req/sec
+2025-11-13 00:20:51 |   Total bids in DB: 6978
+2025-11-13 00:20:51 | 
+2025-11-13 00:20:51 | Testing Bidding GET Endpoints...
+2025-11-13 00:20:51 | ✓ Get All Bids: [0;32mSUCCESS[0m (50 bids)
+2025-11-13 00:20:51 | ✓ Get Bids for Item: [0;32mSUCCESS[0m (1 bids)
+2025-11-13 00:20:51 | 
+==========================================
+2025-11-13 00:20:51 | Testing Notifications Service
+2025-11-13 00:20:51 | ==========================================
+2025-11-13 00:20:51 | Processed Kafka events: 7279
+2025-11-13 00:20:52 | Total notifications in MongoDB: 6941
+2025-11-13 00:20:52 | Emails skipped (DISABLE_EMAILS): 885
+2025-11-13 00:20:52 | 
+2025-11-13 00:20:52 | Testing Notifications API Endpoints...
+2025-11-13 00:21:04 | ✓ Get Notifications: [0;32mSUCCESS[0m (0 notifications)
+2025-11-13 00:21:04 | ✓ Get Unread Count: [0;32mSUCCESS[0m (0 unread)
+2025-11-13 00:21:04 | ✓ Get Notification Stats: [0;32mSUCCESS[0m
+2025-11-13 00:21:04 | 
+==========================================
+2025-11-13 00:21:04 | Testing Profile Service
+2025-11-13 00:21:04 | ==========================================
+2025-11-13 00:21:04 | Total profiles in DB: 603
+2025-11-13 00:21:07 | ✓ Get Profile: [0;32mSUCCESS[0m
+2025-11-13 00:21:07 | ✓ Get Posted Items: [0;32mSUCCESS[0m
+2025-11-13 00:21:07 | ✓ Get Sold Items: [0;32mSUCCESS[0m
+2025-11-13 00:21:07 | ✓ Get My Bids: [0;32mSUCCESS[0m
+2025-11-13 00:21:07 | ✓ Update Profile: [0;32mSUCCESS[0m
+2025-11-13 00:21:07 | 
+2025-11-13 00:21:07 | Testing Medium Priority Endpoints...
+2025-11-13 00:21:11 | ✓ Get Active Bids: [0;32mSUCCESS[0m (1 active bids)
+2025-11-13 00:21:11 | ✓ Get Purchased Items: [0;32mSUCCESS[0m (0 purchased)
+2025-11-13 00:21:11 | ✓ Get Other User Profile: [0;32mSUCCESS[0m
+2025-11-13 00:21:11 | ✓ Get Bids on My Items: [0;32mSUCCESS[0m (1 bids received)
+2025-11-13 00:21:11 | 
+==========================================
+2025-11-13 00:21:11 | Test Summary
+2025-11-13 00:21:11 | ==========================================
+2025-11-13 00:21:11 | Total users: 1267
+2025-11-13 00:21:11 | Total items: 4413
+2025-11-13 00:21:12 | Total bids: 6981
+2025-11-13 00:21:12 | Total profiles: 604
+2025-11-13 00:21:12 | Processed events: 7364
+2025-11-13 00:21:12 | 
+[0;32mTest completed successfully![0m
+2025-11-13 00:21:12 | Full results saved to: logs/test-results.log

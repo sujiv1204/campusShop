@@ -44,6 +44,9 @@ spec:
               value: http://bidding-service.campus-shop.svc.cluster.local
             - name: PROFILE_SERVICE_URL
               value: http://profile-service.campus-shop.svc.cluster.local
+            # ⚠️ Set to 'true' to disable email sending (for testing with large datasets)
+            - name: DISABLE_EMAILS
+              value: "false"
           command: ["/bin/sh", "-c"]
           args:
             - |

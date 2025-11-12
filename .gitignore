@@ -8,3 +8,5 @@ k8s/secrets/
 *.pem
 *.csr
 *.srl
+
+scripts/node_modules/

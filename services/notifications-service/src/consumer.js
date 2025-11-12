@@ -28,6 +28,14 @@ const PROFILE_SERVICE_URL =
     process.env.PROFILE_SERVICE_URL ||
     "http://profile-service.campus-shop.svc.cluster.local";
 
+// ⚠️ DISABLE EMAIL SENDING (for testing/development)
+const DISABLE_EMAILS = process.env.DISABLE_EMAILS === "true";
+if (DISABLE_EMAILS) {
+    console.log(
+        "⚠️  EMAIL SENDING IS DISABLED - Notifications will be logged only"
+    );
+}
+
 // --- Helper to fetch email preferences ---
 async function getEmailPreferences(userId) {
     try {
@@ -219,6 +227,18 @@ async function handleBidPlaced(event) {
         return;
     }
 
+    // ⚠️ Check if email sending is disabled
+    if (DISABLE_EMAILS) {
+        console.log(
+            `📧 [SKIPPED] Would have sent bid notification to ${sellerEmail}`
+        );
+        await Notification.updateOne(
+            { userId: sellerId, type: "BID_RECEIVED", "metadata.bidId": bidId },
+            { emailSent: true }
+        );
+        return;
+    }
+
     // Send email
     const mailInfo = await transporter.sendMail({
         from: process.env.EMAIL_FROM,
@@ -288,25 +308,32 @@ async function handleItemSold(eventPayload) {
     // Check seller email preferences
     const sellerPreferences = await getEmailPreferences(sellerId);
     if (sellerPreferences.itemSold) {
-        const sellerMailInfo = await transporter.sendMail({
-            from: process.env.EMAIL_FROM,
-            to: sellerEmail,
-            subject: `Congratulations! Your item "${item.title}" has been sold.`,
-            html: `
-                <b>Congratulations!</b><br/>
-                <p>Your item, "${item.title}", has been sold for <b>₹${winningBid.amount}</b>.</p>
-                <p>Please contact the buyer to arrange the exchange. Their email is: ${winnerEmail}</p>
-                <br/>
-                <p>Thank you,<br/>The Campus Marketplace Team</p>
-            `,
-        });
+        // ⚠️ Check if email sending is disabled
+        if (!DISABLE_EMAILS) {
+            const sellerMailInfo = await transporter.sendMail({
+                from: process.env.EMAIL_FROM,
+                to: sellerEmail,
+                subject: `Congratulations! Your item "${item.title}" has been sold.`,
+                html: `
+                    <b>Congratulations!</b><br/>
+                    <p>Your item, "${item.title}", has been sold for <b>₹${winningBid.amount}</b>.</p>
+                    <p>Please contact the buyer to arrange the exchange. Their email is: ${winnerEmail}</p>
+                    <br/>
+                    <p>Thank you,<br/>The Campus Marketplace Team</p>
+                `,
+            });
+            console.log(
+                `ItemSold notification sent to seller. Message ID: %s`,
+                sellerMailInfo.messageId
+            );
+        } else {
+            console.log(
+                `📧 [SKIPPED] Would have sent item sold notification to ${sellerEmail}`
+            );
+        }
         await Notification.updateOne(
             { userId: sellerId, type: "ITEM_SOLD", "metadata.itemId": item.id },
             { emailSent: true }
-        );
-        console.log(
-            `ItemSold notification sent to seller. Message ID: %s`,
-            sellerMailInfo.messageId
         );
     } else {
         console.log(
@@ -321,25 +348,32 @@ async function handleItemSold(eventPayload) {
     // Check winner email preferences
     const winnerPreferences = await getEmailPreferences(winnerId);
     if (winnerPreferences.bidWon) {
-        const winnerMailInfo = await transporter.sendMail({
-            from: process.env.EMAIL_FROM,
-            to: winnerEmail,
-            subject: `Congratulations! You won the bid for "${item.title}".`,
-            html: `
-                <b>Congratulations!</b><br/>
-                <p>You are the winning bidder for the item "${item.title}" with a bid of <b>₹${winningBid.amount}</b>.</p>
-                <p>Please contact the seller to arrange the exchange. Their email is: ${sellerEmail}</p>
-                <br/>
-                <p>Thank you,<br/>The Campus Marketplace Team</p>
-            `,
-        });
+        // ⚠️ Check if email sending is disabled
+        if (!DISABLE_EMAILS) {
+            const winnerMailInfo = await transporter.sendMail({
+                from: process.env.EMAIL_FROM,
+                to: winnerEmail,
+                subject: `Congratulations! You won the bid for "${item.title}".`,
+                html: `
+                    <b>Congratulations!</b><br/>
+                    <p>You are the winning bidder for the item "${item.title}" with a bid of <b>₹${winningBid.amount}</b>.</p>
+                    <p>Please contact the seller to arrange the exchange. Their email is: ${sellerEmail}</p>
+                    <br/>
+                    <p>Thank you,<br/>The Campus Marketplace Team</p>
+                `,
+            });
+            console.log(
+                `ItemSold notification sent to winner. Message ID: %s`,
+                winnerMailInfo.messageId
+            );
+        } else {
+            console.log(
+                `📧 [SKIPPED] Would have sent bid won notification to ${winnerEmail}`
+            );
+        }
         await Notification.updateOne(
             { userId: winnerId, type: "BID_WON", "metadata.itemId": item.id },
             { emailSent: true }
-        );
-        console.log(
-            `ItemSold notification sent to winner. Message ID: %s`,
-            winnerMailInfo.messageId
         );
     } else {
         console.log(
