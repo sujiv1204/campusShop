@@ -997,6 +997,7 @@ const UserProfile = () => {
     const [bidsLoading, setBidsLoading] = useState(false);
     const [error, setError] = useState("");
     const [soldItems, setSoldItems] = useState([]);
+    const [purchasedItems, setPurchasedItems] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -1008,6 +1009,8 @@ const UserProfile = () => {
             fetchUserBids();
         } else if (activeTab === "sold-item") {
             fetchUserSoldItems();
+        } else if (activeTab === "purchased-items") {
+            fetchUserPurchasedItems();
         }
     }, [activeTab]);
 
@@ -1045,11 +1048,14 @@ const UserProfile = () => {
 
             const itemsResponse = await profileAPI.getMyPosted();
 
-            setMyItems(itemsResponse.data);
-            console.log(itemsResponse.data);
+            // Handle paginated response
+            const itemsData = itemsResponse.data.items || itemsResponse.data;
+            setMyItems(Array.isArray(itemsData) ? itemsData : []);
+            console.log(itemsData);
         } catch (err) {
             console.error("Error fetching user data:", err);
             setError("Failed to load profile data. Please try again.");
+            setMyItems([]); // Set empty array on error
         } finally {
             setLoading(false);
         }
@@ -1065,11 +1071,38 @@ const UserProfile = () => {
 
             const response = await profileAPI.getMySoldItems();
             console.log("sold items", response.data);
-            setSoldItems(response.data);
-            // console.log(response.data);
+
+            // Handle paginated response
+            const soldItemsData = response.data.items || response.data;
+            setSoldItems(Array.isArray(soldItemsData) ? soldItemsData : []);
         } catch (err) {
             console.error(err);
             setError("Failed to load sold items. Please try again.");
+            setSoldItems([]); // Set empty array on error
+        }
+    };
+
+    const fetchUserPurchasedItems = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error(
+                    "No authentication token found. Please login again."
+                );
+            }
+
+            const response = await profileAPI.getMyPurchasedItems();
+            console.log("purchased items", response.data);
+
+            // Handle paginated response
+            const purchasedItemsData = response.data.items || response.data;
+            setPurchasedItems(
+                Array.isArray(purchasedItemsData) ? purchasedItemsData : []
+            );
+        } catch (err) {
+            console.error(err);
+            setError("Failed to load purchased items. Please try again.");
+            setPurchasedItems([]); // Set empty array on error
         }
     };
 
@@ -1558,6 +1591,121 @@ const UserProfile = () => {
             </div>
         );
     };
+
+    const renderPurchasedItems = () => {
+        if (purchasedItems.length === 0) {
+            return (
+                <div className="empty-state">
+                    <div className="empty-icon">🛍️</div>
+                    <h3>No Purchased Items Yet</h3>
+                    <p>Items you win through bids will appear here!</p>
+                    <button
+                        onClick={() => navigate("/buy-items")}
+                        className="cta-button"
+                    >
+                        Browse Items
+                    </button>
+                </div>
+            );
+        }
+
+        return (
+            <div className="my-bids-tab">
+                <div className="bids-header">
+                    <h2>Purchased Items ({purchasedItems.length})</h2>
+                    <button
+                        onClick={fetchUserPurchasedItems}
+                        className="refresh-btn"
+                    >
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div className="bids-grid">
+                    {purchasedItems.map((item, index) => (
+                        <div
+                            key={item.bidId || `purchased-${item.id}-${index}`}
+                            className="bid-card"
+                        >
+                            {/* Item Image */}
+                            {item.itemImage || item.imageUrl ? (
+                                <div className="bid-item-image">
+                                    <img
+                                        src={item.itemImage || item.imageUrl}
+                                        alt={item.title}
+                                    />
+                                </div>
+                            ) : (
+                                <div className="bid-item-image placeholder">
+                                    <span>📦</span>
+                                </div>
+                            )}
+
+                            <div className="bid-content">
+                                {/* Item Info */}
+                                <div className="bid-item-info">
+                                    <h4 className="bid-item-title">
+                                        {item.title || "Unnamed Item"}
+                                    </h4>
+                                    <p className="bid-item-description">
+                                        {item.description ||
+                                            "No description available"}
+                                    </p>
+                                </div>
+
+                                {/* Purchase Details */}
+                                <div className="bid-details">
+                                    <div className="bid-amount">
+                                        <span className="label">
+                                            Purchase Price:
+                                        </span>
+                                        <span className="value">
+                                            ₹
+                                            {parseFloat(
+                                                item.purchasePrice || item.price
+                                            ).toFixed(2)}
+                                        </span>
+                                    </div>
+
+                                    <div className="item-price">
+                                        <span className="label">
+                                            Original Price:
+                                        </span>
+                                        <span className="value">
+                                            ₹{parseFloat(item.price).toFixed(2)}
+                                        </span>
+                                    </div>
+
+                                    {item.purchasedAt && (
+                                        <div className="bid-time">
+                                            <span className="label">
+                                                Purchased:
+                                            </span>
+                                            <span className="value">
+                                                {new Date(
+                                                    item.purchasedAt
+                                                ).toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    <div className="seller-info">
+                                        <span className="label">
+                                            Seller Email:
+                                        </span>
+                                        <span className="value">
+                                            {item.sellerEmail || "N/A"}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
+
     // const handlePlaceNewBid = (itemId) => {
     //   navigate(`/item/${itemId}`, { state: { focusBid: true } });
     // };
@@ -1730,6 +1878,32 @@ const UserProfile = () => {
     hover:bg-gray-300 hover:border-gray-500
     focus:outline-none focus:ring-2 focus:ring-gray-400
     ${
+        activeTab === "purchased-items"
+            ? "bg-gray-800 text-white border-gray-900"
+            : ""
+    }
+  `}
+                    onClick={() => setActiveTab("purchased-items")}
+                >
+                    Purchased Items (
+                    {activeTab === "purchased-items"
+                        ? purchasedItems.length
+                        : "..."}
+                    )
+                </button>
+                <button
+                    className={`
+  m-2
+    px-4 py-2
+    bg-gray-200
+    blue
+    border border-gray-400
+    rounded-lg
+    font-semibold
+    transition-colors duration-200 ease-in-out
+    hover:bg-gray-300 hover:border-gray-500
+    focus:outline-none focus:ring-2 focus:ring-gray-400
+    ${
         activeTab === "preferences"
             ? "bg-gray-800 text-white border-gray-900"
             : ""
@@ -1866,6 +2040,7 @@ const UserProfile = () => {
                 {activeTab === "bids" && <BidsManager />}
                 {activeTab === "my-bids" && renderMyBids()}
                 {activeTab === "sold-item" && renderSoldItems()}
+                {activeTab === "purchased-items" && renderPurchasedItems()}
                 {activeTab === "preferences" && <EmailPreferences />}
             </div>
         </div>

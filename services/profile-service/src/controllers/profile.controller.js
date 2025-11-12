@@ -75,7 +75,10 @@ exports.getPostedItems = async (req, res) => {
                 headers: { Authorization: req.headers["authorization"] }, // Forward the auth header
             }
         );
-        res.json(response.data);
+
+        // Handle paginated response from items-service
+        const items = response.data.items || response.data;
+        res.json(Array.isArray(items) ? items : []);
     } catch (error) {
         // Log the detailed error from the downstream service
         console.error(
@@ -94,8 +97,11 @@ exports.getSoldItems = async (req, res) => {
             `${process.env.ITEMS_SERVICE_URL}/api/items?sellerId=${sellerId}&status=sold`,
             { headers: { Authorization: req.headers["authorization"] } }
         );
-        const soldItems = itemsResponse.data;
-        if (soldItems.length === 0) {
+
+        // Handle paginated response from items-service
+        const soldItems = itemsResponse.data.items || itemsResponse.data;
+
+        if (!Array.isArray(soldItems) || soldItems.length === 0) {
             return res.json([]);
         }
 
@@ -244,12 +250,58 @@ exports.getPurchasedItems = async (req, res) => {
                 const itemResponse = await axios.get(
                     `${process.env.ITEMS_SERVICE_URL}/api/items/${bid.itemId}`
                 );
+
+                // Only include items that are sold
                 if (itemResponse.data.status === "sold") {
-                    purchasedItems.push({
-                        ...itemResponse.data,
-                        purchasePrice: bid.amount,
-                        purchasedAt: bid.createdAt,
-                    });
+                    // Get all bids for this item to find the winning bid
+                    const itemBidsResponse = await axios.get(
+                        `${process.env.BIDDING_SERVICE_URL}/api/bids/item/${bid.itemId}`,
+                        {
+                            headers: {
+                                Authorization: req.headers["authorization"],
+                            },
+                        }
+                    );
+                    const allItemBids = itemBidsResponse.data;
+
+                    // Find the winning bid (highest amount)
+                    const winningBid = allItemBids.reduce(
+                        (highest, current) => {
+                            return parseFloat(current.amount) >
+                                parseFloat(highest.amount)
+                                ? current
+                                : highest;
+                        },
+                        allItemBids[0]
+                    );
+
+                    // Only include if this user's bid was the winning bid
+                    const bidId = bid.id || bid._id;
+                    const winningBidId = winningBid.id || winningBid._id;
+
+                    if (bidId === winningBidId) {
+                        // Fetch seller email from auth service
+                        let sellerEmail = "N/A";
+                        try {
+                            const sellerResponse = await axios.get(
+                                `${process.env.AUTH_SERVICE_URL}/api/auth/user/${itemResponse.data.sellerId}`
+                            );
+                            sellerEmail = sellerResponse.data.email || "N/A";
+                        } catch (sellerError) {
+                            console.log(
+                                `Could not fetch seller info for item ${bid.itemId}:`,
+                                sellerError.message
+                            );
+                        }
+
+                        purchasedItems.push({
+                            ...itemResponse.data,
+                            bidId: bidId,
+                            purchasePrice: bid.amount,
+                            purchasedAt: bid.createdAt,
+                            sellerEmail: sellerEmail,
+                        });
+                    }
                 }
             } catch (itemError) {
                 console.log(

@@ -238,7 +238,7 @@ export const profileAPI = {
     getMyPurchasedItems: () => api.get("/profiles/me/items/purchased"),
 };
 export const itemsAPI = {
-    getAll: () => api.get("/items/"),
+    getAll: (params) => api.get("/items/", { params }), // Support pagination params
     getById: (id) => api.get(`/items/${id}`),
     create: (itemData) => api.post("/items/", itemData),
     update: (id, itemData) => api.put(`/items/${id}`, itemData),

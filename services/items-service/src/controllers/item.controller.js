@@ -34,22 +34,96 @@ exports.createItem = async (req, res) => {
     }
 };
 
-// Controller method for getting all items (reverted to non-paginated version)
+// Controller method for getting all items with pagination
 exports.getAllItems = async (req, res) => {
     try {
-        const { sellerId, status } = req.query;
-        let queryOptions = {
-            where: { status: status || "available" },
-        };
+        const {
+            sellerId,
+            status,
+            page = 1,
+            limit = 20,
+            search,
+            sortBy,
+            minPrice,
+            maxPrice,
+        } = req.query;
 
-        // If a sellerId is provided, add it to the filter
+        // Parse and validate pagination params
+        const pageNum = Math.max(1, parseInt(page) || 1);
+        const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 20)); // Max 100 items per page
+        const offset = (pageNum - 1) * limitNum;
+
+        // Build where clause
+        const whereClause = { status: status || "available" };
+
+        // Add sellerId filter if provided
         if (sellerId) {
-            queryOptions.where.sellerId = sellerId;
+            whereClause.sellerId = sellerId;
         }
 
-        // Use the simple findAll, which returns just an array
-        const items = await Item.findAll(queryOptions);
-        res.status(200).json(items); // This returns a simple array
+        // Add search filter (searches in title and description)
+        if (search && search.trim()) {
+            const { Op } = require("sequelize");
+            whereClause[Op.or] = [
+                { title: { [Op.iLike]: `%${search.trim()}%` } },
+                { description: { [Op.iLike]: `%${search.trim()}%` } },
+            ];
+        }
+
+        // Add price range filters
+        if (minPrice || maxPrice) {
+            const { Op } = require("sequelize");
+            whereClause.price = {};
+
+            if (minPrice) {
+                whereClause.price[Op.gte] = parseFloat(minPrice);
+            }
+
+            if (maxPrice) {
+                whereClause.price[Op.lte] = parseFloat(maxPrice);
+            }
+        }
+
+        // Determine sort order
+        let orderClause = [["createdAt", "DESC"]]; // Default: newest first
+
+        if (sortBy === "oldest") {
+            orderClause = [["createdAt", "ASC"]];
+        } else if (sortBy === "price-low") {
+            orderClause = [["price", "ASC"]];
+        } else if (sortBy === "price-high") {
+            orderClause = [["price", "DESC"]];
+        } else if (sortBy === "newest") {
+            orderClause = [["createdAt", "DESC"]];
+        }
+
+        let queryOptions = {
+            where: whereClause,
+            limit: limitNum,
+            offset: offset,
+            order: orderClause,
+        };
+
+        // Use findAndCountAll for pagination
+        const { count, rows: items } = await Item.findAndCountAll(queryOptions);
+
+        // Calculate pagination metadata
+        const totalPages = Math.ceil(count / limitNum);
+        const hasNextPage = pageNum < totalPages;
+        const hasPrevPage = pageNum > 1;
+
+        // Return paginated response
+        res.status(200).json({
+            items,
+            pagination: {
+                currentPage: pageNum,
+                totalPages,
+                totalItems: count,
+                itemsPerPage: limitNum,
+                hasNextPage,
+                hasPrevPage,
+            },
+        });
     } catch (error) {
         console.error("Error fetching items:", error);
         res.status(500).json({ message: "Server error while fetching items." });
