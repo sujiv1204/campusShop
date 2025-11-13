@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Header from './components/Header/header';
 import LandingPage from './pages/LandingPage/landingPage';
 import Login from './pages/Login/login';
+import ResetPassword from './pages/Login/resetPassword';
 import Register from './pages/Register/register';
 import CreateItem from './pages/CreateItem/createItem'; 
 import Dashboard from './pages/Dashboard/dashboard'; 
@@ -45,6 +46,10 @@ function App() {
             <Route 
               path="/login" 
               element={!isAuthenticated ? <Login setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/" />} 
+            />
+            <Route 
+              path="/reset-password" 
+              element={!isAuthenticated ? <ResetPassword /> : <Navigate to="/" />} 
             />
             <Route 
               path="/buy-items" 
