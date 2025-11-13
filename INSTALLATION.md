@@ -257,7 +257,38 @@ You should see your ingress listed (e.g., `app-ingress`, `minio-ingress`).
 
 ---
 
-## Step 9: Access Your Application (Port Forwarding)
+## Step 9: Deploy Monitoring Stack (Prometheus & Grafana)
+
+This step sets up observability for your microservices.
+
+```bash
+# 1. Create monitoring namespace
+kubectl create namespace monitoring
+
+# 2. Deploy Prometheus and Grafana
+kubectl apply -f k8s/monitoring/namespace.yaml
+kubectl apply -f k8s/monitoring/rbac.yaml
+kubectl apply -f k8s/monitoring/prometheus-config.yaml
+kubectl apply -f k8s/monitoring/prometheus.yaml
+kubectl apply -f k8s/monitoring/grafana-datasources.yaml
+kubectl apply -f k8s/monitoring/grafana.yaml
+```
+
+---
+
+**✅ Checkpoint:** Verify monitoring pods are running.
+
+```bash
+kubectl get pods -n monitoring
+```
+
+You should see `prometheus-...` and `grafana-...` pods in `Running` state.
+
+**Important:** Grafana requires 512Mi memory for stability. This is already configured in the deployment.
+
+---
+
+## Step 10: Access Your Application (Port Forwarding)
 
 You must run these commands in **separate, dedicated terminals** as they will block.
 
@@ -275,6 +306,22 @@ This forwards the MinIO API and Console ports.
 
 ```bash
 kubectl port-forward svc/minio-service 9000:9000 9001:9001 -n campus-shop
+```
+
+### **Terminal 3: Forward Prometheus** (Optional)
+
+Access Prometheus metrics UI.
+
+```bash
+kubectl port-forward -n monitoring svc/prometheus 9090:9090
+```
+
+### **Terminal 4: Forward Grafana** (Optional)
+
+Access Grafana dashboards.
+
+```bash
+kubectl port-forward -n monitoring svc/grafana 3000:3000
 ```
 
 ---
@@ -296,9 +343,14 @@ curl http://localhost:8080/api/notifications/health
 curl http://localhost:8080/api/profiles/health
 ```
 
+**Access Monitoring:**
+
+-   **Prometheus:** http://localhost:9090 (if port-forward running)
+-   **Grafana:** http://localhost:3000 (if port-forward running, login: admin/admin)
+
 ---
 
-## Step 10: Testing & Verification
+## Step 11: Testing & Verification
 
 Run these commands in new, separate terminals to watch your autoscalers work.
 
@@ -338,7 +390,7 @@ kubectl describe vpa items-vpa -n campus-shop
 
 ---
 
-## Step 11: Accessing MinIO Console
+## Step 12: Accessing MinIO Console
 
 MinIO provides a web console for managing object storage.
 
@@ -457,9 +509,9 @@ All services run in the `campus-shop` namespace with proper secret management, r
 
 ---
 
-## Next Steps
+### Next Steps
 
--   Set up monitoring with Prometheus and Grafana
+-   ~~Set up monitoring with Prometheus and Grafana~~ ✅ **Already deployed in Step 9**
 -   Configure persistent volumes for production
 -   Implement proper TLS/SSL certificates
 -   Set up CI/CD pipeline

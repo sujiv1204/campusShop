@@ -2858,44 +2858,48 @@ Applied changes:
 **Problem:** Grafana pod repeatedly crashing with 24 restarts in 2 days 3 hours (OOMKilled - Exit Code 137).
 
 **Root Cause Investigation:**
+
 1. Checked pod logs - normal startup, no application errors
 2. Checked previous crash logs - database locked warnings, but not fatal
 3. Described pod resources:
-   ```
-   Limits:
-     cpu:     100m
-     memory:  128Mi
-   Requests:
-     cpu:     50m
-     memory:  64Mi
-   Last State: Terminated
-     Reason:  OOMKilled
-   ```
+    ```
+    Limits:
+      cpu:     100m
+      memory:  128Mi
+    Requests:
+      cpu:     50m
+      memory:  64Mi
+    Last State: Terminated
+      Reason:  OOMKilled
+    ```
 4. **Root Cause:** Memory limit of 128Mi too low for Grafana with Prometheus datasource and dashboards
 
 **Solution:**
+
 1. Updated `k8s/monitoring/grafana.yaml` resource limits:
-   - Memory requests: 64Mi → **256Mi**
-   - Memory limits: 128Mi → **512Mi**
-   - CPU requests: 50m → **100m**
-   - CPU limits: 100m → **500m**
+    - Memory requests: 64Mi → **256Mi**
+    - Memory limits: 128Mi → **512Mi**
+    - CPU requests: 50m → **100m**
+    - CPU limits: 100m → **500m**
 2. Applied changes: `kubectl apply -f k8s/monitoring/grafana.yaml`
 3. Restarted deployment: `kubectl rollout restart deployment/grafana -n monitoring`
 4. Verified new pod: `grafana-5fbfc87f48-tct6p` running with 0 restarts
 5. Waited 109 seconds - pod stable, no crashes
 
 **Resource Standardization:**
-- Also updated **notifications-service** to match other services:
-  - Memory limits: 256Mi → **512Mi**
-  - CPU limits: 500m → **1 core**
-  - Requests increased proportionally
-- All 5 microservices now have consistent limits (256Mi/512Mi, 200m/1 core)
 
-**Result:** 
-- ✅ **Grafana stable with 0 restarts**
-- ✅ **Monitoring fully operational**
-- ✅ **All services standardized at 512Mi memory**
-- ✅ **Prometheus also stable (was restarting 7 times, not investigated as less critical)**
+-   Also updated **notifications-service** to match other services:
+    -   Memory limits: 256Mi → **512Mi**
+    -   CPU limits: 500m → **1 core**
+    -   Requests increased proportionally
+-   All 5 microservices now have consistent limits (256Mi/512Mi, 200m/1 core)
+
+**Result:**
+
+-   ✅ **Grafana stable with 0 restarts**
+-   ✅ **Monitoring fully operational**
+-   ✅ **All services standardized at 512Mi memory**
+-   ✅ **Prometheus also stable (was restarting 7 times, not investigated as less critical)**
 
 **Lesson Learned:** Grafana requires minimum 512Mi for production use with multiple datasources and dashboards. Initial 128Mi limit was fine for demo but insufficient for sustained operation.
 
