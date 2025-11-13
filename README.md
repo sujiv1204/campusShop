@@ -269,6 +269,8 @@ npm run dev
 | [TESTING.md](TESTING.md)               | Testing guide and results       |
 | [DATABASE_GUIDE.md](DATABASE_GUIDE.md) | Database inspection commands    |
 
+**Reports & Documentation:** [Google Drive](https://drive.google.com/drive/folders/1KpFjGLDyYcPtKchY8Rxo3-Mb6PriGTq_)
+
 ---
 
 ## Performance
