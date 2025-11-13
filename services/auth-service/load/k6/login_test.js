@@ -22,7 +22,7 @@ export let options = {
   },
 };
 
-const BASE = __ENV.STAGING_URL || 'http://localhost:5001';
+const BASE = __ENV.STAGING_URL || 'http://localhost:8080';
 const LOGIN_ENDPOINT = `${BASE}/api/auth/login`;
 
 // Choose a ratio valid:invalid

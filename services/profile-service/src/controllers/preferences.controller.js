@@ -42,7 +42,8 @@ exports.updatePreferences = async (req, res) => {
         const userId = req.user.userId;
         const { bidReceived, itemSold, bidWon } = req.body;
 
-        let profile = await Profile.findByPk(userId);
+        // Force using primary database for write operations
+        let profile = await Profile.findByPk(userId, { useMaster: true });
 
         if (!profile) {
             // Create profile if it doesn't exist
@@ -78,7 +79,8 @@ exports.updatePreferences = async (req, res) => {
                         ? currentPreferences.bidWon
                         : true,
             };
-            await profile.save();
+            // Force save to primary database
+            await profile.save({ useMaster: true });
         }
 
         res.json(profile.emailPreferences);

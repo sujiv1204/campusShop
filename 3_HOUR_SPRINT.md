@@ -71,10 +71,11 @@ curl -X POST http://localhost/api/auth/login \
 ```
 
 **Expected Issues to Fix:**
-- ⚠️ Image upload size limits (check MinIO config)
-- ⚠️ Pagination edge cases (empty results, last page)
-- ⚠️ Profile edit validation (phone number format)
-- ⚠️ Notification delays (check Kafka consumer)
+
+-   ⚠️ Image upload size limits (check MinIO config)
+-   ⚠️ Pagination edge cases (empty results, last page)
+-   ⚠️ Profile edit validation (phone number format)
+-   ⚠️ Notification delays (check Kafka consumer)
 
 ### 1.2 Rate Limiting & Security Testing (15 min)
 
@@ -106,9 +107,10 @@ curl -X POST http://localhost/api/auth/forgot-password \
 ```
 
 **Expected Issues:**
-- ⚠️ Email delivery delays (check SMTP logs)
-- ⚠️ Frontend reset password route (verify it exists)
-- ⚠️ Token expiration handling
+
+-   ⚠️ Email delivery delays (check SMTP logs)
+-   ⚠️ Frontend reset password route (verify it exists)
+-   ⚠️ Token expiration handling
 
 ### 1.3 Performance & Load Testing (15 min)
 
@@ -149,24 +151,27 @@ kubectl logs -n campus-shop deployment/items-service --tail=100 | grep -i "pool\
 **Based on testing results, prioritize:**
 
 1. **Image Upload Issues** (10 min)
-   - Check MinIO storage limits
-   - Verify image compression in frontend
-   - Test edge cases (no image, large image)
+
+    - Check MinIO storage limits
+    - Verify image compression in frontend
+    - Test edge cases (no image, large image)
 
 2. **Pagination Bugs** (10 min)
-   - Fix empty result handling
-   - Fix last page navigation
-   - Ensure consistent item count
+
+    - Fix empty result handling
+    - Fix last page navigation
+    - Ensure consistent item count
 
 3. **Profile/Contact Info** (5 min)
-   - Verify buyer/seller info enrichment
-   - Check email fetching from auth-service
-   - Test with missing profile data
+
+    - Verify buyer/seller info enrichment
+    - Check email fetching from auth-service
+    - Test with missing profile data
 
 4. **Notification Delays** (5 min)
-   - Check Kafka consumer lag
-   - Verify email preferences working
-   - Test notification center updates
+    - Check Kafka consumer lag
+    - Verify email preferences working
+    - Test notification center updates
 
 ### 2.2 Frontend Polish (20 min)
 
@@ -317,12 +322,14 @@ git push origin v2.0.0
 ### Merge to Main (When Ready)
 
 **Option 1: Branch Replacement (Recommended)**
+
 ```bash
 # On GitHub: Settings → Branches → Default branch → Change to "v2"
 # This makes v2 the primary branch without merge conflicts
 ```
 
 **Option 2: Create Release PR**
+
 ```bash
 # On GitHub: Create PR from v2 to main
 # Add comprehensive description
@@ -335,30 +342,34 @@ git push origin v2.0.0
 ## Priority Checklist
 
 ### Must Complete (Critical):
-- [ ] Test all critical user flows (registration → login → profile → item → bid)
-- [ ] Verify rate limiting works
-- [ ] Fix any blocking bugs found during testing
-- [ ] Run automated test suite
-- [ ] Commit and push all changes
+
+-   [ ] Test all critical user flows (registration → login → profile → item → bid)
+-   [ ] Verify rate limiting works
+-   [ ] Fix any blocking bugs found during testing
+-   [ ] Run automated test suite
+-   [ ] Commit and push all changes
 
 ### Should Complete (High Priority):
-- [ ] Test forgot password flow
-- [ ] Run load testing (k6)
-- [ ] Check performance metrics
-- [ ] Update README with new features
-- [ ] Polish frontend error handling
+
+-   [ ] Test forgot password flow
+-   [ ] Run load testing (k6)
+-   [ ] Check performance metrics
+-   [ ] Update README with new features
+-   [ ] Polish frontend error handling
 
 ### Nice to Have (If Time Permits):
-- [ ] Mobile responsiveness check
-- [ ] Add more test coverage
-- [ ] Grafana dashboard review
-- [ ] Documentation improvements
+
+-   [ ] Mobile responsiveness check
+-   [ ] Add more test coverage
+-   [ ] Grafana dashboard review
+-   [ ] Documentation improvements
 
 ---
 
 ## Quick Reference Commands
 
 ### Testing
+
 ```bash
 # Full test suite
 cd scripts && ./test-system.sh
@@ -376,6 +387,7 @@ kubectl get pods -n campus-shop
 ```
 
 ### Debugging
+
 ```bash
 # Restart service
 kubectl rollout restart deployment auth-service -n campus-shop
@@ -391,6 +403,7 @@ kubectl port-forward -n campus-shop svc/auth-service 5001:80
 ```
 
 ### Git
+
 ```bash
 # Quick commit
 git add -A && git commit -m "fix: [description]" && git push origin v2

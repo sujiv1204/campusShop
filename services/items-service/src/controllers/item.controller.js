@@ -268,7 +268,7 @@ exports.deleteItem = async (req, res) => {
 
 // Controller method for marking an item as sold
 exports.markAsSold = async (req, res) => {
-    const t = await sequelize.transaction(); // Start transaction
+    const t = await sequelize.transaction({ useMaster: true }); // Start transaction with write connection
     try {
         const item = await Item.findByPk(req.params.id, { transaction: t });
         if (!item) {

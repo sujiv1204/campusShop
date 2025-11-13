@@ -15,8 +15,8 @@ exports.placeBid = async (req, res) => {
             .json({ message: "Item ID and amount are required." });
     }
 
-    // Start a database transaction
-    const t = await sequelize.transaction();
+    // Start a database transaction with explicit write connection
+    const t = await sequelize.transaction({ useMaster: true });
 
     try {
         // --- Business Logic Checks ---
@@ -60,12 +60,14 @@ exports.placeBid = async (req, res) => {
         // --- End Business Logic Checks ---
 
         // 1. Create the bid within the transaction
+        // Force using the write/master database connection
         const newBid = await Bid.create(
             { itemId, bidderId, amount },
-            { transaction: t }
+            { transaction: t, logging: console.log }
         );
 
         // 2. Create the event in the outbox table within the same transaction
+        // Force using the write/master database connection
         await EventOutbox.create(
             {
                 topic: "bids-topic",
