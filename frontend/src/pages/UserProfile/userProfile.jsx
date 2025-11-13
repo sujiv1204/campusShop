@@ -985,6 +985,7 @@ import { useNavigate } from "react-router-dom";
 import { itemsAPI, bidsAPI, profileAPI } from "../../services/api";
 import BidsManager from "../../components/BidsManager/bidsManager";
 import EmailPreferences from "../../components/EmailPreferences/EmailPreferences";
+import ProfileManagement from "../../components/ProfileManagement/ProfileManagement";
 import "./userProfile.css";
 import { Button } from "flowbite-react";
 
@@ -1437,38 +1438,11 @@ const UserProfile = () => {
         );
     };
     const renderSoldItems = () => {
-        // if (bidsLoading) {
-        //   return (
-        //     <div className="bids-loading">
-        //       <div className="loading-spinner"></div>
-        //       <p>Loading your bids...</p>
-        //     </div>
-        //   );
-        // }
-
-        // if (error && activeTab === 'sold-item') {
-        //   return (
-        //     <div className="bids-error">
-        //       <div className="error-icon">⚠️</div>
-        //       <h3>Error Loading Bids</h3>
-        //       <p>{error}</p>
-        //       <button onClick={fetchUserBids} className="retry-btn">Try Again</button>
-        //     </div>
-        //   );
-        // }
-
         if (soldItems.length === 0) {
             return (
                 <div className="empty-state">
                     <div className="empty-icon">🏷️</div>
                     <h3>No sold Items Yet</h3>
-                    {/* <p>You haven't placed any bids yet. Start bidding on items to see them here!</p> */}
-                    {/* <button 
-            onClick={() => navigate('/items')}
-            className="cta-button"
-          >
-            Browse Items
-          </button> */}
                 </div>
             );
         }
@@ -1477,112 +1451,81 @@ const UserProfile = () => {
             <div className="my-bids-tab">
                 <div className="bids-header">
                     <h2>Sold Items ({soldItems.length})</h2>
-                    <button onClick={fetchUserBids} className="refresh-btn">
+                    <button
+                        onClick={fetchUserSoldItems}
+                        className="refresh-btn"
+                    >
                         🔄 Refresh
                     </button>
                 </div>
 
                 <div className="bids-grid">
-                    {soldItems.map((bid) => (
-                        <div key={bid.id || bid._id} className="bid-card">
-                            {/* Item Image */}
-                            {bid.itemImage || bid.imageUrl ? (
-                                <div className="bid-item-image">
+                    {soldItems.map((item) => (
+                        <div
+                            key={item.id || item._id}
+                            className="sold-item-card"
+                        >
+                            <div className="sold-item-image-section">
+                                {item.imageUrl ? (
                                     <img
-                                        src={bid.itemImage || bid.imageUrl}
-                                        alt={bid.itemName || bid.itemTitle}
+                                        src={item.imageUrl}
+                                        alt={item.title}
+                                        className="sold-item-image"
                                     />
-                                </div>
-                            ) : (
-                                <div className="bid-item-image placeholder">
-                                    <span></span>
-                                </div>
-                            )}
+                                ) : (
+                                    <div className="sold-item-image placeholder">
+                                        <span>📦</span>
+                                    </div>
+                                )}
+                            </div>
 
-                            <div className="bid-content">
-                                {/* Item Info */}
-                                <div className="bid-item-info">
-                                    <h4 className="bid-item-title">
-                                        {bid.itemName ||
-                                            bid.title ||
-                                            "Unnamed Item"}
+                            <div className="sold-item-content">
+                                <div className="sold-item-header">
+                                    <h4 className="sold-item-title">
+                                        {item.title || "Unnamed Item"}
                                     </h4>
-                                    {/* <p className="bid-item-description"> */}
-                                    {/* {bid.itemDescription || bid.description || 'No description available'} */}
-                                    <p>sold for: </p>
-                                    {bid.finalPrice}
-                                    <p>Original price: </p>
-                                    {bid.price}
-                                    {/* ################################################################################ */}
-                                    <p>Sold to: </p>
-                                    {bid?.soldTo?.email}
-                                    {/* ####################################################################################### */}
-                                    {/* </p> */}
+                                    <div className="sold-item-prices">
+                                        <span className="price-badge original">
+                                            Original: ₹
+                                            {parseFloat(item.price).toFixed(2)}
+                                        </span>
+                                        <span className="price-badge sold">
+                                            Sold: ₹
+                                            {parseFloat(
+                                                item.finalPrice
+                                            ).toFixed(2)}
+                                        </span>
+                                    </div>
                                 </div>
 
-                                {/* Bid Details */}
-                                {/* <div className="bid-details"> */}
-                                {/* <div className="bid-amount">
-                    <span className="label">Your Bid:</span>
-                    <span className="value">{formatCurrency(bid.price || bid.amount)}</span>
-                  </div> */}
-
-                                {/* <div className="bid-time">
-                    <span className="label">Placed:</span>
-                    <span className="value">{formatDate(bid.bidTime || bid.createdAt || bid.timestamp)}</span>
-                  </div> */}
-
-                                {/* <div className={`bid-status ${(bid.status || 'active').toLowerCase()}`}>
-                    <span className="label">Status:</span>
-                    <span className="value">{bid.status || 'Active'}</span>
-                  </div> */}
-
-                                {/* Current highest bid if available */}
-                                {/* {bid.currentHighestBid && (
-                    <div className="current-highest">
-                      <span className="label">Current Highest:</span>
-                      <span className="value">{formatCurrency(bid.currentHighestBid)}</span>
-                    </div>
-                  )} */}
-
-                                {/* Item price if available */}
-                                {/* {bid.itemPrice && (
-                    <div className="item-price">
-                      <span className="label">Item Price:</span>
-                      <span className="value">{formatCurrency(bid.itemPrice)}</span>
-                    </div>
-                  )} */}
-
-                                {/* Time remaining if available */}
-                                {/* {bid.auctionEndTime && (
-                    <div className="time-remaining">
-                      <span className="label">Auction Ends:</span>
-                      <span className="value">{formatDate(bid.auctionEndTime)}</span>
-                    </div>
-                  )} */}
-                                {/* </div> */}
-
-                                {/* Bid Actions */}
-                                <div className="bid-actions">
-                                    {/* {(bid.status === 'active' || !bid.status) && (
-                    <button 
-                      onClick={() => handlePlaceNewBid(bid.itemId)}
-                      className="action-btn bid-again-btn"
-                    >
-                      💰 Bid Again
-                    </button>
-                  )} */}
-
-                                    {bid.status === "won" && (
-                                        <button
-                                            onClick={() =>
-                                                handleContactSeller(bid)
-                                            }
-                                            className="action-btn contact-btn"
-                                        >
-                                            📞 Contact Seller
-                                        </button>
-                                    )}
+                                <div className="buyer-info-compact">
+                                    <div className="info-label">
+                                        Buyer Contact:
+                                    </div>
+                                    <div className="info-row">
+                                        {item.soldTo?.name && (
+                                            <span className="info-item">
+                                                <span className="info-icon">
+                                                    👤
+                                                </span>
+                                                {item.soldTo.name}
+                                            </span>
+                                        )}
+                                        {item.soldTo?.phone && (
+                                            <span className="info-item">
+                                                <span className="info-icon">
+                                                    📱
+                                                </span>
+                                                {item.soldTo.phone}
+                                            </span>
+                                        )}
+                                        <span className="info-item">
+                                            <span className="info-icon">
+                                                📧
+                                            </span>
+                                            {item.soldTo?.email || "N/A"}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1625,75 +1568,86 @@ const UserProfile = () => {
                     {purchasedItems.map((item, index) => (
                         <div
                             key={item.bidId || `purchased-${item.id}-${index}`}
-                            className="bid-card"
+                            className="purchased-item-card"
                         >
-                            {/* Item Image */}
-                            {item.itemImage || item.imageUrl ? (
-                                <div className="bid-item-image">
+                            <div className="purchased-item-image-section">
+                                {item.imageUrl ? (
                                     <img
-                                        src={item.itemImage || item.imageUrl}
+                                        src={item.imageUrl}
                                         alt={item.title}
+                                        className="purchased-item-image"
                                     />
-                                </div>
-                            ) : (
-                                <div className="bid-item-image placeholder">
-                                    <span>📦</span>
-                                </div>
-                            )}
+                                ) : (
+                                    <div className="purchased-item-image placeholder">
+                                        <span>📦</span>
+                                    </div>
+                                )}
+                            </div>
 
-                            <div className="bid-content">
-                                {/* Item Info */}
-                                <div className="bid-item-info">
-                                    <h4 className="bid-item-title">
+                            <div className="purchased-item-content">
+                                <div className="purchased-item-header">
+                                    <h4 className="purchased-item-title">
                                         {item.title || "Unnamed Item"}
                                     </h4>
-                                    <p className="bid-item-description">
-                                        {item.description ||
-                                            "No description available"}
-                                    </p>
-                                </div>
-
-                                {/* Purchase Details */}
-                                <div className="bid-details">
-                                    <div className="bid-amount">
-                                        <span className="label">
-                                            Purchase Price:
+                                    <div className="purchased-item-prices">
+                                        <span className="price-badge original">
+                                            Original: ₹
+                                            {parseFloat(item.price).toFixed(2)}
                                         </span>
-                                        <span className="value">
-                                            ₹
+                                        <span className="price-badge purchased">
+                                            Paid: ₹
                                             {parseFloat(
                                                 item.purchasePrice || item.price
                                             ).toFixed(2)}
                                         </span>
                                     </div>
+                                </div>
 
-                                    <div className="item-price">
-                                        <span className="label">
-                                            Original Price:
-                                        </span>
-                                        <span className="value">
-                                            ₹{parseFloat(item.price).toFixed(2)}
-                                        </span>
+                                {item.description && (
+                                    <p className="purchased-item-description">
+                                        {item.description.length > 100
+                                            ? `${item.description.substring(
+                                                  0,
+                                                  100
+                                              )}...`
+                                            : item.description}
+                                    </p>
+                                )}
+
+                                {item.purchasedAt && (
+                                    <div className="purchased-date">
+                                        📅 Purchased on{" "}
+                                        {new Date(
+                                            item.purchasedAt
+                                        ).toLocaleDateString()}
                                     </div>
+                                )}
 
-                                    {item.purchasedAt && (
-                                        <div className="bid-time">
-                                            <span className="label">
-                                                Purchased:
+                                <div className="seller-info-compact">
+                                    <div className="info-label">
+                                        Seller Contact:
+                                    </div>
+                                    <div className="info-row">
+                                        {item.sellerName && (
+                                            <span className="info-item">
+                                                <span className="info-icon">
+                                                    👤
+                                                </span>
+                                                {item.sellerName}
                                             </span>
-                                            <span className="value">
-                                                {new Date(
-                                                    item.purchasedAt
-                                                ).toLocaleDateString()}
+                                        )}
+                                        {item.sellerPhone && (
+                                            <span className="info-item">
+                                                <span className="info-icon">
+                                                    📱
+                                                </span>
+                                                {item.sellerPhone}
                                             </span>
-                                        </div>
-                                    )}
-
-                                    <div className="seller-info">
-                                        <span className="label">
-                                            Seller Email:
-                                        </span>
-                                        <span className="value">
+                                        )}
+                                        <span className="info-item">
+                                            <span className="info-icon">
+                                                📧
+                                            </span>
                                             {item.sellerEmail || "N/A"}
                                         </span>
                                     </div>
@@ -1839,12 +1793,6 @@ const UserProfile = () => {
                 >
                     My Bids ({activeTab === "my-bids" ? myBids.length : "..."})
                 </button>
-                {/* <button 
-          className={`tab-nav ${activeTab === 'sold-item' ? 'active' : ''}`}
-          onClick={() => setActiveTab('sold-item')}
-        >
-          🏷️ Sold Items ({activeTab === 'sold-item' ? soldItems.length : '...'})
-        </button> */}
 
                 <button
                     className={`
@@ -1890,6 +1838,28 @@ const UserProfile = () => {
                         ? purchasedItems.length
                         : "..."}
                     )
+                </button>
+                <button
+                    className={`
+  m-2
+    px-4 py-2
+    bg-gray-200
+    blue
+    border border-gray-400
+    rounded-lg
+    font-semibold
+    transition-colors duration-200 ease-in-out
+    hover:bg-gray-300 hover:border-gray-500
+    focus:outline-none focus:ring-2 focus:ring-gray-400
+    ${
+        activeTab === "profile-settings"
+            ? "bg-gray-800 text-white border-gray-900"
+            : ""
+    }
+  `}
+                    onClick={() => setActiveTab("profile-settings")}
+                >
+                    Profile Settings
                 </button>
                 <button
                     className={`
@@ -2041,6 +2011,7 @@ const UserProfile = () => {
                 {activeTab === "my-bids" && renderMyBids()}
                 {activeTab === "sold-item" && renderSoldItems()}
                 {activeTab === "purchased-items" && renderPurchasedItems()}
+                {activeTab === "profile-settings" && <ProfileManagement />}
                 {activeTab === "preferences" && <EmailPreferences />}
             </div>
         </div>

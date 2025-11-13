@@ -17,16 +17,17 @@ exports.getMyProfile = async (req, res) => {
     try {
         const userId = req.user.userId;
 
-        // Get profile from database
-        let profile = await Profile.findByPk(userId);
+        // Get user email from auth service
+        try {
+            const userResponse = await axios.get(
+                `${process.env.AUTH_SERVICE_URL}/api/auth/user/${userId}`
+            );
 
-        // If profile doesn't exist, get user info from auth service
-        if (!profile) {
-            try {
-                const userResponse = await axios.get(
-                    `${process.env.AUTH_SERVICE_URL}/api/auth/user/${userId}`
-                );
-                // Return basic info even if no profile exists
+            // Get profile from database
+            let profile = await Profile.findByPk(userId);
+
+            // If profile doesn't exist, return basic info with email
+            if (!profile) {
                 return res.status(200).json({
                     userId: userId,
                     email: userResponse.data.email,
@@ -34,15 +35,40 @@ exports.getMyProfile = async (req, res) => {
                     phoneNumber: null,
                     profileExists: false,
                 });
-            } catch (authError) {
-                return res.status(404).json({ message: "User not found." });
             }
-        }
 
-        res.status(200).json({
-            ...profile.toJSON(),
-            profileExists: true,
-        });
+            // Return profile with email from auth service
+            res.status(200).json({
+                ...profile.toJSON(),
+                email: userResponse.data.email,
+                profileExists: true,
+            });
+        } catch (authError) {
+            console.error(
+                "Error fetching user from auth service:",
+                authError.message
+            );
+            console.error("AUTH_SERVICE_URL:", process.env.AUTH_SERVICE_URL);
+
+            // Fallback: return profile without email
+            let profile = await Profile.findByPk(userId);
+
+            if (!profile) {
+                return res.status(200).json({
+                    userId: userId,
+                    email: "N/A (Auth service unavailable)",
+                    displayName: null,
+                    phoneNumber: null,
+                    profileExists: false,
+                });
+            }
+
+            res.status(200).json({
+                ...profile.toJSON(),
+                email: "N/A (Auth service unavailable)",
+                profileExists: true,
+            });
+        }
     } catch (error) {
         console.error("Error fetching my profile:", error);
         res.status(500).json({ message: "Server error." });
@@ -55,13 +81,24 @@ exports.upsertProfile = async (req, res) => {
     if (!displayName)
         return res.status(400).json({ message: "Display name is required." });
     try {
+        // Get user email from auth service
+        const userResponse = await axios.get(
+            `${process.env.AUTH_SERVICE_URL}/api/auth/user/${userId}`
+        );
+
         const [profile] = await Profile.upsert({
             userId,
             displayName,
             phoneNumber,
         });
-        res.status(200).json(profile);
+
+        // Return profile with email
+        res.status(200).json({
+            ...profile.toJSON(),
+            email: userResponse.data.email,
+        });
     } catch (error) {
+        console.error("Error updating profile:", error);
         res.status(500).json({ message: "Server error." });
     }
 };
@@ -99,9 +136,19 @@ exports.getSoldItems = async (req, res) => {
         );
 
         // Handle paginated response from items-service
-        const soldItems = itemsResponse.data.items || itemsResponse.data;
+        let soldItems = itemsResponse.data.items || itemsResponse.data;
 
-        if (!Array.isArray(soldItems) || soldItems.length === 0) {
+        // Ensure soldItems is an array
+        if (!soldItems) {
+            return res.json([]);
+        }
+
+        if (!Array.isArray(soldItems)) {
+            console.error("Sold items is not an array:", soldItems);
+            return res.json([]);
+        }
+
+        if (soldItems.length === 0) {
             return res.json([]);
         }
 
@@ -116,20 +163,34 @@ exports.getSoldItems = async (req, res) => {
                     { headers: { Authorization: req.headers["authorization"] } }
                 );
                 const winningBid = bidsResponse.data[0];
-                // console.log(bidsResponse.data)
 
                 if (winningBid) {
                     enrichedItem.finalPrice = winningBid.amount;
 
-                    // 3. Call the profile-service to get the winner's display name
-                    const profileResponse = await axios.get(
+                    // 3. Get buyer's email from auth service
+                    const authResponse = await axios.get(
                         `${process.env.AUTH_SERVICE_URL}/api/auth/user/${winningBid.bidderId}`
-                        //  { headers: { Authorization: req.headers["authorization"] } }
                     );
-                    enrichedItem.soldTo = profileResponse.data; // Attach the full profile object
+
+                    // 4. Try to get buyer's profile (name and phone)
+                    let buyerProfile = null;
+                    try {
+                        buyerProfile = await Profile.findByPk(
+                            winningBid.bidderId
+                        );
+                    } catch (profileError) {
+                        console.log(
+                            `No profile found for buyer ${winningBid.bidderId}`
+                        );
+                    }
+
+                    enrichedItem.soldTo = {
+                        email: authResponse.data.email,
+                        name: buyerProfile?.displayName || null,
+                        phone: buyerProfile?.phoneNumber || null,
+                    };
                 }
             } catch (error) {
-                // If fetching extra info fails, just include what we have
                 console.error(
                     `Could not fetch full details for sold item ${item.id}:`,
                     error.message
@@ -144,6 +205,7 @@ exports.getSoldItems = async (req, res) => {
             "Error fetching sold items:",
             error.response ? error.response.data : error.message
         );
+        console.error("Full error:", error);
         res.status(500).json({ message: "Could not fetch sold items." });
     }
 };
@@ -281,12 +343,33 @@ exports.getPurchasedItems = async (req, res) => {
 
                     if (bidId === winningBidId) {
                         // Fetch seller email from auth service
-                        let sellerEmail = "N/A";
+                        let sellerInfo = {
+                            email: "N/A",
+                            name: null,
+                            phone: null,
+                        };
                         try {
                             const sellerResponse = await axios.get(
                                 `${process.env.AUTH_SERVICE_URL}/api/auth/user/${itemResponse.data.sellerId}`
                             );
-                            sellerEmail = sellerResponse.data.email || "N/A";
+                            sellerInfo.email =
+                                sellerResponse.data.email || "N/A";
+
+                            // Try to get seller's profile
+                            try {
+                                const sellerProfile = await Profile.findByPk(
+                                    itemResponse.data.sellerId
+                                );
+                                if (sellerProfile) {
+                                    sellerInfo.name = sellerProfile.displayName;
+                                    sellerInfo.phone =
+                                        sellerProfile.phoneNumber;
+                                }
+                            } catch (profileError) {
+                                console.log(
+                                    `No profile found for seller ${itemResponse.data.sellerId}`
+                                );
+                            }
                         } catch (sellerError) {
                             console.log(
                                 `Could not fetch seller info for item ${bid.itemId}:`,
@@ -299,7 +382,9 @@ exports.getPurchasedItems = async (req, res) => {
                             bidId: bidId,
                             purchasePrice: bid.amount,
                             purchasedAt: bid.createdAt,
-                            sellerEmail: sellerEmail,
+                            sellerEmail: sellerInfo.email,
+                            sellerName: sellerInfo.name,
+                            sellerPhone: sellerInfo.phone,
                         });
                     }
                 }
