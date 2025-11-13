@@ -22,19 +22,18 @@
 -   [Performance](#performance)
 -   [Security & Quality](#security--quality)
 -   [Testing](#testing)
--   [Contributing](#contributing)
 -   [License](#license)
 
 ---
 
 ## Overview
 
-Campus Shop is a **production-ready microservices marketplace** designed for campus communities to buy, sell, and bid on items. Built with modern cloud-native technologies, it demonstrates enterprise-grade scalability, security, and observability.
+Campus Shop is a **production-ready microservices marketplace** designed for campus communities to buy, sell, and bid on items. Built with modern cloud-native technologies and deployed on **Kind (Kubernetes in Docker)**, it demonstrates enterprise-grade scalability, security, and observability.
 
 ### Why Campus Shop?
 
 -   **Microservices Architecture:** 5 independent services with clear boundaries
--   **Kubernetes Orchestration:** 20 pods with autoscaling (HPA/VPA)
+-   **Kubernetes Orchestration:** 20 pods with autoscaling (HPA/VPA) on Kind cluster
 -   **Database Replication:** 10 PostgreSQL pods (97% reads from replicas)
 -   **Event-Driven:** Kafka for async messaging and notifications
 -   **Full Observability:** Prometheus + Grafana monitoring
@@ -104,13 +103,12 @@ Campus Shop is a **production-ready microservices marketplace** designed for cam
 -   **Custom metrics:** Items created, bids placed, notifications sent
 -   **Health checks:** `/health` endpoints on all services
 -   **Resource monitoring:** CPU, memory, database connections
--   **Fixed:** Grafana OOM crashes (increased from 128Mi to 512Mi)
 -   **Standardized:** All services use consistent resource limits
 
 #### Event-Driven Architecture
 
 -   **Apache Kafka:** Message broker for async communication
--   **Topics:** bid.placed, bid.accepted, item.sold
+-   **Topics:** bid.placed, item.sold
 -   **Consumer:** Notifications service with zero lag
 -   **Guaranteed delivery:** At-least-once semantics
 
@@ -126,13 +124,6 @@ Campus Shop follows a **microservices pattern** with:
 -   **Message Broker:** Apache Kafka + Zookeeper
 -   **Object Storage:** MinIO (S3-compatible)
 -   **Monitoring:** Prometheus + Grafana
-
-**Detailed Architecture:** See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for Mermaid diagrams:
-
--   System Architecture (microservices flow)
--   Database Architecture (replication topology)
--   Kubernetes Deployment (pod layout)
--   User Flow & Request Path (sequence diagrams)
 
 ### Microservices Breakdown
 
@@ -177,7 +168,8 @@ Campus Shop follows a **microservices pattern** with:
 
 ### Infrastructure
 
--   **Kubernetes 1.29** - Container orchestration (Kind for local)
+-   **Kubernetes 1.29** - Container orchestration
+-   **Kind (Kubernetes in Docker)** - Local Kubernetes cluster for development
 -   **Docker** - Containerization
 -   **Nginx Ingress** - API gateway + routing
 -   **Apache Kafka 3.x** - Message broker
@@ -270,45 +262,118 @@ npm run dev
 
 ## Documentation
 
-| Document                                     | Description                                     |
-| -------------------------------------------- | ----------------------------------------------- |
-| [README.md](README.md)                       | This file - project overview                    |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | **Detailed architecture with Mermaid diagrams** |
-| [PROJECT_REPORT.md](PROJECT_REPORT.md)       | **Comprehensive evaluation report**             |
-| [INSTALLATION.md](INSTALLATION.md)           | Complete Kubernetes setup guide                 |
-| [TESTING.md](TESTING.md)                     | Testing guide and results                       |
-| [DATABASE_GUIDE.md](DATABASE_GUIDE.md)       | Database inspection commands                    |
-| [SECURITY_ISO25010.md](SECURITY_ISO25010.md) | ISO 25010 compliance documentation              |
-| [ROADMAP.md](ROADMAP.md)                     | Development phases and progress                 |
+| Document                               | Description                     |
+| -------------------------------------- | ------------------------------- |
+| [README.md](README.md)                 | This file - project overview    |
+| [INSTALLATION.md](INSTALLATION.md)     | Complete Kubernetes setup guide |
+| [TESTING.md](TESTING.md)               | Testing guide and results       |
+| [DATABASE_GUIDE.md](DATABASE_GUIDE.md) | Database inspection commands    |
 
 ---
 
 ## Performance
 
-### Database Performance
+### System Metrics (Tested: November 2025)
+
+**Infrastructure:**
+
+-   **Pods:** 19 pods across 5 microservices + databases + messaging
+-   **Database Cluster:** 10 PostgreSQL pods (5 primary + 5 replica) + 1 MongoDB
+-   **Message Broker:** Kafka + Zookeeper (2 pods)
+-   **Storage:** MinIO (S3-compatible object storage)
+-   **Monitoring:** Prometheus + Grafana
+
+**Current Scale:**
+
+-   **Users:** 1,512+ registered users
+-   **Items:** 4,489+ items (454 sold)
+-   **Bids:** 7,027+ bids placed
+-   **Notifications:** 7,203+ notifications generated
+-   **Kafka Events:** 7,488+ events processed
+-   **Zero Consumer Lag:** Real-time event processing
+
+### Database Performance (CQRS Pattern)
 
 -   **Read Replica Usage:** 97%+ reads served by replicas
--   **Replication Lag:** <100ms (streaming replication)
+-   **Replication Status:** All replicas streaming (HEALTHY)
+-   **Replication Lag:** <100ms average (PostgreSQL streaming replication)
 -   **Connection Pooling:** Max 10 per service (Sequelize)
--   **Query Time:** <50ms (reads), <100ms (writes)
+-   **Database Memory:** 22-34Mi per PostgreSQL pod
 
-### API Performance
+### API Throughput (Load Test Results)
 
--   **Items Service:** 150ms avg, 300ms p95, handles 500+ concurrent users
--   **Bidding Service:** 200ms avg, 400ms p95
--   **Profile Service:** 300ms avg, 600ms p95
+**Auth Service:**
 
-### Pagination Performance
+-   User Registration: 1 req/sec sustained throughput
+-   Load Test: 50 users in 137s (100% success rate)
+-   Active Users: 1,500+ in database
 
--   **100 items:** 80ms response time
--   **2000 items:** 180ms response time
--   **5000 items:** 220ms response time
+**Items Service:**
 
-### Autoscaling
+-   Item Creation: **33 req/sec** peak throughput
+-   Load Test: 100 items in 3s (100% success rate)
+-   Full CRUD Operations: Create, Read, Update, Delete, Mark as Sold
+-   Image Upload: MinIO S3 integration working
+-   Total Items: 4,489+ items
 
--   **Load Test:** 100 concurrent users, 1000 req/s for 10 minutes
--   **Result:** Scales from 1 → 5 pods in <2 minutes
--   **Response Time:** Stays <200ms during scaling
+**Bidding Service:**
+
+-   Bid Placement: 9 req/sec average throughput
+-   Bid Queries: Get all bids, Get bids for item
+-   Total Bids: 7,027+ bids
+
+**Profile Service:**
+
+-   Profile CRUD operations
+-   Posted items, Sold items, My bids
+-   Active bids, Purchased items
+-   User profile visibility
+-   Total Profiles: 620+
+
+**Notifications Service:**
+
+-   Kafka event consumption (zero lag)
+-   Notification queries (paginated)
+-   Unread counts, Mark as read, Delete
+-   Notification stats and batch operations
+-   Processed Events: 7,488+
+-   MongoDB Notifications: 7,203+
+
+### Resource Utilization (All Services)
+
+**Microservices:**
+
+-   Auth: 6m CPU, 59Mi memory
+-   Items: 41m CPU, 66Mi memory
+-   Bidding: 48m CPU, 56Mi memory
+-   Notifications: 51m CPU, 74Mi memory
+-   Profile: 10m CPU, 50Mi memory
+
+**Infrastructure:**
+
+-   MongoDB: 167m CPU, 326Mi memory
+-   Kafka: 16m CPU, 442Mi memory
+-   MinIO: 3m CPU, 150Mi memory
+-   PostgreSQL (avg): 16m CPU, 27Mi memory per pod
+
+**All pods running well within limits (512Mi memory, 1 CPU)**
+
+### Autoscaling (HPA)
+
+-   **Auth Service:** 17% CPU utilization (1/5 pods)
+-   **Items Service:** 27% CPU utilization (1/5 pods)
+-   **Bidding Service:** 28% CPU utilization (1/5 pods)
+-   **Profile Service:** 12% CPU utilization (1/5 pods)
+-   **Threshold:** Auto-scale at 60% CPU
+-   **Max Replicas:** 5 per service
+
+### Monitoring & Stability
+
+-   **Grafana:** Stable operation (512Mi memory)
+-   **All Services:** Zero failures in system tests
+-   **Database Replication:** All healthy (streaming status)
+-   **Kafka Consumer:** Zero lag (real-time processing)
+-   **Uptime:** 3+ days stable operation
 
 ---
 
@@ -364,8 +429,50 @@ npm run dev
 | **Notifications** | 6      | 6     | **100%** | 100%         |
 | **Profile**       | 8      | 9     | 88.89%   | 100%         |
 
-**4 services at 100% coverage**  
-**100% success rate** on all tested endpoints
+**Tested Endpoints:**
+
+**Auth Service (1/6):**
+
+-   POST /api/auth/register
+
+**Items Service (8/8 - 100%):**
+
+-   POST /api/items (Create item)
+-   GET /api/items (Get all items)
+-   GET /api/items/:id (Get item by ID)
+-   PUT /api/items/:id (Update item)
+-   POST /api/items/:id/sell (Mark as sold)
+-   DELETE /api/items/:id (Delete item)
+-   POST /api/items/:id/image (Upload image)
+-   GET /api/items/me/bids (Get bids on my items)
+
+**Bidding Service (3/3 - 100%):**
+
+-   POST /api/bids (Place bid)
+-   GET /api/bids (Get all bids)
+-   GET /api/bids/item/:itemId (Get bids for item)
+
+**Notifications Service (6/6 - 100%):**
+
+-   GET /api/notifications (Get notifications with pagination)
+-   GET /api/notifications/unread-count (Get unread count)
+-   GET /api/notifications/stats (Get notification stats)
+-   PATCH /api/notifications/:id/read (Mark as read)
+-   PATCH /api/notifications/mark-all-read (Mark all as read)
+-   DELETE /api/notifications/:id (Delete notification)
+
+**Profile Service (8/9):**
+
+-   GET /api/profiles/me (Get my profile)
+-   GET /api/profiles/:userId (Get other user profile)
+-   PUT /api/profiles/me (Update profile)
+-   GET /api/profiles/me/items/posted (Get posted items)
+-   GET /api/profiles/me/items/sold (Get sold items)
+-   GET /api/profiles/me/items/purchased (Get purchased items)
+-   GET /api/profiles/me/bids (Get my bids)
+-   GET /api/profiles/me/bids/active (Get active bids)
+
+**Result:** 4 services at 100% coverage | 100% success rate on all tested endpoints
 
 ### Run Tests
 
@@ -396,91 +503,6 @@ cd scripts
 
 ---
 
-## Contributing
-
-Contributions are welcome! Please follow these guidelines:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Follow conventional commits (`feat:`, `fix:`, `docs:`, etc.)
-4. Write tests for new features
-5. Update documentation
-6. Submit a pull request
-
----
-
 ## License
 
-MIT License
-
----
-
-## Acknowledgments
-
--   **Contributors:** Harshil Pathria (rate limiting + password reset)
--   **Inspired by:** Campus communities and student needs
--   **Thanks to:** Open-source communities (Node.js, React, Kubernetes, Kafka)
-
----
-
-## Project Stats
-
-| Metric                  | Value   |
-| ----------------------- | ------- |
-| **Total Lines of Code** | 15,000+ |
-| **Microservices**       | 5       |
-| **Kubernetes Pods**     | 20      |
-| **API Endpoints**       | 32      |
-| **Test Coverage**       | 81.25%  |
-| **Documentation Files** | 8       |
-| **Commits**             | 100+    |
-
----
-
-## Screenshots
-
-### Landing Page
-
-_Coming soon_
-
-### Item Listing with Pagination
-
-_Coming soon_
-
-### Bidding Interface
-
-_Coming soon_
-
-### Notification Center
-
-_Coming soon_
-
-### Profile Management
-
-_Coming soon_
-
----
-
-## Demo Video
-
-_Coming soon_
-
----
-
-## Contact
-
-**Project Maintainer:** Sujiv  
-**GitHub:** [@sujiv1204](https://github.com/sujiv1204)  
-**Repository:** [campusShop](https://github.com/sujiv1204/campusShop)
-
-**Reports & Documentation:** [Google Drive](https://drive.google.com/drive/folders/17bpAYH8ug_BUI-pf57DD9TX2uE5gF3u4?usp=sharing)
-
----
-
-<div align="center">
-
-**Built with care for campus communities**
-
-Star this repo if you find it helpful!
-
-</div>
+MIT License - See LICENSE file for details
