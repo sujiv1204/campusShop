@@ -100,10 +100,12 @@ Campus Shop is a **production-ready microservices marketplace** designed for cam
 #### Monitoring & Observability
 
 -   **Prometheus:** Metrics collection from all 5 services
--   **Grafana:** Real-time dashboards + alerts
+-   **Grafana:** Real-time dashboards + alerts (512Mi memory for stability)
 -   **Custom metrics:** Items created, bids placed, notifications sent
 -   **Health checks:** `/health` endpoints on all services
 -   **Resource monitoring:** CPU, memory, database connections
+-   **Fixed:** Grafana OOM crashes (increased from 128Mi to 512Mi)
+-   **Standardized:** All services use consistent resource limits
 
 #### Event-Driven Architecture
 

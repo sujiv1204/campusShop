@@ -10,3 +10,6 @@ k8s/secrets/
 *.srl
 
 scripts/node_modules/
+
+# Test logs
+logs/
