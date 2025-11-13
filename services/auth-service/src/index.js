@@ -5,7 +5,7 @@ const authRoutes = require("./routes/auth.routes");
 
 const app = express();
 app.use(express.json());
-app.set('trust proxy', 1);
+// app.set('trust proxy', 1);
 
 app.get("/api/auth/health", (req, res) => res.send("Auth service is healthy!"));
 app.use("/api/auth", authRoutes);
